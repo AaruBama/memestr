@@ -67,7 +67,7 @@ const HashTagTool = (props) => {
     const filters = {
       limit: 100,
     };
-    filters["#t"] = ['meme', 'memes', 'funny'];
+    filters["#t"] = ['meme', 'memes', 'funny', 'memestr'];
     
 
     console.log("filters", filters);
