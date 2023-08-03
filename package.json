@@ -1,7 +1,7 @@
 {
   "name": "memestr",
   "version": "0.1.0",
-  "homepage": "https://aarubama.github.io/react-gh-pages",
+  "homepage": "https://aarubama.github.io/memestr/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
