@@ -25,6 +25,5 @@
 //       console.log("event is created. The created event is - ", event)
 //       let pubs = pool.publish(relays, event)
 //       console.log("pubs is ", pubs)
-    
 // }
 
