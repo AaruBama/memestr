@@ -1,14 +1,12 @@
 import "./App.css";
 import HashTagTool from "./components/HashtagTool";
-import MenuBar from "./components/Menu";
-
-
+import Login from "./components/Login";
 import React from "react";
 
 function App() {
   return (
     <div >
-      <MenuBar />
+      <Login />
       <HashTagTool />
     </div>
   );
