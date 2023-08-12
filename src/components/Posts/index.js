@@ -49,25 +49,30 @@ const Button = styled.button`
 
 function Posts(props) {
 
-    function upvotePost() {
+    const upvotePost = (event) => {
+        const storedData = localStorage.getItem('memestr')
+        if (!storedData) {
+            alert("Login required to upvote.")
+            return
+        }
         let note = props.note
-        console.log("Inside the vote component")
-        console.log("Value of note is ", note)
         const pool = new SimplePool()
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
         let privateKey = generatePrivateKey() // `sk` is a hex string
         let publicKey = getPublicKey(privateKey) // `pk` is a hex string
-        let event = {
+        let upvoteEvent = {
             kind: 7,
             pubkey: publicKey,
             created_at: Math.floor(Date.now() / 1000),
             tags: [["e", note.id], ["p", note.pubkey]],
             content: '+'
         }
-        event.id = getEventHash(event)
-        event.sig = getSignature(event, privateKey)
-        let pubs = pool.publish(relays, event)
-
+        upvoteEvent.id = getEventHash(upvoteEvent)
+        upvoteEvent.sig = getSignature(upvoteEvent, privateKey)
+        let pubs = pool.publish(relays, upvoteEvent)
+        console.log("Pool published,", pubs)
+        event.currentTarget.disabled = true;
+        return true
     }
 
     const mediaLinks = extractLinksFromText(props.note.content);
@@ -80,7 +85,7 @@ function Posts(props) {
             "#e": [props.note.id]
         };
         let voteCount = await relayPool.list(relays, [filters])
-        setVotes(voteCount);
+        setVotes(voteCount); //Broken, calculates fine then updates to zero.
     }
     useEffect(() => { getVotes(); }, [])
     console.log("votes count is ", votes.length, " for note id ", props.note.id)

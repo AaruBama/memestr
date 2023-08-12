@@ -5,7 +5,7 @@ import { nip19 } from "nostr-tools";
 
 
 async function getUserDetailsFromPrivateKey(skk) {
-  let relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
+  let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nostr.wine", "wss://eden.nostr.land"]
   const relayPool = new SimplePool();
   let sk = nip19.decode(skk)
   const pubKey = getPublicKey(sk.data)

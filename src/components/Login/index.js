@@ -9,7 +9,18 @@ function Login(props) {
     const [loggedInUser, setLoggedInUser] = useState(null);
 
     const handleLoginClick = () => {
-        setShowLogin(true);
+        const storedData = localStorage.getItem('memestr')
+        if (!storedData) {
+            setShowLogin(true);
+        } else {
+            console.log("Fetched details from local storages")
+            const userDetails = JSON.parse(storedData);
+            setShowLogin(false);
+            setisLoggedIn(true);
+            const display_name = userDetails.display_name
+            const profile_picture = userDetails.picture
+            setLoggedInUser({ display_name, profile_picture });
+        }
     };
 
     const loginUser = () => {
@@ -26,11 +37,12 @@ function Login(props) {
         let userDetails = null;
         const storedData = localStorage.getItem('memestr')
         if (storedData) {
+            console.log("Fetched details from local storages")
             userDetails = JSON.parse(storedData);
             setShowLogin(false);
             setisLoggedIn(true);
-            const display_name = value.display_name
-            const profile_picture = value.picture
+            const display_name = userDetails.display_name
+            const profile_picture = userDetails.picture
             setLoggedInUser({ display_name, profile_picture });
         } else {
             userDetails = getUserDetailsFromPrivateKey(privateKey)
@@ -69,7 +81,6 @@ function Login(props) {
                     <button onClick={handleLoginClick}>Login</button>
                 }
             </div>
-            {/* {!isLoggedIn && <button onClick={handleLoginClick}>Login</button>} */}
             {showLogin && (
                 <div className="popup">
                     <div className="popup-inner">

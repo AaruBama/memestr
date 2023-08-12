@@ -21,7 +21,7 @@ const HashTagTool = (props) => {
   const LoadMedia = async () => {
     const relayPool = new SimplePool();
     const filters = {
-      limit: 5,
+      limit: 50,
     };
     filters["#t"] = ['memes','meme','funny','memestr'];
 
