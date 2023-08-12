@@ -93,7 +93,7 @@ function Posts(props) {
             <img src={mediaLinks[0]} style={{ maxWidth: '100%', height: 'auto' }} />
             <div>
                 <Button onClick={upvotePost}>+</Button>
-                <a style={{ color: 'white', display: "inline-block" }}>{votes.length}</a>
+                <div style={{ color: 'white', display: "inline-block" }}>{votes.length}</div>
             </div>
         </div>
     );

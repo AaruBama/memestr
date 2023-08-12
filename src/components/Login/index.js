@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import getUserDetailsFromPrivateKey from '../Profile';
+import './profile.css'
 
 function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
     const [privateKey, setPrivateKey] = useState('');
     const [isLoggedIn, setisLoggedIn] = useState(false)
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
     const handleLoginClick = () => {
         setShowLogin(true);
@@ -20,20 +22,35 @@ function Login(props) {
 
     const handleLoginSubmit = (event) => {
         event.preventDefault();
-        // Here you can add the logic to validate the private key and perform the login action
-        // For the sake of example, let's just alert the private key
-
-        alert('Logged in with private key: ' + privateKey);
+        let status = false
         let userDetails = getUserDetailsFromPrivateKey(privateKey)
-        setShowLogin(false);
-        setisLoggedIn(true);
+        console.log("user details are", userDetails)
+        userDetails.then((value) => {
+
+            status = true
+            const display_name = value.display_name
+            const profile_picture = value.picture
+            console.log("username is ", display_name)
+            setShowLogin(false);
+            setisLoggedIn(true);
+            setLoggedInUser({ display_name, profile_picture });
+        });
+
     };
 
     return (
-        <div className="App">
-
-            {!isLoggedIn && <button onClick={handleLoginClick}>Login</button>}
-            {isLoggedIn && <h3>Welcome.</h3>}
+        <div className="Login">
+            <div className='container'>
+                {isLoggedIn ?
+                    <div>
+                        <img className='profile1' src={loggedInUser.profile_picture} alt="Profile" />
+                        <div className='username'>Welcome, {loggedInUser.display_name}</div>
+                    </div>
+                    :
+                    <button onClick={handleLoginClick}>Login</button>
+                }
+            </div>
+            {/* {!isLoggedIn && <button onClick={handleLoginClick}>Login</button>} */}
             {showLogin && (
                 <div className="popup">
                     <div className="popup-inner">
