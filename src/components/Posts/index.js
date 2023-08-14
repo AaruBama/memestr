@@ -49,6 +49,18 @@ const Button = styled.button`
 
 function Posts(props) {
 
+    const [comment, setComment] = useState('');
+    const captureComment = (event) => {
+        setComment(event.target.value);
+    };
+
+    const saveComment = (event) => {
+        event.preventDefault();
+        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
+        const relayPool = new SimplePool();
+    }
+
+
     const upvotePost = (event) => {
         const storedData = localStorage.getItem('memestr')
         if (!storedData) {
@@ -99,8 +111,19 @@ function Posts(props) {
             <div>
                 <Button onClick={upvotePost}>+</Button>
                 <div style={{ color: 'white', display: "inline-block" }}>{votes.length}</div>
-            </div>
-        </div>
+                <div className="commentBox">
+                    <form onSubmit={captureComment}>
+                        <label>
+                            Comment:
+                            <input type="text" placeholder="Comment"
+                                value={comment}
+                                onChange={saveComment}
+                                required />
+                        </label>
+                        <button type="submit">Comment</button>
+                    </form>
+                </div>
+            </div></div>
     );
 }
 

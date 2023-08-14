@@ -5,7 +5,7 @@ import { nip19 } from "nostr-tools";
 
 
 async function getUserDetailsFromPrivateKey(skk) {
-  let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nostr.wine", "wss://eden.nostr.land"]
+  let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
   const relayPool = new SimplePool();
   let sk = nip19.decode(skk)
   const pubKey = getPublicKey(sk.data)
@@ -15,10 +15,12 @@ async function getUserDetailsFromPrivateKey(skk) {
   };
   let profile = await relayPool.list(relays, [filters])
   console.log("profile object is ", profile)
-  let content = profile[0].content
+  if (profile.length > 0) {
+    let content = profile[0].content
 
-  content = JSON.parse(content)
-  return content
+    content = JSON.parse(content)
+    return content
+  }
 
 
 }
