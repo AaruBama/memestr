@@ -99,7 +99,7 @@ function Posts(props) {
         zapRequestEvent.id = getEventHash(zapRequestEvent)
         zapRequestEvent.sig = getSignature(zapRequestEvent, sk.data)
         let nostrEventForZap = encodeURI(JSON.stringify(zapRequestEvent))
-        const zaprequestUrl = callback + '?amount=1000&nostr=' + nostrEventForZap + '&lnurl=' + lnurl
+        const zaprequestUrl = callback + '?amount=10000&nostr=' + nostrEventForZap + '&lnurl=' + lnurl
         // useEffect(() => {
         //     fetch(zaprequestUrl)
         //        .then((res) => res.json())
@@ -131,7 +131,7 @@ function Posts(props) {
         console.log("inside the handleZapClick methodd")
         let zapUrl =  await zapRequest()
         console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
-        window.open(zapUrl); // Open the URL in a new tab/window
+        window.location.assign(zapUrl); // Open the URL in a new tab/window
       }; 
 
     const saveComment = (event) => {

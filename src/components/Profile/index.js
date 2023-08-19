@@ -10,7 +10,6 @@ async function getUserDetailsFromPrivateKey(skk) {
     'wss://relay.primal.net',
     "wss://nos.lol",
     "wss://nostr.bitcoiner.social",
-    'ws://relay.damus.io',
     "wss://nostr.pleb.network",
     "wss://relay.f7z.io",
     "wss://relay.nostr.bg",
