@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import getUserDetailsFromPrivateKey from '../Profile';
 import './profile.css'
+import { getPublicKey, nip19 } from 'nostr-tools';
 
 function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
@@ -53,6 +54,10 @@ function Login(props) {
             const display_name = value.display_name
             const profile_picture = value.picture
             console.log("username is ", display_name)
+            let decodedpk = nip19.decode(privateKey)
+            let publicKey = getPublicKey(decodedpk.data)
+            value["pubKey"] = publicKey
+            value["privateKey"] = privateKey //Encrypt it.
             setShowLogin(false);
             setisLoggedIn(true);
             setLoggedInUser({ display_name, profile_picture });
@@ -69,22 +74,21 @@ function Login(props) {
     }
 
     return (
-        <div className="Login">
-            <div className='container'>
+        <div className="header-menu container possti borders">
+            <header>
                 {isLoggedIn ?
                     <div>
                         <img className='profile1' src={loggedInUser.profile_picture} alt="Profile" />
-                        <div className='username'>Welcome, {loggedInUser.display_name}</div>
-                        <button className='logout' onClick={logoutUser}>Logout</button>
-                    </div>
+                        <div className='username'><code>{loggedInUser.display_name}</code></div>
+                        <div className='dib logout-button'><button onClick={logoutUser}>Logout</button>
+                    </div></div>
                     :
-                    <button onClick={handleLoginClick}>Login</button>
+                    <div className='login'><button onClick={handleLoginClick}>Login</button></div>
                 }
-            </div>
+            </header>
             {showLogin && (
-                <div className="popup">
+                <div>
                     <div className="popup-inner">
-                        <h2>Login</h2>
                         <form onSubmit={handleLoginSubmit}>
                             <label>
                                 Private Key:
@@ -92,6 +96,7 @@ function Login(props) {
                                     type="text"
                                     value={privateKey}
                                     onChange={handlePrivateKeyChange}
+                                    placeholder='Your private key'
                                     required
                                 />
                             </label>

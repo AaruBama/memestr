@@ -1,0 +1,10 @@
+.dib {
+    display: inline-block;
+}
+.pd20{
+    padding-left: '20px';
+    float: right;
+}
+.commentBox {
+    padding-left: 20px;
+}
