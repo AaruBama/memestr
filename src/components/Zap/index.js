@@ -20,14 +20,12 @@ function setContentForMetadata(userDetails) {
 }
 
 const zapRequest = async (postId, recipientPubKey, userDetails) => {
-
+    console.log("post id is ", postId)
     const storedData = localStorage.getItem('memestr')
     if (!storedData) {
         alert("Login required to upvote.")
         return
     }
-    // const rvlnurl = "lnurl1dp68gurn8ghj7ampd3kx2ar0veekzar0wd5xjtnrdakj7tnhv4kxctttdehhwm30d3h82unvwqhkget9wpk8jemvd9jx2u33xg6ms7v5"
-    // const lnurl = 'lnurl1dp68gurn8ghj7ampd3kx2ar0veekzar0wd5xjtnrdakj7tnhv4kxctttdehhwm30d3h82unvwqhkwun0dakk2er5daunswg8s3rfy'
     let senderPublicKey = JSON.parse(storedData).pubKey
     let staticData = setContentForMetadata(userDetails)
     let lnurl = staticData['lnurl']
@@ -35,8 +33,6 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
     const metadata = {
         kind: 0,
         content: staticData['content'],
-        // content: '{"lud16": "' + lnurl + '"}',
-        // content: '{"lud06": "' + lnurl + '"}',
         pubkey: senderPublicKey,
         created_at: Math.floor(Date.now() / 1000),
         tags: [],
@@ -52,7 +48,7 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
         kind: 9734,
         tags: [
             ['relays', "wss://relay.damus.io"],
-            ['amount', 10000],
+            ['amount', "10000"],
             ["lnurl", lnurl],
             ["e", postId], ["p", recipientPubKey]
         ],
@@ -63,6 +59,7 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
     zapRequestEvent.id = getEventHash(zapRequestEvent)
     zapRequestEvent.sig = getSignature(zapRequestEvent, sk.data)
     let nostrEventForZap = encodeURI(JSON.stringify(zapRequestEvent))
+    console.log("encoded uri nostreventzap is", nostrEventForZap)
     const zaprequestUrl = callback + '?amount=10000&nostr=' + nostrEventForZap + '&lnurl=' + lnurl
     let pr = await fetch(zaprequestUrl)
         .then((result) => {
@@ -82,7 +79,7 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
 const  handleZapClick = async (postId, recipientPubKey, userDetails) => {
     let zapUrl =  await zapRequest(postId, recipientPubKey, userDetails)
     console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
-    window.location.assign(zapUrl); // Open the URL in a new tab/window
+    // window.location.assign(zapUrl, '_blank'); // Open the URL in a new tab/window
   }; 
 
 export default handleZapClick;
