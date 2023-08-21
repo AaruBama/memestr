@@ -26,18 +26,17 @@ const HashTagTool = (props) => {
     filters["#t"] = ['memes','meme','funny','memestr'];
 
 
-    console.log("filters", filters);
     let notes = await relayPool.list(relays, [filters]);
     console.log("notes are = ", notes);
     setNotes(notes);
-    const kind0Filters = {
-      kinds: [0],
-      authors: notes.map((note) => {
-        return note.pubkey;
-      }),
-    };
-    console.log("kind0Filters", kind0Filters);
-    const kind0Result = await relayPool.list(relays, [kind0Filters]);
+    // const kind0Filters = {
+    //   kinds: [0],
+    //   authors: notes.map((note) => {
+    //     return note.pubkey;
+    //   }),
+    // };
+    // console.log("kind0Filters", kind0Filters);
+    // const kind0Result = await relayPool.list(relays, [kind0Filters]);
     // setKind0List(kind0Result);
     //setMuteList(muted);
     // console.log("muteList", muteList);

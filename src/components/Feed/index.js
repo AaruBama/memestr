@@ -24,7 +24,7 @@ function Feed(props) {
 
                     return <Posts note={note} />
                 })}
-                <button onClick={LoadMoreMedia()}> Thats it for today! Take rest.</button>
+                <button onClick={LoadMoreMedia}> Thats it for today! Take rest.</button>
             </div>
 
         </div>

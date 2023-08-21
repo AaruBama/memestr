@@ -1,9 +1,9 @@
 import styled from "styled-components";
-// import upvotePost from "../Vote"
-import { generatePrivateKey, relayInit, getPublicKey, SimplePool, getEventHash, getSignature, nip25, nip57 } from 'nostr-tools'
+import { getPublicKey, SimplePool, getEventHash, getSignature} from 'nostr-tools'
 import { useEffect, useState } from "react";
 import { nip19 } from "nostr-tools";
-
+import handleZapClick from "../Zap";
+import { getUserDetailsFromPublicKey } from "../Profile"
 
 
 function extractLinksFromText(text) {
@@ -57,82 +57,6 @@ function Posts(props) {
         setComment(event.target.value);
     };
 
-    const zapRequest = async (event) => {
-        // const metadata = new Event({kind: 0, content: '{"lud16": "sparklingsnow89122@getalby.com"}'})
-
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            alert("Login required to upvote.")
-            return
-        }
-        const rvlnurl = "lnurl1dp68gurn8ghj7ampd3kx2ar0veekzar0wd5xjtnrdakj7tnhv4kxctttdehhwm30d3h82unvwqhkget9wpk8jemvd9jx2u33xg6ms7v5"
-        const lnurl = 'lnurl1dp68gurn8ghj7ampd3kx2ar0veekzar0wd5xjtnrdakj7tnhv4kxctttdehhwm30d3h82unvwqhkwun0dakk2er5daunswg8s3rfy'
-        let senderPublicKey = JSON.parse(storedData).pubKey
-        const metadata = {
-            kind: 0,
-            // content: '{"lud16": "sparklingsnow89122@getalby.com"}',
-            content: '{"lud06": "' + lnurl + '"}',
-            pubkey: senderPublicKey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [],
-        }
-        let userPrivateKey = JSON.parse(storedData).privateKey
-        let sk = nip19.decode(userPrivateKey)
-        metadata.id = getEventHash(metadata)
-        metadata.sig = getSignature(metadata, sk.data)
-        let callback = await nip57.getZapEndpoint(metadata)
-        const postId = props.note.id
-        const recipientPubKey = props.note.pubkey
-        // Create a zap request
-        let zapRequestEvent = {
-            kind: 9734,
-            tags: [
-                ['relays', "wss://relay.damus.io"],
-                ['amount', 10000],
-                ["lnurl",],
-                ["e", postId], ["p", recipientPubKey]
-            ],
-            pubkey: senderPublicKey,
-            created_at: Math.floor(Date.now() / 1000),
-            content: ""
-        }
-        zapRequestEvent.id = getEventHash(zapRequestEvent)
-        zapRequestEvent.sig = getSignature(zapRequestEvent, sk.data)
-        let nostrEventForZap = encodeURI(JSON.stringify(zapRequestEvent))
-        const zaprequestUrl = callback + '?amount=10000&nostr=' + nostrEventForZap + '&lnurl=' + lnurl
-        // useEffect(() => {
-        //     fetch(zaprequestUrl)
-        //        .then((res) => res.json())
-        //        .then((data) => {
-        //           console.log(data);
-        //           setZapData(data);
-        //        })
-        //        .catch((err) => {
-        //           console.log(err.message);
-        //        });
-        //  }, []);
-        //  console.log("set zap data is ", zapRequestData)
-        let pr = await fetch(zaprequestUrl)
-            .then((result) => {
-                return result.json();
-            })
-            .catch((error) => {
-                console.log("error is ", error);
-                return null;
-            });
-
-        const prUrl = 'lightning:' + pr.pr;
-        console.log("prurl is ", prUrl)
-        return prUrl
-
-    }
-
-    const  handleZapClick = async () => {
-        console.log("inside the handleZapClick methodd")
-        let zapUrl =  await zapRequest()
-        console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
-        window.location.assign(zapUrl); // Open the URL in a new tab/window
-      }; 
 
     const saveComment = (event) => {
         console.log("inside the saveComment function", event.target.value)
@@ -163,6 +87,13 @@ function Posts(props) {
         console.log("Pool published,", pubs)
     }
 
+    const sendZaps = async (event) => {
+        console.log("props is ", props)
+        const pubKey = props.note.pubkey
+        let userDetails = await getUserDetailsFromPublicKey(pubKey)
+        console.log("usrDetails is", userDetails)
+        handleZapClick(props.note.id, props.note.pubKey, userDetails)
+    }
 
     const upvotePost = (event) => {
         const storedData = localStorage.getItem('memestr')
@@ -194,6 +125,8 @@ function Posts(props) {
 
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
+    const postId = props.note.id
+    const postOwnerPubKey = props.note.pubKey
     const relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
     const getVotes = async () => {
         return 7;
@@ -226,7 +159,7 @@ function Posts(props) {
                         <button type="submit">Comment</button>
                     </form>
                 </div>
-                <Button onClick={handleZapClick}>Zap</Button>
+                <Button onClick={sendZaps}>Zap</Button>
             </div></div>
     );
 }
