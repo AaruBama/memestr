@@ -35,33 +35,30 @@ async function getUserDetailsFromPrivateKey(skk) {
 
 
   export async function getUserDetailsFromPublicKey(pubKey) {
-    console.log("pubkeyz is", pubKey)
     let relays = [
-      'wss://relay.damus.io',
-      'wss://relay.primal.net',
-      "wss://nos.lol",
-      "wss://nostr.bitcoiner.social",
-      "wss://nostr.pleb.network",
-      "wss://relay.f7z.io",
-      "wss://relay.nostr.bg",
-      "wss://relay.nostriches.org",
-      "wss://relay.snort.social"
+      "wss://relay.nostr.band",
+      "wss://purplepag.es",
+      "wss://relay.damus.io",
+      "wss://nostr.wine",
     ]
-    console.log("inside th public key method.")
-    // let pubKey = nip19.npubEncode(pubKeyZ)
-    console.log("encoded pub key is", pubKey)
     const relayPool = new SimplePool();
     const filters = {
       kinds: [0],
       "authors": [pubKey]
     };
-    let profile = await relayPool.list(relays, [filters])
-    console.log("profile object is ", profile)
-    if (profile.length > 0) {
-      let content = profile[0].content
-  
-      content = JSON.parse(content)
-      return content
+    try {
+      let profile = await relayPool.list(relays, [filters])
+      console.log("profile object is ", profile)
+      if (profile.length > 0) {
+        let content = profile[0].content
+
+        content = JSON.parse(content)
+        return content
+      }
+    }  catch (error) {
+      throw new Error("failed to fetch user profile :(");
+    } finally {
+      relayPool.close(relays);
     }
   }
 

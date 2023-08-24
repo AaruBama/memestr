@@ -91,7 +91,7 @@ function Posts(props) {
         console.log("props is ", props)
         const pubKey = props.note.pubkey
         let userDetails = await getUserDetailsFromPublicKey(pubKey)
-        console.log("usrDetails is", userDetails)
+        console.log("userDetails is", userDetails)
         handleZapClick(props.note.id, props.note.pubKey, userDetails)
     }
 

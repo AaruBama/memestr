@@ -59,7 +59,6 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
     zapRequestEvent.id = getEventHash(zapRequestEvent)
     zapRequestEvent.sig = getSignature(zapRequestEvent, sk.data)
     let nostrEventForZap = encodeURI(JSON.stringify(zapRequestEvent))
-    console.log("encoded uri nostreventzap is", nostrEventForZap)
     const zaprequestUrl = callback + '?amount=10000&nostr=' + nostrEventForZap + '&lnurl=' + lnurl
     let pr = await fetch(zaprequestUrl)
         .then((result) => {
@@ -76,8 +75,8 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
 
 }
 
-const  handleZapClick = async (encodedpostId, recipientPubKey, userDetails) => {
-    const postId = nip19.decode(encodedpostId)
+const  handleZapClick = async (postId, recipientPubKey, userDetails) => {
+    console.log("inside the handlezapclick method")
     let zapUrl =  await zapRequest(postId, recipientPubKey, userDetails)
     console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
     window.location.assign(zapUrl); // Open the URL in a new tab/window
