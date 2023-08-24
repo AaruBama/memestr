@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { nip19 } from "nostr-tools";
 import handleZapClick from "../Zap";
 import { getUserDetailsFromPublicKey } from "../Profile"
+import {extractProfileMetadataContent, getProfileMetadata, getZapEndpoint} from "../ZapHelper";
 
 
 function extractLinksFromText(text) {
@@ -92,7 +93,17 @@ function Posts(props) {
         const pubKey = props.note.pubkey
         let userDetails = await getUserDetailsFromPublicKey(pubKey)
         console.log("userDetails is", userDetails)
-        handleZapClick(props.note.id, props.note.pubKey, userDetails)
+        handleZapClick(props.note.id, pubKey, userDetails)
+    }
+
+    const sendNewZaps = async  (event) => {
+        const pubKey = props.note.pubkey
+        let userDetails = await getProfileMetadata(pubKey)
+        console.log("new user details is", userDetails)
+        let userDetailMetadata = extractProfileMetadataContent(userDetails)
+        console.log("new user metadata is", userDetailMetadata)
+        let zapEndpoint = await getZapEndpoint(userDetails)
+        console.log("zap endpoint is ", zapEndpoint)
     }
 
     const upvotePost = (event) => {
