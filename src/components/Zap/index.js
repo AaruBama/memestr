@@ -77,10 +77,10 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
 }
 
 const  handleZapClick = async (encodedpostId, recipientPubKey, userDetails) => {
-    const postId = nip19.decode(encodedpostIds)
+    const postId = nip19.decode(encodedpostId)
     let zapUrl =  await zapRequest(postId, recipientPubKey, userDetails)
     console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
-    window.location.assign(zapUrls); // Open the URL in a new tab/window
+    window.location.assign(zapUrl); // Open the URL in a new tab/window
   }; 
 
 export default handleZapClick;
