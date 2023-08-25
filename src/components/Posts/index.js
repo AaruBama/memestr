@@ -134,16 +134,16 @@ function Posts(props) {
             };
             let voteCount = await relayPool.list(relays, [filters])
             if (voteCount > votes) {
-                setVotes(voteCount);
+                setVotes(voteCount); //quick hack to store vote count
             }
             relayPool.close(relays);
         };
         getVotes();
     }, [props.note.id, votes]);
 
-    let title = removeHashtagsAndLinks(props.note.content)
+    let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
-        title = "No title"
+        title = "Title"
     }
     return (
         <div className={"post-container"}>
