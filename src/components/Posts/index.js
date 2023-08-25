@@ -66,7 +66,6 @@ function Posts(props) {
 
 
     const saveComment = (event) => {
-        console.log("inside the saveComment function", event.target.value)
         event.preventDefault();
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
         const pool = new SimplePool();
@@ -86,12 +85,10 @@ function Posts(props) {
             tags: [["e", postId], ["p", uesrPublicKey], ["alt", "reply"]],
             content: comment,
         }
-        console.log("Event created is ", commentEvent)
 
         commentEvent.id = getEventHash(commentEvent)
         commentEvent.sig = getSignature(commentEvent, sk.data)
         let pubs = pool.publish(relays, commentEvent)
-        console.log("Pool published,", pubs)
     }
 
     // const sendZaps = async (event) => {
@@ -107,9 +104,6 @@ function Posts(props) {
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
         const encodedNoteId = nip19.noteEncode(props.note.id)
         let userDetails = await getProfileMetadata(pubKey)
-        console.log(
-            "user details are", userDetails
-        )
         let zapEndpoint = await getZapEndpoint(userDetails)
         let invoice = await fetchInvoice({
             "zapEndpoint": zapEndpoint,
@@ -135,7 +129,6 @@ function Posts(props) {
         let privateKey = "nsec1mf54zukt27mr9ry5pv853qa470280scua4sqvfs3ftnxuayks8dqr3q9z2"
         let sk = nip19.decode(privateKey)
         let publicKey = getPublicKey(sk.data) // `pk` is a hex string
-        console.log("public key is ", publicKey)
         let upvoteEvent = {
             kind: 7,
             pubkey: publicKey,
@@ -146,7 +139,6 @@ function Posts(props) {
         upvoteEvent.id = getEventHash(upvoteEvent)
         upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
         let pubs = pool.publish(relays, upvoteEvent)
-        console.log("Pool published,", pubs)
         event.currentTarget.disabled = true;
         return true
     }

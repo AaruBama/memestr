@@ -5,25 +5,21 @@ function setContentForMetadata(userDetails) {
     let content = null
     let lnurl = null
     if (("lud06" in userDetails) && (userDetails.lud06.length > 0)) {
-        console.log("it has lud06", userDetails.lud06)
         content = '{"lud06": "' + userDetails.lud06 + '"}';
         lnurl = userDetails.lud06
     } else if (("lud16" in userDetails) && (userDetails.lud16.length > 0)) {
-        console.log("it has lud16", userDetails.lud16)
         content = '{"lud16": "' + userDetails.lud16 + '"}'
         let [name, domain] = userDetails.lud16.split('@')
         lnurl = "https://" + domain + "/.well-known/lnurlp/" +name;
         // let encodedlnurl = nip19.encode(lnurl)
         // console.log("encoded lnurl is ", encodedlnurl)
     } else {
-        console.log("it has nothing")
     }
 
     return {"content": content, "lnurl": lnurl}
 }
 
 const zapRequest = async (postId, recipientPubKey, userDetails) => {
-    console.log("post id is ", postId)
     const storedData = localStorage.getItem('memestr')
     if (!storedData) {
         alert("Login required to upvote.")
@@ -32,7 +28,6 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
     let senderPublicKey = JSON.parse(storedData).pubKey
     let staticData = setContentForMetadata(userDetails)
     let lnurl = staticData['lnurl']
-    console.log("static data is", staticData)
     const metadata = {
         kind: 0,
         content: staticData['content'],
@@ -45,7 +40,6 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
     metadata.id = getEventHash(metadata)
     metadata.sig = getSignature(metadata, sk.data)
     let callback = await nip57.getZapEndpoint(metadata)
-    console.log("callback is ", callback)
     // Create a zap request
     let zapRequestEvent = {
         kind: 9734,
@@ -73,14 +67,12 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
         });
 
     const prUrl = 'lightning:' + pr.pr;
-    console.log("prurl is ", prUrl)
     return prUrl
 
 }
 
 const  handleZapClick = async (postId, recipientPubKey, userDetails) => {
     let zapUrl =  await zapRequest(postId, recipientPubKey, userDetails)
-    console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
     window.location.assign(zapUrl); // Open the URL in a new tab/window
   };
 

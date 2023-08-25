@@ -24,7 +24,6 @@ async function getUserDetailsFromPrivateKey(skk) {
     "authors": [pubKey]
   };
   let profile = await relayPool.list(relays, [filters])
-  console.log("profile object is ", profile)
   if (profile.length > 0) {
     let content = profile[0].content
 
@@ -48,7 +47,6 @@ async function getUserDetailsFromPrivateKey(skk) {
     };
     try {
       let profile = await relayPool.list(relays, [filters])
-      console.log("profile object is ", profile)
       if (profile.length > 0) {
         let content = profile[0].content
 
