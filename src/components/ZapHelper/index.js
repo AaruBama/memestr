@@ -65,7 +65,6 @@ const signEvent = async (zapEvent) => {
     }
     let userPrivateKey = JSON.parse(storedData).privateKey
     let privateKey = nip19.decode(userPrivateKey).data
-    console.log("private key is", privateKey)
     return finishEvent(zapEvent, privateKey);
 };
 
@@ -96,11 +95,9 @@ export const fetchInvoice = async ({
         relays: normalizedRelays,
         comment,
     });
-    console.log("zap event created is ", zapEvent)
     let url = `${zapEndpoint}?amount=${amount}&nostr=${encodeURIComponent(
         JSON.stringify(zapEvent)
     )}`;
-    console.log("url -->", url)
 
     if (comment) {
         url = `${url}&comment=${encodeURIComponent(comment)}`;
@@ -117,7 +114,6 @@ export const isNipO7ExtAvailable = () => {
 };
 
 export const listenForZapReceipt = ({ relays, invoice }) => {
-    console.log("now listening for receipt")
     const pool = new SimplePool();
     const normalizedRelays = Array.from(
         new Set([...relays, "wss://relay.nostr.band"])
@@ -132,7 +128,6 @@ export const listenForZapReceipt = ({ relays, invoice }) => {
     let round = 1;
     // check for zap receipt every 5 seconds
     const intervalId = setInterval(() => {
-        console.log("Checking now - Round", round)
         round += 1;
         const sub = pool.sub(normalizedRelays, [
             {
@@ -143,7 +138,6 @@ export const listenForZapReceipt = ({ relays, invoice }) => {
 
         sub.on("event", (event) => {
             if (event.tags.find((t) => t[0] === "bolt11" && t[1] === invoice)) {
-                console.log("SUCCESSSFULLY RECEIVED THE CALLBACK EVENT", event)
                 closePool();
                 clearInterval(intervalId);
             }

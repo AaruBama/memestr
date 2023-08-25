@@ -27,7 +27,6 @@ const HashTagTool = (props) => {
 
 
     let notes = await relayPool.list(relays, [filters]);
-    console.log("notes are = ", notes);
     setNotes(notes);
     // const kind0Filters = {
     //   kinds: [0],

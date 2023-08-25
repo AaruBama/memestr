@@ -14,7 +14,6 @@ function Login(props) {
         if (!storedData) {
             setShowLogin(true);
         } else {
-            console.log("Fetched details from local storages")
             const userDetails = JSON.parse(storedData);
             setShowLogin(false);
             setisLoggedIn(true);
@@ -38,7 +37,6 @@ function Login(props) {
         let userDetails = null;
         const storedData = localStorage.getItem('memestr')
         if (storedData) {
-            console.log("Fetched details from local storages")
             userDetails = JSON.parse(storedData);
             setShowLogin(false);
             setisLoggedIn(true);
@@ -48,12 +46,10 @@ function Login(props) {
         } else {
             userDetails = getUserDetailsFromPrivateKey(privateKey)
         }
-        console.log("user details are", userDetails)
         userDetails.then((value) => {
             status = true
             const display_name = value.display_name
             const profile_picture = value.picture
-            console.log("username is ", display_name)
             let decodedpk = nip19.decode(privateKey)
             let publicKey = getPublicKey(decodedpk.data)
             value["pubKey"] = publicKey
