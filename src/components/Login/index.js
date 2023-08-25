@@ -23,17 +23,12 @@ function Login(props) {
         }
     };
 
-    const loginUser = () => {
-        setisLoggedIn(true);
-    }
-
     const handlePrivateKeyChange = (event) => {
         setPrivateKey(event.target.value);
     };
 
     const handleLoginSubmit = (event) => {
         event.preventDefault();
-        let status = false
         let userDetails = null;
         const storedData = localStorage.getItem('memestr')
         if (storedData) {
@@ -47,7 +42,6 @@ function Login(props) {
             userDetails = getUserDetailsFromPrivateKey(privateKey)
         }
         userDetails.then((value) => {
-            status = true
             const display_name = value.display_name
             const profile_picture = value.picture
             let decodedpk = nip19.decode(privateKey)

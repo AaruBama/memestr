@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { getPublicKey, SimplePool } from 'nostr-tools'
 import { nip19 } from "nostr-tools";
 

@@ -1,7 +1,6 @@
 import {
     nip19,
     nip57,
-    generatePrivateKey,
     finishEvent,
     SimplePool,
 } from "nostr-tools";
@@ -125,10 +124,8 @@ export const listenForZapReceipt = ({ relays, invoice }) => {
     };
     const since = Math.round(Date.now() / 1000);
 
-    let round = 1;
     // check for zap receipt every 5 seconds
     const intervalId = setInterval(() => {
-        round += 1;
         const sub = pool.sub(normalizedRelays, [
             {
                 kinds: [9735],

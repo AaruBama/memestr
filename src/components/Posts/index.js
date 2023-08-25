@@ -1,7 +1,4 @@
-import styled from "styled-components";
 import { getPublicKey, SimplePool, getEventHash, getSignature} from 'nostr-tools'
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import { useEffect, useState } from "react";
 import { nip19 } from "nostr-tools";
 import {
@@ -11,6 +8,8 @@ import {
 } from "../ZapHelper";
 
 import "./index.css"
+
+import Button from 'react-bootstrap/Button';
 
 
 function extractLinksFromText(text) {
@@ -36,30 +35,9 @@ const removeHashtagsAndLinks = (text) => {
     return withoutLinks;
 };
 
-
-const Button = styled.button`
-  background-color: white;
-  color: black;
-  font-size: 20px;
-  text-align: center;
-  padding: .25em 1em;
-  margin-right: 2%;
-  margin-bottom: 3px;
-  display: inline-block;
-
-  &:disabled {
-    color: grey;
-    opacity: 0.7;
-    cursor: default;
-  }
-`;
-
-
 function Posts(props) {
-    const utf8 = require('utf8');
 
     const [comment, setComment] = useState('');
-    const [zapRequestData, setZapData] = useState(null)
     const captureComment = (event) => {
         setComment(event.target.value);
     };
@@ -88,7 +66,7 @@ function Posts(props) {
 
         commentEvent.id = getEventHash(commentEvent)
         commentEvent.sig = getSignature(commentEvent, sk.data)
-        let pubs = pool.publish(relays, commentEvent)
+        pool.publish(relays, commentEvent)
     }
 
     // const sendZaps = async (event) => {
@@ -138,42 +116,45 @@ function Posts(props) {
         }
         upvoteEvent.id = getEventHash(upvoteEvent)
         upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-        let pubs = pool.publish(relays, upvoteEvent)
+        pool.publish(relays, upvoteEvent)
         event.currentTarget.disabled = true;
         return true
     }
 
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
-    const postId = props.note.id
-    const postOwnerPubKey = props.note.pubKey
-    const relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
-    const getVotes = async () => {
-        return 7;
-        const relayPool = new SimplePool();
-        const filters = {
-            kinds: [7],
-            "#e": [props.note.id]
+
+    useEffect(() => {
+        const getVotes = async (event) => {
+            const relayPool = new SimplePool();
+            const relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
+            const filters = {
+                kinds: [7],
+                "#e": [props.note.id]
+            };
+            let voteCount = await relayPool.list(relays, [filters])
+            if (voteCount > votes) {
+                setVotes(voteCount);
+            }
+            relayPool.close(relays);
         };
-        let voteCount = await relayPool.list(relays, [filters])
-        setVotes(voteCount); //Broken, calculates fine then updates to zero.
-    }
-    useEffect(() => { getVotes(); }, [])
+        getVotes();
+    }, [props.note.id, votes]);
+
     let title = removeHashtagsAndLinks(props.note.content)
     if (title.length === 0) {
         title = "No title"
     }
     return (
-        <div>
+        <div className={"post-container"}>
             <div className={"title-post"}> {title} </div>
-            <div className="grid-container" >
-                <div className={"post"}>
-                    <img className={"post-content"} src={mediaLinks[0]}/>
+                <div className="grid-container" >
+                    <div className={"post"}>
+                        <img alt={""} className={"post-content"} src={mediaLinks[0]}/>
+                    </div>
                 </div>
-            </div>
             <div>
-                <Button onClick={upvotePost}>+</Button>
-                <div className={"vote-count"}>{votes.length}</div>
+                <Button variant="light" size={"lg"} onClick={upvotePost}>+ {votes.length}</Button>{' '}
                 <div className="commentBox dib pd20">
                     <form onSubmit={saveComment}>
                         <input type="text" placeholder="Comment"
@@ -184,7 +165,7 @@ function Posts(props) {
                         <button type="submit">Comment</button>
                     </form>
                 </div>
-                <Button onClick={sendNewZaps}>Zap</Button>
+                <Button variant="light" size={"lg"} onClick={sendNewZaps}>Zap</Button>{' '}
             </div>
         </div>
     );
