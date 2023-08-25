@@ -8,3 +8,31 @@
 .commentBox {
     padding-left: 20px;
 }
+
+.grid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    background-color: lightgrey;
+}
+
+
+.title-post {
+    color: white;
+    margin-bottom: 5px;
+    margin-left: 8px;
+}
+
+.vote-count {
+    color:white;
+    display: inline-block;
+}
+
+.post-content {
+    padding: 5px;
+    max-width: 100%; /* Ensure the image doesn't exceed its container */
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+}

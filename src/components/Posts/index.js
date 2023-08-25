@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import { getPublicKey, SimplePool, getEventHash, getSignature} from 'nostr-tools'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 import { useEffect, useState } from "react";
 import { nip19 } from "nostr-tools";
-import handleZapClick from "../Zap";
-import { getUserDetailsFromPublicKey } from "../Profile"
 import {
-    extractProfileMetadataContent,
     fetchInvoice,
     getProfileMetadata,
     getZapEndpoint,
-    listenForZapReceipt
 } from "../ZapHelper";
+
+import "./index.css"
 
 
 function extractLinksFromText(text) {
@@ -159,17 +159,22 @@ function Posts(props) {
         setVotes(voteCount); //Broken, calculates fine then updates to zero.
     }
     useEffect(() => { getVotes(); }, [])
+    let title = removeHashtagsAndLinks(props.note.content)
+    if (title.length === 0) {
+        title = "No title"
+    }
     return (
-        <div style={{
-            display: "flex", flexDirection: 'column', borderBottom: '5px solid grey', paddingBottom: '15px', paddingTop: '10px', marginBottom: '15px', alignContent: 'center', justifyContent
-                : 'center'
-        }}>
-            <b style={{ color: 'white', marginBottom: '5px', marginLeft: '8px' }}>{removeHashtagsAndLinks(props.note.content)}</b>
-            <img src={mediaLinks[0]} style={{ maxWidth: '100%', height: 'auto' }} />
+        <div>
+            <div className={"title-post"}> {title} </div>
+            <div className="grid-container" >
+                <div className={"post"}>
+                    <img className={"post-content"} src={mediaLinks[0]}/>
+                </div>
+            </div>
             <div>
                 <Button onClick={upvotePost}>+</Button>
-                <div style={{ color: 'white', display: "inline-block" }}>{votes.length}</div>
-                <div className="commentBox dib pd20 !important">
+                <div className={"vote-count"}>{votes.length}</div>
+                <div className="commentBox dib pd20">
                     <form onSubmit={saveComment}>
                         <input type="text" placeholder="Comment"
                             value={comment}
@@ -180,7 +185,8 @@ function Posts(props) {
                     </form>
                 </div>
                 <Button onClick={sendNewZaps}>Zap</Button>
-            </div></div>
+            </div>
+        </div>
     );
 }
 

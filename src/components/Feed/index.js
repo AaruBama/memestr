@@ -16,8 +16,7 @@ const LoadMoreMedia = () => {
 
 function Feed(props) {
     return (
-        <div className="matrix-input-container">
-            <div className="results">
+            <div>
                 {props.notes.filter((note) => { return containsJpgOrMp4Link(note.content) }).map((note) => {
                     //console.log("note", note);,
 
@@ -26,8 +25,6 @@ function Feed(props) {
                 })}
                 <button onClick={LoadMoreMedia}> Thats it for today! Take rest.</button>
             </div>
-
-        </div>
     );
 }
 
