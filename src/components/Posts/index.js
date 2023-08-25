@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { nip19 } from "nostr-tools";
 import handleZapClick from "../Zap";
 import { getUserDetailsFromPublicKey } from "../Profile"
-import {extractProfileMetadataContent, getProfileMetadata, getZapEndpoint} from "../ZapHelper";
+import {
+    extractProfileMetadataContent,
+    fetchInvoice,
+    getProfileMetadata,
+    getZapEndpoint,
+    listenForZapReceipt
+} from "../ZapHelper";
 
 
 function extractLinksFromText(text) {
@@ -88,22 +94,33 @@ function Posts(props) {
         console.log("Pool published,", pubs)
     }
 
-    const sendZaps = async (event) => {
-        console.log("props is ", props)
-        const pubKey = props.note.pubkey
-        let userDetails = await getUserDetailsFromPublicKey(pubKey)
-        console.log("userDetails is", userDetails)
-        handleZapClick(props.note.id, pubKey, userDetails)
-    }
+    // const sendZaps = async (event) => {
+    //     console.log("props is ", props)
+    //     const pubKey = props.note.pubkey
+    //     let userDetails = await getUserDetailsFromPublicKey(pubKey)
+    //     console.log("userDetails is", userDetails)
+    //     handleZapClick(props.note.id, pubKey, userDetails)
+    // }
 
     const sendNewZaps = async  (event) => {
         const pubKey = props.note.pubkey
+        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
+        const encodedNoteId = nip19.noteEncode(props.note.id)
         let userDetails = await getProfileMetadata(pubKey)
-        console.log("new user details is", userDetails)
-        let userDetailMetadata = extractProfileMetadataContent(userDetails)
-        console.log("new user metadata is", userDetailMetadata)
+        console.log(
+            "user details are", userDetails
+        )
         let zapEndpoint = await getZapEndpoint(userDetails)
-        console.log("zap endpoint is ", zapEndpoint)
+        let invoice = await fetchInvoice({
+            "zapEndpoint": zapEndpoint,
+            "amount": 10000,
+            "comment": "You got zapped!",
+            "authorId": pubKey,
+            "noteId": encodedNoteId,
+            "normalizedRelays": relays
+        })
+        let zapUrl = 'lightning:' + invoice
+        window.location.assign(zapUrl)
     }
 
     const upvotePost = (event) => {
@@ -170,7 +187,7 @@ function Posts(props) {
                         <button type="submit">Comment</button>
                     </form>
                 </div>
-                <Button onClick={sendZaps}>Zap</Button>
+                <Button onClick={sendNewZaps}>Zap</Button>
             </div></div>
     );
 }

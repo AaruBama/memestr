@@ -1,3 +1,4 @@
+// DEPRECATED - Use Zap Helper instead
 import { getEventHash, getSignature, nip19, nip57 } from 'nostr-tools'
 
 function setContentForMetadata(userDetails) {
@@ -12,6 +13,8 @@ function setContentForMetadata(userDetails) {
         content = '{"lud16": "' + userDetails.lud16 + '"}'
         let [name, domain] = userDetails.lud16.split('@')
         lnurl = "https://" + domain + "/.well-known/lnurlp/" +name;
+        // let encodedlnurl = nip19.encode(lnurl)
+        // console.log("encoded lnurl is ", encodedlnurl)
     } else {
         console.log("it has nothing")
     }
@@ -76,10 +79,9 @@ const zapRequest = async (postId, recipientPubKey, userDetails) => {
 }
 
 const  handleZapClick = async (postId, recipientPubKey, userDetails) => {
-    console.log("inside the handlezapclick method")
     let zapUrl =  await zapRequest(postId, recipientPubKey, userDetails)
     console.log("zapurl is ", zapUrl);// Replace this with your logic to get the URL
     window.location.assign(zapUrl); // Open the URL in a new tab/window
-  }; 
+  };
 
 export default handleZapClick;
