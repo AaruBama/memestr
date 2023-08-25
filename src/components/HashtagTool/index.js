@@ -14,7 +14,7 @@ const HashTagTool = (props) => {
     const LoadMedia = async () => {
       const relayPool = new SimplePool();
       const filters = {
-        limit: 10,
+        limit: 100,
       };
 
       const relays = [

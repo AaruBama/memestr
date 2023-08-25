@@ -32,7 +32,7 @@ async function getUserDetailsFromPrivateKey(skk) {
 }
 
 
-  export async function getUserDetailsFromPublicKey(pubKey) {
+  export const getUserDetailsFromPublicKey = async (pubKey) => {
     let relays = [
       "wss://relay.nostr.band",
       "wss://purplepag.es",
@@ -44,18 +44,12 @@ async function getUserDetailsFromPrivateKey(skk) {
       kinds: [0],
       "authors": [pubKey]
     };
-    try {
-      let profile = await relayPool.list(relays, [filters])
-      if (profile.length > 0) {
-        let content = profile[0].content
 
-        content = JSON.parse(content)
-        return content
-      }
-    }  catch (error) {
-      throw new Error("failed to fetch user profile :(");
-    } finally {
-      relayPool.close(relays);
+    let profile = await relayPool.list(relays, [filters])
+    if (profile.length > 0) {
+      let content = profile[0].content
+      content = JSON.parse(content)
+      return content
     }
   }
 

@@ -1,0 +1,22 @@
+.comment-container {
+    display: grid;
+    color: white;
+    border: 1px solid grey;
+    background: #282c34;
+    padding: 30px;
+
+}
+
+.username-comment {
+    color: white;
+}
+.profile1 {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.comment {
+    padding-left: 20px;
+    color: white;
+}

@@ -6,7 +6,8 @@ import {
     getProfileMetadata,
     getZapEndpoint,
 } from "../ZapHelper";
-
+import { Link } from 'react-router-dom';
+import React from 'react';
 import "./index.css"
 
 import Button from 'react-bootstrap/Button';
@@ -35,6 +36,29 @@ const removeHashtagsAndLinks = (text) => {
     return withoutLinks;
 };
 
+export async function upvotePost(noteId, OpPubKey) {
+    const storedData = localStorage.getItem('memestr')
+    if (!storedData) {
+        alert("Login required to upvote.")
+        return
+    }
+    const pool = new SimplePool()
+    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
+    let privateKey = "nsec1mf54zukt27mr9ry5pv853qa470280scua4sqvfs3ftnxuayks8dqr3q9z2"
+    let sk = nip19.decode(privateKey)
+    let publicKey = getPublicKey(sk.data) // `pk` is a hex string
+    let upvoteEvent = {
+        kind: 7,
+        pubkey: publicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [["e", noteId], ["p", OpPubKey]],
+        content: '+'
+    }
+    upvoteEvent.id = getEventHash(upvoteEvent)
+    upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
+    pool.publish(relays, upvoteEvent)
+    return true
+}
 function Posts(props) {
 
     const [comment, setComment] = useState('');
@@ -95,32 +119,6 @@ function Posts(props) {
         window.location.assign(zapUrl)
     }
 
-    const upvotePost = (event) => {
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            alert("Login required to upvote.")
-            return
-        }
-        let note = props.note
-        const pool = new SimplePool()
-        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
-        let privateKey = "nsec1mf54zukt27mr9ry5pv853qa470280scua4sqvfs3ftnxuayks8dqr3q9z2"
-        let sk = nip19.decode(privateKey)
-        let publicKey = getPublicKey(sk.data) // `pk` is a hex string
-        let upvoteEvent = {
-            kind: 7,
-            pubkey: publicKey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [["e", note.id], ["p", note.pubkey]],
-            content: '+'
-        }
-        upvoteEvent.id = getEventHash(upvoteEvent)
-        upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-        pool.publish(relays, upvoteEvent)
-        event.currentTarget.disabled = true;
-        return true
-    }
-
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
 
@@ -145,16 +143,19 @@ function Posts(props) {
     if (title.length === 0) {
         title = "Title"
     }
+    const imageLink = mediaLinks[0]
     return (
+        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
+        {/*// <Link to={`/post/${props.note.id}?sort=name&order=ascending`} className="post">*/}
         <div className={"post-container"}>
             <div className={"title-post"}> {title} </div>
                 <div className="grid-container" >
                     <div className={"post"}>
-                        <img alt={""} className={"post-content"} src={mediaLinks[0]}/>
+                        <img alt={""} className={"post-content"} src={imageLink}/>
                     </div>
                 </div>
             <div>
-                <Button variant="light" size={"lg"} onClick={upvotePost}>+ {votes.length}</Button>{' '}
+                <Button variant="light" size={"lg"} onClick={() => upvotePost(props.note.id,props.note.pubkey)}>+ {votes.length}</Button>{' '}
                 <div className="commentBox dib pd20">
                     <form onSubmit={saveComment}>
                         <input type="text" placeholder="Comment"
@@ -168,6 +169,7 @@ function Posts(props) {
                 <Button variant="light" size={"lg"} onClick={sendNewZaps}>Zap</Button>{' '}
             </div>
         </div>
+        </Link>
     );
 }
 
