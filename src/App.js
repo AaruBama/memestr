@@ -4,7 +4,7 @@ import PostViewTool from "./components/Post/post.js"
 import Login from "./components/Login";
 import React from "react";
 import {
-    BrowserRouter as Router,
+    HashRouter as Router,
     Routes,
     Route,
 } from "react-router-dom";
@@ -15,8 +15,8 @@ function App() {
         <Login />
         <Router>
             <Routes>
-                <Route path="/" element={<HashTagTool />} />
-                <Route path="/post/:postId" element={<PostViewTool note={{}}/>} />
+                <Route exact path="/" element={<HashTagTool />} />
+                <Route path="/post/:postId" element={<PostViewTool />} />
                 {/*<Route path="/dashboard" element={<Dashboard />} />*/}
             </Routes>
         </Router>

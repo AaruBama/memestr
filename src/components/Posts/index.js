@@ -56,68 +56,55 @@ export async function upvotePost(noteId, OpPubKey) {
     }
     upvoteEvent.id = getEventHash(upvoteEvent)
     upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-    pool.publish(relays, upvoteEvent)
+    let x = pool.publish(relays, upvoteEvent)
+    console.log("pool is publishing, ", x)
     return true
 }
+
+export const sendNewZaps = async  (postId, opPubKey) => {
+    const pubKey = opPubKey
+    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
+    const encodedNoteId = nip19.noteEncode(postId)
+    let userDetails = await getProfileMetadata(pubKey)
+    let zapEndpoint = await getZapEndpoint(userDetails)
+    let invoice = await fetchInvoice({
+        "zapEndpoint": zapEndpoint,
+        "amount": 10000,
+        "comment": "You got zapped!",
+        "authorId": pubKey,
+        "noteId": encodedNoteId,
+        "normalizedRelays": relays
+    })
+    console.log("invoice generated is", invoice)
+    let zapUrl = 'lightning:' + invoice
+    window.location.assign(zapUrl)
+}
+
+export const saveComment = (postId, comment) => {
+    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
+    const pool = new SimplePool();
+    const storedData = localStorage.getItem('memestr')
+    if (!storedData) {
+        alert("Login required to upvote.")
+        return
+    }
+    let uesrPublicKey = JSON.parse(storedData).pubKey
+    let userPrivateKey = JSON.parse(storedData).privateKey
+    let sk = nip19.decode(userPrivateKey)
+    let commentEvent = {
+        kind: 1,
+        pubkey: uesrPublicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [["e", postId], ["p", uesrPublicKey], ["alt", "reply"]],
+        content: comment,
+    }
+
+    commentEvent.id = getEventHash(commentEvent)
+    commentEvent.sig = getSignature(commentEvent, sk.data)
+    pool.publish(relays, commentEvent)
+}
+
 function Posts(props) {
-
-    const [comment, setComment] = useState('');
-    const captureComment = (event) => {
-        setComment(event.target.value);
-    };
-
-
-    const saveComment = (event) => {
-        event.preventDefault();
-        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
-        const pool = new SimplePool();
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            alert("Login required to upvote.")
-            return
-        }
-        let uesrPublicKey = JSON.parse(storedData).pubKey
-        let userPrivateKey = JSON.parse(storedData).privateKey
-        let sk = nip19.decode(userPrivateKey)
-        const postId = props.note.id;
-        let commentEvent = {
-            kind: 1,
-            pubkey: uesrPublicKey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [["e", postId], ["p", uesrPublicKey], ["alt", "reply"]],
-            content: comment,
-        }
-
-        commentEvent.id = getEventHash(commentEvent)
-        commentEvent.sig = getSignature(commentEvent, sk.data)
-        pool.publish(relays, commentEvent)
-    }
-
-    // const sendZaps = async (event) => {
-    //     console.log("props is ", props)
-    //     const pubKey = props.note.pubkey
-    //     let userDetails = await getUserDetailsFromPublicKey(pubKey)
-    //     console.log("userDetails is", userDetails)
-    //     handleZapClick(props.note.id, pubKey, userDetails)
-    // }
-
-    const sendNewZaps = async  (event) => {
-        const pubKey = props.note.pubkey
-        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
-        const encodedNoteId = nip19.noteEncode(props.note.id)
-        let userDetails = await getProfileMetadata(pubKey)
-        let zapEndpoint = await getZapEndpoint(userDetails)
-        let invoice = await fetchInvoice({
-            "zapEndpoint": zapEndpoint,
-            "amount": 10000,
-            "comment": "You got zapped!",
-            "authorId": pubKey,
-            "noteId": encodedNoteId,
-            "normalizedRelays": relays
-        })
-        let zapUrl = 'lightning:' + invoice
-        window.location.assign(zapUrl)
-    }
 
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
@@ -144,32 +131,26 @@ function Posts(props) {
         title = "Title"
     }
     const imageLink = mediaLinks[0]
+
     return (
-        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
-        {/*// <Link to={`/post/${props.note.id}?sort=name&order=ascending`} className="post">*/}
         <div className={"post-container"}>
             <div className={"title-post"}> {title} </div>
                 <div className="grid-container" >
                     <div className={"post"}>
-                        <img alt={""} className={"post-content"} src={imageLink}/>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
+                            <img alt={""} className={"post-content"} src={imageLink}/>
+                        </Link>
                     </div>
                 </div>
             <div>
                 <Button variant="light" size={"lg"} onClick={() => upvotePost(props.note.id,props.note.pubkey)}>+ {votes.length}</Button>{' '}
-                <div className="commentBox dib pd20">
-                    <form onSubmit={saveComment}>
-                        <input type="text" placeholder="Comment"
-                            value={comment}
-                            onChange={captureComment}
-                            required />
-
-                        <button type="submit">Comment</button>
-                    </form>
-                </div>
-                <Button variant="light" size={"lg"} onClick={sendNewZaps}>Zap</Button>{' '}
+                <Button variant="light" size={"lg"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>Zap</Button>{' '}
+                <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
+                    <Button variant="light" size={"lg"}>Comments</Button>
+                </Link>
             </div>
         </div>
-        </Link>
+        // </Link>
     );
 }
 

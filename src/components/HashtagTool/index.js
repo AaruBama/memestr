@@ -8,13 +8,14 @@ import Feed from "../Feed";
 
 
 const HashTagTool = (props) => {
+  console.log("hey")
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
     const LoadMedia = async () => {
       const relayPool = new SimplePool();
       const filters = {
-        limit: 100,
+        limit: 10,
       };
 
       const relays = [
