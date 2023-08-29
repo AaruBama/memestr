@@ -50,6 +50,8 @@
     ]
   },
   "devDependencies": {
+    "@svgr/cli": "^8.1.0",
+    "@svgr/webpack": "^8.1.0",
     "gh-pages": "^5.0.0",
     "source-map-loader": "^4.0.1"
   }

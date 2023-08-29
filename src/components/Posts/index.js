@@ -11,6 +11,7 @@ import React from 'react';
 import "./index.css"
 
 import Button from 'react-bootstrap/Button';
+import {ReactComponent as ShakaLogo} from "../../Icons/shaka.svg"
 
 
 function extractLinksFromText(text) {
@@ -56,9 +57,12 @@ export async function upvotePost(noteId, OpPubKey) {
     }
     upvoteEvent.id = getEventHash(upvoteEvent)
     upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-    let x = pool.publish(relays, upvoteEvent)
-    console.log("pool is publishing, ", x)
-    return true
+    pool.publish(relays, upvoteEvent)
+    if (pool) {
+        pool.close(relays);
+        return true
+    }
+    return false
 }
 
 export const sendNewZaps = async  (postId, opPubKey) => {
@@ -75,7 +79,6 @@ export const sendNewZaps = async  (postId, opPubKey) => {
         "noteId": encodedNoteId,
         "normalizedRelays": relays
     })
-    console.log("invoice generated is", invoice)
     let zapUrl = 'lightning:' + invoice
     window.location.assign(zapUrl)
 }
@@ -102,49 +105,86 @@ export const saveComment = (postId, comment) => {
     commentEvent.id = getEventHash(commentEvent)
     commentEvent.sig = getSignature(commentEvent, sk.data)
     pool.publish(relays, commentEvent)
+    pool.close(relays);
 }
 
 function Posts(props) {
 
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
+    const [votesCount, setVotesCount] = useState(0)
 
     useEffect(() => {
         const getVotes = async (event) => {
             const relayPool = new SimplePool();
-            const relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
+            const relays = ['wss://relay.damus.io', "wss://nos.lol"]
             const filters = {
                 kinds: [7],
                 "#e": [props.note.id]
             };
             let voteCount = await relayPool.list(relays, [filters])
-            if (voteCount > votes) {
-                setVotes(voteCount); //quick hack to store vote count
+            if (voteCount.length > votesCount) {
+                setVotesCount(voteCount.length);
+                setVotes(voteCount)//quick hack to store vote count
             }
             relayPool.close(relays);
         };
         getVotes();
-    }, [props.note.id, votes]);
+    }, [props.note.id, votes, votesCount]);
 
     let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
         title = "Title"
     }
     const imageLink = mediaLinks[0]
+    let voteCount = votes.length
+    // var shaka = require("../../Icons/shaka.svg")
+
+    function voteIncrement() {
+        const storedData = localStorage.getItem('memestr')
+
+        if (storedData) {
+            console.log("increment vote count from ", votesCount)
+            setVotesCount(voteCount+1);
+        }
+    }
+
+    function isTodisabled() {
+        let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
+        const storedData = localStorage.getItem('memestr')
+        if (!storedData) {
+            return true
+        }
+        let userPublicKey = JSON.parse(storedData).pubKey
+        if (pubKeySet.has(userPublicKey)) {
+            return true
+        }
+        return false
+    }
 
     return (
         <div className={"post-container"}>
             <div className={"title-post"}> {title} </div>
                 <div className="grid-container" >
                     <div className={"post"}>
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`} className="post">
                             <img alt={""} className={"post-content"} src={imageLink}/>
                         </Link>
                     </div>
                 </div>
             <div>
-                <Button variant="light" size={"lg"} onClick={() => upvotePost(props.note.id,props.note.pubkey)}>+ {votes.length}</Button>{' '}
-                <Button variant="light" size={"lg"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>Zap</Button>{' '}
+                {/*<Button variant="light" size={"lg"} onClick={() => {upvotePost(props.note.id,props.note.pubkey); voteIncrement();}} disabled={isTodisabled()}>*/}
+                {/*    + {votes.length}*/}
+                {/*</Button>{' '}*/}
+                <button className={"upvote-button"} onClick={() => {upvotePost(props.note.id,props.note.pubkey); voteIncrement();}} disabled={isTodisabled()}>
+                    <ShakaLogo /> {votes.length}
+                </button>
+                    {/*<Button variant="light" size={"lg"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>*/}
+                {/*    Zap*/}
+                {/*</Button>{' '}*/}
+                <button className={"zap-button"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>
+                    Zap
+                </button>
                 <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
                     <Button variant="light" size={"lg"}>Comments</Button>
                 </Link>

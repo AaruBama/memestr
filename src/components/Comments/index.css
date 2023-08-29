@@ -7,6 +7,8 @@
     border-top: 1px solid dimgray;
     border-radius: 5px;
     margin-bottom: 5px;
+    max-width: 100%;
+    min-width: 400px;
 }
 
 .comment-container > div:nth-child(2) {
@@ -17,6 +19,14 @@
 .username-comment {
     align-items: flex-start;
     color: white;
+    font-weight: bold;
+    font-size: medium;
+    padding-right: 5px;
+    /*background-color: red;*/
+}
+.name-comment {
+    color: grey;
+    align-items: flex-start;
     font-weight: bold;
     font-size: medium;
     /*background-color: red;*/
@@ -34,5 +44,8 @@
     flex: 1;
     padding-top: 3px;
     font-size: small;
+    padding-left: 3px;
+    display: flex;
+    flex-wrap: wrap;
     /*background-color: blue;*/
 }

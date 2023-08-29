@@ -1,3 +1,11 @@
+:root {
+  --primary-color: #000814;
+  --secondary-color: #001D3D;
+  --third-color: #003566;
+  --fourth-color: #FFC300;
+  --fifth-color: #FFD60A;
+}
+
 .App {
   text-align: center;
 }
@@ -14,7 +22,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #000814;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

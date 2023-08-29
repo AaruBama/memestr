@@ -25,11 +25,13 @@ export const saveComment = (postId, comment) => {
     commentEvent.id = getEventHash(commentEvent)
     commentEvent.sig = getSignature(commentEvent, sk.data)
     pool.publish(relays, commentEvent)
+    pool.close(relays);
 }
 
 function Comments (props) {
     const [picture, setpicture] = useState('')
     const [username, setUsername] = useState(null)
+    const [name, setName] = useState('Anonymous')
 
 
     let comment = props.reply
@@ -39,14 +41,21 @@ function Comments (props) {
         a.then((value) => {
             setpicture(value.picture)
             setUsername(value.display_name)
-        });
+            setName(value.name)
+        }).catch(
+            console.log("something went wrong fetching comment from the pubkey")
+
+        )
+        ;
     }, [commentatorPubKey] )
 
     return (
         <div className={"comment-container"}>
             <img className='profile1' src={picture} alt="Profile" />
             <div>
-                <div className={"username-comment"}>{username}</div>
+                {/*<div className={"username-comment"}>{username} @{name}</div>*/}
+                <span className={"username-comment"}>{username}</span>
+                <span className={"name-comment"}>@{name}</span>
                 <div className={"comment"}>{comment.content}</div>
             </div>
         </div>

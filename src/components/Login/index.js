@@ -64,7 +64,7 @@ function Login(props) {
     }
 
     return (
-        <div className="header-menu container possti borders">
+        <div className="container possti borders">
             <header>
                 {isLoggedIn ?
                     <div>

@@ -6,9 +6,6 @@ import {sendNewZaps, upvotePost} from "../Posts";
 import {SimplePool} from "nostr-tools";
 import Comments, {saveComment} from "../Comments";
 
-import {Stack} from "react-bootstrap";
-
-
 function Post(props) {
     let params = useParams();
     const [searchParams] = useSearchParams();
@@ -45,6 +42,12 @@ function Post(props) {
     // {/*    3. would render each one in their own div.*/}
     // {/*    4. add a menu to every comment to zap or reply.*/}
     // {/*    5. Add new comment modal.*/}
+    function captureNewComment(newComment) {
+        setReplies(replies => [...replies,comment])
+        // addNewComment(newComment)
+
+    }
+
     // {/*    6. Css to fetch the newly submitted comment.*/}
     return (
         <div>
@@ -52,21 +55,18 @@ function Post(props) {
             <div className={"post-content"}><img alt={""} className={"post-content"} src={imageLink}/></div>
             <Button variant="light" size={"lg"} onClick={() => upvotePost(postId, OpPubKey)}>+ {voteCount}</Button>{' '}
             <Button variant="light" size={"lg"} onClick={() => sendNewZaps(postId, OpPubKey)}>Zap</Button>{' '}
-            <div>
-                <Stack direction="horizontal" gap={3}>
-                <div style={{display: "inline-block"}}>
-                    <div className="commentBox dib pd20">
-                        <form onSubmit={() => saveComment(postId, comment)}>
-                            <input type="text" placeholder="Comment"
-                                   value={comment}
-                                   onChange={captureComment}
-                                   required/>
+            <div className="commentBox">
+                <div >
+                    <form onSubmit={() => {saveComment(postId, comment); captureNewComment(comment);}}>
+                        <input type="text" placeholder="Add a comment" className={"comment-form"}
+                               value={comment}
+                               onChange={captureComment}
+                               required/>
 
-                            <Button variant="secondary" type="submit">Submit</Button>
-                        </form>
-                    </div>
+                        <Button variant="secondary" type="submit">Submit</Button>
+                    </form>
                 </div>
-                </Stack>
+
             </div>
             {replies.map(function (object) {
                 return <Comments reply={object}/>;

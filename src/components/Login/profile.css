@@ -1,5 +1,6 @@
 .container {
-    background-color: rgb(168, 178, 187);
+    background-color: #000814;
+    max-width: 100%;
 }
 .private-key {
     color: white;
@@ -18,8 +19,8 @@
 }
  .borders {
     border-style: outset;
-
  }
+
 .username {
     color: white;
     align-content: center;
@@ -33,21 +34,21 @@
 
 .pad1 { padding: 2px }
 
-
 .posfix {position: fixed;}
+
 .possti {
     position: fixed;
     display: block;
     width: 100%;
     top: 0px;
 }
-.poswsti {position: -webkit-sticky;}
 
 .login-menu {
     size: 200px;
     background-color: black;
     padding: 150px;
 }
+
 .logout-button{
     position: relative;
     top: 10px;

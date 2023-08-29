@@ -29,6 +29,7 @@ async function getUserDetailsFromPrivateKey(skk) {
     content = JSON.parse(content)
     return content
   }
+  relayPool.close(relays);
 }
 
 
@@ -51,6 +52,7 @@ async function getUserDetailsFromPrivateKey(skk) {
       content = JSON.parse(content)
       return content
     }
+    relayPool.close(relays);
   }
 
 

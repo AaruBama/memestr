@@ -1,42 +1,42 @@
-import React, { useEffect, useState } from "react";
-
-
+import React from "react";
 import { SimplePool } from "nostr-tools";
 import Feed from "../Feed";
 
+class HashTagTool extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      notes: []
+    }
+  }
+  shouldComponentUpdate() {
+    return true;
+  }
 
-
-
-const HashTagTool = (props) => {
-  console.log("hey")
-  const [notes, setNotes] = useState([]);
-
-  useEffect(() => {
-    const LoadMedia = async () => {
-      const relayPool = new SimplePool();
-      const filters = {
-        limit: 10,
-      };
-
-      const relays = [
-        "wss://relay.damus.io/",
-        "wss://offchain.pub/",
-        "wss://nos.lol/",
-        "wss://relay.nostr.wirednet.jp/",
-        "wss://nostr.wine/",
-      ];
-      filters["#t"] = ['memes','meme','funny','memestr'];
-
-
-      let notes = await relayPool.list(relays, [filters]);
-      setNotes(notes);
+  async componentDidMount() {
+    const relayPool = new SimplePool();
+    const filters = {
+      limit: 50,
     };
-    LoadMedia();
-    }, []);
 
-  return <Feed notes={notes} />
-};
+    const relays = [
+      "wss://relay.damus.io/",
+      "wss://offchain.pub/",
+      "wss://nos.lol/",
+      "wss://relay.nostr.wirednet.jp/",
+      "wss://nostr.wine/",
+    ];
+    filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
 
 
+    let notes1 = await relayPool.list(relays, [filters]);
+    this.setState({notes: notes1})
+    // setNotes(notes);
+    relayPool.close(relays)
+  }
 
+  render() {
+    return <Feed notes={this.state.notes} />
+  }
+}
 export default HashTagTool;

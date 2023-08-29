@@ -9,19 +9,24 @@ import {
     Route,
 } from "react-router-dom";
 
-function App() {
-  return (
-    <div >
-        <Login />
-        <Router>
-            <Routes>
-                <Route exact path="/" element={<HashTagTool />} />
-                <Route path="/post/:postId" element={<PostViewTool />} />
-                {/*<Route path="/dashboard" element={<Dashboard />} />*/}
-            </Routes>
-        </Router>
-    </div>
-  );
+class App extends React.Component {
+    shouldComponentUpdate() {
+        return false;
+    }
+    render() {
+        console.log("yoyo");
+        return (
+            <div>
+                <Login/>
+                <Router>
+                    <Routes>
+                        <Route exact path="/" element={<HashTagTool/>}/>
+                        <Route path="/post/:postId" element={<PostViewTool/>}/>
+                    </Routes>
+                </Router>
+            </div>
+        );
+    }
 }
 
 export default App;
