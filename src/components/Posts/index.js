@@ -1,13 +1,7 @@
-import { getPublicKey, SimplePool, getEventHash, getSignature} from 'nostr-tools'
-import { useEffect, useState } from "react";
-import { nip19 } from "nostr-tools";
-import {
-    fetchInvoice,
-    getProfileMetadata,
-    getZapEndpoint,
-} from "../ZapHelper";
-import { Link } from 'react-router-dom';
-import React from 'react';
+import {getEventHash, getPublicKey, getSignature, nip19, SimplePool} from 'nostr-tools'
+import {fetchInvoice, getProfileMetadata, getZapEndpoint,} from "../ZapHelper";
+import {Link} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
 import "./index.css"
 
 import Button from 'react-bootstrap/Button';
@@ -22,8 +16,7 @@ function extractLinksFromText(text) {
     const links = text.match(linkRegex);
     if (!links) return [];
 
-    const filteredLinks = links.filter((link) => jpgRegex.test(link) || mp4Regex.test(link));
-    return filteredLinks;
+    return links.filter((link) => jpgRegex.test(link) || mp4Regex.test(link));
 }
 
 
@@ -32,9 +25,7 @@ const removeHashtagsAndLinks = (text) => {
     const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    const withoutLinks = withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
-
-    return withoutLinks;
+    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId, OpPubKey) {
@@ -153,7 +144,7 @@ function Posts(props) {
         let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
         const storedData = localStorage.getItem('memestr')
         if (!storedData) {
-            return true
+            return false;
         }
         let userPublicKey = JSON.parse(storedData).pubKey
         if (pubKeySet.has(userPublicKey)) {
