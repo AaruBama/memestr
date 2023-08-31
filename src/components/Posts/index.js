@@ -8,11 +8,12 @@ function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
     const jpgRegex = /\.(jpg|jpeg)$/i;
     const mp4Regex = /\.mp4$/i;
+    const gifRegex = /\.gif$/i;
 
     const links = text.match(linkRegex);
     if (!links) return [];
 
-    return links.filter((link) => jpgRegex.test(link) || mp4Regex.test(link));
+    return links.filter((link) => jpgRegex.test(link) || mp4Regex.test(link) || gifRegex.test(link));
 }
 
 
@@ -158,6 +159,7 @@ function Posts(props) {
                     </div>
                     <div class="p-2 max-h-fit">
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
+                            {console.log("image link is", imageLink)}
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>
