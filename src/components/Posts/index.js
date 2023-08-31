@@ -159,7 +159,6 @@ function Posts(props) {
                     </div>
                     <div class="p-2 max-h-fit">
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
-                            {console.log("image link is", imageLink)}
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>

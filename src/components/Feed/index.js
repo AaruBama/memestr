@@ -3,14 +3,12 @@ import "./index.css"
 
 
 function Feed(props) {
-    return (
-            <div className={"feed-container"}>
-                {props.notes.map((note) => {
-                    return <Posts note={note} />
-                })}
+    return (<div className={"feed-container"}>
+        {props.notes.map((note) => {
+            return <Posts note={note}/>
+        })}
 
-            </div>
-    );
+    </div>);
 }
 
 export default Feed;
