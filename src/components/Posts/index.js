@@ -96,7 +96,6 @@ export const saveComment = (postId, comment) => {
 }
 
 function Posts(props) {
-
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0)
@@ -133,7 +132,6 @@ function Posts(props) {
         const storedData = localStorage.getItem('memestr')
 
         if (storedData) {
-            console.log("increment vote count from ", votesCount)
             setVotesCount(voteCount+1);
         }
     }

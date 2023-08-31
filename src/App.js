@@ -14,7 +14,6 @@ class App extends React.Component {
         return false;
     }
     render() {
-        console.log("yoyo");
         return (
             <div>
                 <Login/>
