@@ -152,62 +152,48 @@ function Posts(props) {
     }
 
     return (
-        <div class="flex flex-col bg-black">
-            <div class="pl-4 pr-4 pt-4 text-white"> {title} </div>
-            <div class="flex-column bg-gray-200 rounded m-2">
-                <div class="p-2 max-h-fit justify-content-center align-content-center align-items-center">
-                    <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
-                        <img alt={""} src={imageLink}/>
-                    </Link>
-                </div>
+            <div class="flex flex-col bg-black divide-y mt-2">
 
-                <div class="flex flex-row justify-content-center">
-                    <button class="ml-1 d-inline-block basis-1/4 flex justify-content-center"
-                            onClick={() => {
-                                upvotePost(props.note.id,props.note.pubkey);
-                                voteIncrement();
-                                setFillLike(true);
-                            }} disabled={isTodisabled()}>
-                        <svg class={`${
-                            fillLike && "fill-current text-red-600"
-                        } h-8 w-8`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0"
-                            y="0"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 30"
-                        >
-                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                        </svg>{votesCount}
-                    </button>
+                <div class="bg-gray-200 rounded-lg m-2 shadow-sm shadow-gray-400">
+                    <div className="px-2 pt-2 text-black font-medium">
+                        {title}
+                    </div>
+                    <div class="p-2 max-h-fit">
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
+                            <img alt={""} src={imageLink}/>
+                        </Link>
+                    </div>
 
-                    <button class="basis-1/4"
-                            onClick={() => {
-                                sendNewZaps(props.note.id, props.note.pubkey);
-                                setFillZap(true);
-                            }
-                            }>
-                        <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } h-8 w-8`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0"
-                            y="0"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 30"
-                        >
-                            <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
-                    </button>
 
-                    <Link class="basis-1/4" to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`}>
-                        <button variant="light" size={"lg"}>
-                            <svg class="h-8 w-8"
+                    <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white shadow-sm shadow-gray-400">
+
+                        {/*Comments button*/}
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`}>
+                            <button variant="light" size={"lg"}>
+                                <svg class="h-8 w-8 flex align-items-center shadow-sm shadow-gray-400"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     x="0"
+                                     y="0"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     strokeLinecap="round"
+                                     strokeLinejoin="round"
+                                     strokeWidth="2"
+                                     viewBox="0 0 24 30"
+                                >
+                                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                                </svg>
+                            </button>
+                        </Link>
+
+
+                        <button
+                                onClick={() => {
+                                    sendNewZaps(props.note.id, props.note.pubkey);
+                                    setFillZap(true);
+                                }
+                                }>
+                            <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } flex align-items-center h-8 w-8 shadow-sm shadow-gray-400`}
                                 xmlns="http://www.w3.org/2000/svg"
                                 x="0"
                                 y="0"
@@ -218,13 +204,35 @@ function Posts(props) {
                                 strokeWidth="2"
                                 viewBox="0 0 24 30"
                             >
-                                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-                            </svg>
+                                <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
                         </button>
-                    </Link>
+
+                        <button className="flex justify-content-center pr-4 shadow-sm shadow-gray-400"
+                                onClick={() => {
+                                    upvotePost(props.note.id,props.note.pubkey);
+                                    voteIncrement();
+                                    setFillLike(true);
+                                }} disabled={isTodisabled()}>
+                            <svg className={`${
+                                fillLike && "fill-current text-red-600"
+                            } h-8 w-8`}
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 x="0"
+                                 y="0"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 strokeLinecap="round"
+                                 strokeLinejoin="round"
+                                 strokeWidth="2"
+                                 viewBox="0 0 24 30"
+                            >
+                                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+                            </svg>{votesCount}
+                        </button>
+
+                    </div>
                 </div>
             </div>
-        </div>
     );
 }
 
