@@ -4,10 +4,6 @@ import {Link} from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
 import "./index.css"
 
-import Button from 'react-bootstrap/Button';
-import {ReactComponent as ShakaLogo} from "../../Icons/shaka.svg"
-
-
 function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
     const jpgRegex = /\.(jpg|jpeg)$/i;
@@ -104,6 +100,8 @@ function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0)
+    const [fillLike, setFillLike] = useState(false)
+    const [fillZap, setFillZap] = useState(false)
 
     useEffect(() => {
         const getVotes = async (event) => {
@@ -154,34 +152,79 @@ function Posts(props) {
     }
 
     return (
-        <div className={"post-container"}>
-            <div className={"title-post"}> {title} </div>
-                <div className="grid-container" >
-                    <div className={"post"}>
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`} className="post">
-                            <img alt={""} className={"post-content"} src={imageLink}/>
-                        </Link>
-                    </div>
+        <div class="flex flex-col bg-black">
+            <div class="pl-4 pr-4 pt-4 text-white"> {title} </div>
+            <div class="flex-column bg-gray-200 rounded m-2">
+                <div class="p-2 max-h-fit justify-content-center align-content-center align-items-center">
+                    <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
+                        <img alt={""} src={imageLink}/>
+                    </Link>
                 </div>
-            <div>
-                {/*<Button variant="light" size={"lg"} onClick={() => {upvotePost(props.note.id,props.note.pubkey); voteIncrement();}} disabled={isTodisabled()}>*/}
-                {/*    + {votes.length}*/}
-                {/*</Button>{' '}*/}
-                <button className={"upvote-button"} onClick={() => {upvotePost(props.note.id,props.note.pubkey); voteIncrement();}} disabled={isTodisabled()}>
-                    <ShakaLogo /> {votes.length}
-                </button>
-                    {/*<Button variant="light" size={"lg"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>*/}
-                {/*    Zap*/}
-                {/*</Button>{' '}*/}
-                <button className={"zap-button"} onClick={() => sendNewZaps(props.note.id,props.note.pubkey)}>
-                    Zap
-                </button>
-                <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`} className="post">
-                    <Button variant="light" size={"lg"}>Comments</Button>
-                </Link>
+
+                <div class="flex flex-row justify-content-center">
+                    <button class="ml-1 d-inline-block basis-1/4 flex justify-content-center"
+                            onClick={() => {
+                                upvotePost(props.note.id,props.note.pubkey);
+                                voteIncrement();
+                                setFillLike(true);
+                            }} disabled={isTodisabled()}>
+                        <svg class={`${
+                            fillLike && "fill-current text-red-600"
+                        } h-8 w-8`}
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0"
+                            y="0"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 30"
+                        >
+                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+                        </svg>{votesCount}
+                    </button>
+
+                    <button class="basis-1/4"
+                            onClick={() => {
+                                sendNewZaps(props.note.id, props.note.pubkey);
+                                setFillZap(true);
+                            }
+                            }>
+                        <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } h-8 w-8`}
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0"
+                            y="0"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 30"
+                        >
+                            <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
+                    </button>
+
+                    <Link class="basis-1/4" to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`}>
+                        <button variant="light" size={"lg"}>
+                            <svg class="h-8 w-8"
+                                xmlns="http://www.w3.org/2000/svg"
+                                x="0"
+                                y="0"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                viewBox="0 0 24 30"
+                            >
+                                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                            </svg>
+                        </button>
+                    </Link>
+                </div>
             </div>
         </div>
-        // </Link>
     );
 }
 

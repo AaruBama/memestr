@@ -5,7 +5,6 @@ import { SimplePool } from "nostr-tools";
 import Feed from "../Feed";
 
 const HashTagTool = (props) => {
-  console.log("hey")
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
