@@ -1,5 +1,5 @@
 import "./App.css";
-import HashTagTool from "./components/HashtagTool";
+import { HashTagToolProvider} from "./components/HashtagTool";
 import PostViewTool from "./components/Post/post.js"
 import Login from "./components/Login";
 import React from "react";
@@ -8,6 +8,8 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
+
+import HashtagTool from "./components/HashtagTool";
 
 class App extends React.Component {
     shouldComponentUpdate() {
@@ -18,10 +20,12 @@ class App extends React.Component {
             <div>
                 <Login/>
                 <Router>
+                    <HashTagToolProvider>
                     <Routes>
-                        <Route exact path="/" element={<HashTagTool/>}/>
+                        <Route exact path="/" element={<HashtagTool />}/>
                         <Route path="/post/:postId" element={<PostViewTool/>}/>
                     </Routes>
+                    </HashTagToolProvider>
                 </Router>
             </div>
         );
