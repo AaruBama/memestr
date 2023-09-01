@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/memestr/static/css/main.49a0ba8e.css",
-    "main.js": "/memestr/static/js/main.d87d5fe8.js",
+    "main.css": "/memestr/static/css/main.0551125f.css",
+    "main.js": "/memestr/static/js/main.eeb6eea5.js",
     "static/js/27.1827af03.chunk.js": "/memestr/static/js/27.1827af03.chunk.js",
     "index.html": "/memestr/index.html"
   },
   "entrypoints": [
-    "static/css/main.49a0ba8e.css",
-    "static/js/main.d87d5fe8.js"
+    "static/css/main.0551125f.css",
+    "static/js/main.eeb6eea5.js"
   ]
 }
