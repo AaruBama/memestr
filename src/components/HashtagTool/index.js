@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 
 import {SimplePool} from "nostr-tools";
@@ -6,7 +6,6 @@ import Feed from "../Feed";
 
 const HashTagTool = (props) => {
     const [notes, setNotes] = useState([]);
-    const prevNotes = useRef([])
 
     const containsJpgOrMp4Link = (text) => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
@@ -17,11 +16,6 @@ const HashTagTool = (props) => {
 
     useEffect(() => {
         const LoadMedia = async () => {
-            if (prevNotes.current.length > 0) {
-                console.log("returning because we already had it.")
-                setNotes(prevNotes.current)
-                return
-            }
             const relayPool = new SimplePool();
             const filters = {
                 limit: 5,
@@ -35,12 +29,8 @@ const HashTagTool = (props) => {
             notes = notes.filter((note) => {
                 return containsJpgOrMp4Link(note.content)
             })
-            prevNotes.current = notes
             setNotes(notes);
             relayPool.close(relays)
-            console.log("Before setting prev notes", prevNotes.current)
-            console.log("Setting prevNotess now.")
-            console.log("After setting prev notes", prevNotes.current)
         };
         LoadMedia();
     }, []);
@@ -64,12 +54,11 @@ const HashTagTool = (props) => {
             return containsJpgOrMp4Link(note.content)
         })
         setNotes(notes => [...notes, ...newNotes]);
-        prevNotes.current = notes
         relayPool.close(relays)
     }
 
     return (<>
-        <Feed notes={prevNotes.current}/>
+        <Feed notes={notes}/>
         <button onClick={() => {
             LoadMoreMedia();
         }}
