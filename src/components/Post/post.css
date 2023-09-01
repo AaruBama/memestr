@@ -1,0 +1,22 @@
+.title-post {
+    color: white;
+}
+
+/*.comment-container {*/
+/*    width: 200px;*/
+/*}*/
+
+.commentBox {
+    max-width: 100%;
+    padding-top: 10px;
+    /*background-color: yellow;*/
+}
+
+
+.comment-form {
+    width: 70%;
+    color: white;
+    max-width: 100%;
+    background-color: black;
+    border: 2px solid grey;
+}
