@@ -3,6 +3,7 @@ import {fetchInvoice, getProfileMetadata, getZapEndpoint,} from "../ZapHelper";
 import {Link} from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
 import "./index.css"
+import ZapModal from "../ZapHelper/ZapModal";
 
 function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -53,7 +54,8 @@ export async function upvotePost(noteId, OpPubKey) {
     return false
 }
 
-export const sendNewZaps = async  (postId, opPubKey) => {
+export const sendNewZaps = async  (postId, opPubKey, sats = 11) => {
+    console.log("Sending zaps")
     const pubKey = opPubKey
     let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
     const encodedNoteId = nip19.noteEncode(postId)
@@ -61,7 +63,7 @@ export const sendNewZaps = async  (postId, opPubKey) => {
     let zapEndpoint = await getZapEndpoint(userDetails)
     let invoice = await fetchInvoice({
         "zapEndpoint": zapEndpoint,
-        "amount": 10000,
+        "amount": sats * 1000,
         "comment": "You got zapped!",
         "authorId": pubKey,
         "noteId": encodedNoteId,
@@ -103,6 +105,23 @@ function Posts(props) {
     const [fillLike, setFillLike] = useState(false)
     const [fillZap, setFillZap] = useState(false)
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [processedValue, setProcessedValue] = useState(null);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleConfirm = (value) => {
+        // Process the value internally here or update state as needed
+        const postId = props.note.id;
+        let opPubKey = props.note.pubkey
+        console.log(`Processing value: ${value}`);
+
+        sendNewZaps(postId, opPubKey, value)
+        setProcessedValue(value);
+    };
+
     useEffect(() => {
         setVotesCount(props.note.voteCount)
     }, [props.note.voteCount])
@@ -140,6 +159,16 @@ function Posts(props) {
         // return false
     }
 
+    function handleZapButton() {
+        const storedData = localStorage.getItem('memestr');
+        if (!storedData) {
+            alert('Login to send zaps.')
+            return false
+        }
+        openModal();
+        setFillZap(true);
+    }
+
     return (
             <div class="flex flex-col bg-black divide-y mt-2">
 
@@ -157,6 +186,7 @@ function Posts(props) {
                     <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white">
 
                         {/*Comments button*/}
+
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <button variant="light" size={"lg"}>
                                 <svg class="h-8 w-8 flex align-items-center"
@@ -176,10 +206,9 @@ function Posts(props) {
                         </Link>
 
 
-                        <button
+                        <button className="flex justify-content-center"
                                 onClick={() => {
-                                    sendNewZaps(props.note.id, props.note.pubkey);
-                                    setFillZap(true);
+                                    handleZapButton();
                                 }
                                 }>
                             <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } flex align-items-center h-8 w-8`}
@@ -194,6 +223,12 @@ function Posts(props) {
                                 viewBox="0 0 24 30"
                             >
                                 <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
+                            {processedValue && <p>{processedValue}</p>}
+
+                            <ZapModal
+                                isOpenm={isModalOpen}
+                                onConfirm={handleConfirm}
+                            />
                         </button>
 
                         <button className="flex justify-content-center pr-4"
