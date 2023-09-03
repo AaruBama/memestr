@@ -104,22 +104,8 @@ function Posts(props) {
     const [fillZap, setFillZap] = useState(false)
 
     useEffect(() => {
-        const getVotes = async (event) => {
-            const relayPool = new SimplePool();
-            const relays = ['wss://relay.damus.io', "wss://nos.lol"]
-            const filters = {
-                kinds: [7],
-                "#e": [props.note.id]
-            };
-            let voteCount = await relayPool.list(relays, [filters])
-            if (voteCount.length > votesCount) {
-                setVotesCount(voteCount.length);
-                setVotes(voteCount)//quick hack to store vote count
-            }
-            relayPool.close(relays);
-        };
-        getVotes();
-    }, [props.note.id, votes, votesCount]);
+        setVotesCount(props.note.voteCount)
+    }, [props.note.voteCount])
 
     let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
@@ -127,13 +113,18 @@ function Posts(props) {
     }
     const imageLink = mediaLinks[0]
     let voteCount = votes.length
-    // var shaka = require("../../Icons/shaka.svg")
 
     function voteIncrement() {
         const storedData = localStorage.getItem('memestr')
-
         if (storedData) {
-            setVotesCount(voteCount+1);
+            setVotesCount(votesCount+1);
+        }
+    }
+
+    function fillColor() {
+        const storedData = localStorage.getItem('memestr')
+        if (storedData) {
+            setFillLike(true);
         }
     }
 
@@ -210,7 +201,7 @@ function Posts(props) {
                                 onClick={() => {
                                     upvotePost(props.note.id,props.note.pubkey);
                                     voteIncrement();
-                                    setFillLike(true);
+                                    fillColor();
                                 }} disabled={isTodisabled()}>
                             <svg className={`${
                                 fillLike && "fill-current text-red-600"

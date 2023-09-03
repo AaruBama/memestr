@@ -8,12 +8,43 @@ const HashTagContext = React.createContext();
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children }) {
     const [notes, setNotes] = useState([]);
+
     const [scrollPosition, setScrollPosition] = useState(0);
 
     const containsJpgOrMp4Link = (text) => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
         return linkRegex.test(text);
     };
+
+    async function getVotes(postIds) {
+        const voteFilters = {
+            kinds: [7],
+            "#e": postIds
+        };
+        const relayPool = new SimplePool();
+        const relays = ["wss://relay.damus.io/",
+            "wss://offchain.pub/",
+            "wss://nos.lol/",
+            "wss://relay.nostr.wirednet.jp/",
+            "wss://nostr.wine/",
+        ];
+        let votes = await relayPool.list(relays, [voteFilters]);
+        const groupedByPostId = {};
+
+        for (const vote of votes) {
+            const voteTags = vote.tags
+            for (const tag of voteTags) {
+                if (tag[0] === "e") {
+                    if (groupedByPostId[tag[1]]) {
+                        groupedByPostId[tag[1]] += 1;
+                    } else {
+                        groupedByPostId[tag[1]] = 1;
+                    }
+                }
+            }
+        }
+        return groupedByPostId;
+    }
 
     useEffect(() => {
         const LoadMedia = async () => {
@@ -24,7 +55,12 @@ export function HashTagToolProvider({ children }) {
                 limit: 5,
             };
 
-            const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
+            const relays = ["wss://relay.damus.io/",
+                "wss://offchain.pub/",
+                "wss://nos.lol/",
+                "wss://relay.nostr.wirednet.jp/",
+                "wss://nostr.wine/",
+            ];
             filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
 
 
@@ -32,6 +68,19 @@ export function HashTagToolProvider({ children }) {
             notes = notes.filter((note) => {
                 return containsJpgOrMp4Link(note.content)
             })
+            // console.log("notes are ", notes)
+            // GET VOTES COMBINED
+            let postIds = []
+            notes.forEach(function (note) {
+                var id = note.id;
+                postIds.push(id)
+            });
+            // console.log("PostIds is ", postIds)
+            let groupedByPostId = await getVotes(postIds)
+            for (const note of notes) {
+                note["voteCount"] = groupedByPostId[note.id] || 0;
+            }
+            // console.log("Vote infused notes are", notes)
             setNotes(notes);
             relayPool.close(relays)
         };
