@@ -98,7 +98,7 @@ export const saveComment = (postId, comment) => {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
-    const [votes, setVotes] = useState([])
+    // const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0)
     const [fillLike, setFillLike] = useState(false)
     const [fillZap, setFillZap] = useState(false)
@@ -112,7 +112,6 @@ function Posts(props) {
         title = "Title"
     }
     const imageLink = mediaLinks[0]
-    let voteCount = votes.length
 
     function voteIncrement() {
         const storedData = localStorage.getItem('memestr')
@@ -129,16 +128,16 @@ function Posts(props) {
     }
 
     function isTodisabled() {
-        let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            return false;
-        }
-        let userPublicKey = JSON.parse(storedData).pubKey
-        if (pubKeySet.has(userPublicKey)) {
-            return true
-        }
-        return false
+        // let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
+        // const storedData = localStorage.getItem('memestr')
+        // if (!storedData) {
+        //     return false;
+        // }
+        // let userPublicKey = JSON.parse(storedData).pubKey
+        // if (pubKeySet.has(userPublicKey)) {
+        //     return true
+        // }
+        // return false
     }
 
     return (
@@ -149,7 +148,7 @@ function Posts(props) {
                         {title}
                     </div>
                     <div class="p-2 max-h-fit">
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>
@@ -158,7 +157,7 @@ function Posts(props) {
                     <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white">
 
                         {/*Comments button*/}
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <button variant="light" size={"lg"}>
                                 <svg class="h-8 w-8 flex align-items-center"
                                      xmlns="http://www.w3.org/2000/svg"
