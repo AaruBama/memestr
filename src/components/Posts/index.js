@@ -3,6 +3,7 @@ import {fetchInvoice, getProfileMetadata, getZapEndpoint,} from "../ZapHelper";
 import {Link} from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
 import "./index.css"
+import ZapModal from "../ZapHelper/ZapModal";
 
 function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -98,10 +99,23 @@ export const saveComment = (postId, comment) => {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
-    const [votes, setVotes] = useState([])
+    // const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0)
     const [fillLike, setFillLike] = useState(false)
     const [fillZap, setFillZap] = useState(false)
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [processedValue, setProcessedValue] = useState(null);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleConfirm = (value) => {
+        // Process the value internally here or update state as needed
+        console.log(`Processing value: ${value}`);
+        setProcessedValue(value);
+    };
 
     useEffect(() => {
         setVotesCount(props.note.voteCount)
@@ -112,7 +126,6 @@ function Posts(props) {
         title = "Title"
     }
     const imageLink = mediaLinks[0]
-    let voteCount = votes.length
 
     function voteIncrement() {
         const storedData = localStorage.getItem('memestr')
@@ -129,16 +142,16 @@ function Posts(props) {
     }
 
     function isTodisabled() {
-        let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            return false;
-        }
-        let userPublicKey = JSON.parse(storedData).pubKey
-        if (pubKeySet.has(userPublicKey)) {
-            return true
-        }
-        return false
+        // let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
+        // const storedData = localStorage.getItem('memestr')
+        // if (!storedData) {
+        //     return false;
+        // }
+        // let userPublicKey = JSON.parse(storedData).pubKey
+        // if (pubKeySet.has(userPublicKey)) {
+        //     return true
+        // }
+        // return false
     }
 
     return (
@@ -149,7 +162,7 @@ function Posts(props) {
                         {title}
                     </div>
                     <div class="p-2 max-h-fit">
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${voteCount}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${props.note.voteCount}&OpPubKey=${props.note.pubkey}`}>
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>
@@ -158,7 +171,7 @@ function Posts(props) {
                     <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white">
 
                         {/*Comments button*/}
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votes.length}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${props.note.voteCount}&OpPubKey=${props.note.pubkey}`}>
                             <button variant="light" size={"lg"}>
                                 <svg class="h-8 w-8 flex align-items-center"
                                      xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +192,8 @@ function Posts(props) {
 
                         <button
                                 onClick={() => {
-                                    sendNewZaps(props.note.id, props.note.pubkey);
+                                    openModal();
+                                    // sendNewZaps(props.note.id, props.note.pubkey);
                                     setFillZap(true);
                                 }
                                 }>
@@ -195,6 +209,12 @@ function Posts(props) {
                                 viewBox="0 0 24 30"
                             >
                                 <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
+                            {processedValue && <p>Processed Value: {processedValue}</p>}
+
+                            <ZapModal
+                                isOpenm={isModalOpen}
+                                onConfirm={handleConfirm}
+                            />
                         </button>
 
                         <button className="flex justify-content-center pr-4"
