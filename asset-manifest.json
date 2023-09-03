@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/memestr/static/css/main.b3e0a6fd.css",
-    "main.js": "/memestr/static/js/main.559301bd.js",
-    "index.html": "/memestr/index.html"
+    "main.css": "/static/css/main.b3e0a6fd.css",
+    "main.js": "/static/js/main.899ea865.js",
+    "index.html": "/index.html"
   },
   "entrypoints": [
     "static/css/main.b3e0a6fd.css",
-    "static/js/main.559301bd.js"
+    "static/js/main.899ea865.js"
   ]
 }
