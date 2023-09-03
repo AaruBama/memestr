@@ -64,16 +64,26 @@ function Login(props) {
     }
 
     return (
-        <div className="container possti borders">
+        <div class="relative flex w-full flex-wrap bg-gray-200 pt-2 pb-1 text-neutral-500 shadow-lg mb-1">
             <header>
                 {isLoggedIn ?
-                    <div>
+                    <div class="flex flex-column w-full gap-2">
                         <img className='profile1' src={loggedInUser.profile_picture} alt="Profile" />
-                        <div className='username'><code>{loggedInUser.display_name}</code></div>
-                        <div className='dib logout-button'><button onClick={logoutUser}>Logout</button>
-                    </div></div>
+                        <div className='pt-2'><code>{loggedInUser.display_name}</code></div>
+                        <div className='flex w-full justify-end rounded bg-white px-3 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]'><button onClick={logoutUser}>Logout</button></div>
+                    </div>
                     :
-                    <div className='login'><button onClick={handleLoginClick}>Login</button></div>
+                    <div className='flex self-end'>
+                        {/*<button onClick={handleLoginClick}>Login</button>*/}
+                        <button
+                            type="button"
+                            data-te-ripple-init
+                            data-te-ripple-color="light"
+                            onClick={handleLoginClick}
+                            class="rounded bg-white px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]">
+                            Login
+                        </button>
+                    </div>
                 }
             </header>
             {showLogin && (

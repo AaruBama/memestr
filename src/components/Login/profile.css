@@ -1,57 +1,57 @@
-.container {
-    background-color: #000814;
-    max-width: 100%;
-}
-.private-key {
-    color: white;
-}
+/*.container {*/
+/*    background-color: #61dafb;*/
+/*    max-width: 100%;*/
+/*}*/
+/*.private-key {*/
+/*    color: white;*/
+/*}*/
 
-.login {
-    position: relative;
-    float: right;
-    margin-right: 10px;
-}
+/*.login {*/
+/*    position: relative;*/
+/*    float: right;*/
+/*    margin-right: 10px;*/
+/*}*/
 
-.profile1 {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
- .borders {
-    border-style: outset;
- }
+/*!*.profile1 {*!*/
+/*    width: 50px;*/
+/*    height: 50px;*/
+/*    border-radius: 50%;*/
+/*}*/
+/* .borders {*/
+/*    border-style: outset;*/
+/* }*/
 
-.username {
-    color: white;
-    align-content: center;
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 2%;
-    margin-top: 3%;
-}
+/*.username {*/
+/*    color: white;*/
+/*    align-content: center;*/
+/*    display: inline-block;*/
+/*    vertical-align: top;*/
+/*    margin-left: 2%;*/
+/*    margin-top: 3%;*/
+/*}*/
 
-.dib { display: inline-block }
+/*.dib { display: inline-block }*/
 
-.pad1 { padding: 2px }
+/*.pad1 { padding: 2px }*/
 
-.posfix {position: fixed;}
+/*.posfix {position: fixed;}*/
 
-.possti {
-    position: fixed;
-    display: block;
-    width: 100%;
-    top: 0px;
-}
+/*.possti {*/
+/*    position: fixed;*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    top: 0px;*/
+/*}*/
 
-.login-menu {
-    size: 200px;
-    background-color: black;
-    padding: 150px;
-}
+/*.login-menu {*/
+/*    size: 200px;*/
+/*    background-color: black;*/
+/*    padding: 150px;*/
+/*}*/
 
-.logout-button{
-    position: relative;
-    top: 10px;
-    float: right;
-    right: 5px;
-}
+/*.logout-button{*/
+/*    position: relative;*/
+/*    top: 10px;*/
+/*    float: right;*/
+/*    right: 5px;*/
+/*}*/

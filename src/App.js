@@ -21,10 +21,10 @@ class App extends React.Component {
                 <Login/>
                 <Router>
                     <HashTagToolProvider>
-                    <Routes>
-                        <Route exact path="/" element={<HashtagTool />}/>
-                        <Route path="/post/:postId" element={<PostViewTool/>}/>
-                    </Routes>
+                        <Routes>
+                            <Route exact path="/" element={<HashtagTool />}/>
+                            <Route path="/post/:postId" element={<PostViewTool/>}/>
+                        </Routes>
                     </HashTagToolProvider>
                 </Router>
             </div>

@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import {getEventHash, getSignature, nip19, SimplePool} from "nostr-tools";
 
 export const saveComment = (postId, comment) => {
+    console.log("Saving comment. ", comment)
     let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
     const pool = new SimplePool();
     const storedData = localStorage.getItem('memestr')
