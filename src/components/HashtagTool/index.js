@@ -52,7 +52,7 @@ export function HashTagToolProvider({ children }) {
             // ...
             const relayPool = new SimplePool();
             const filters = {
-                limit: 5,
+                limit: 15,
             };
 
             const relays = ["wss://relay.damus.io/",
@@ -94,7 +94,7 @@ export function HashTagToolProvider({ children }) {
 
             const relayPool = new SimplePool();
             const filters = {
-                limit: 20,
+                limit: 10,
             };
 
             const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
@@ -149,9 +149,9 @@ export function HashtagTool() {
                 onClick={() => {
                     LoadMoreMedia();
                 }}
-                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                className="ml-[32%] px-10 bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 border border-blue-500 hover:border-transparent rounded "
             >
-                Load More.
+                Load More
             </button>
         </>
     );
