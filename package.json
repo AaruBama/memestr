@@ -1,7 +1,7 @@
 {
   "name": "memestr",
   "version": "0.1.0",
-  "homepage": "https://aarubama.github.io/memestr/",
+  "homepage": "https://memestr.app",
   "private": true,
   "dependencies": {
     "@szhsin/react-menu": "^4.0.2",
