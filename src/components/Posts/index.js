@@ -177,7 +177,7 @@ function Posts(props) {
                         {title}
                     </div>
                     <div class="p-2 max-h-fit">
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${props.note.voteCount}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>
@@ -186,7 +186,8 @@ function Posts(props) {
                     <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white">
 
                         {/*Comments button*/}
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${props.note.voteCount}&OpPubKey=${props.note.pubkey}`}>
+
+                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <button variant="light" size={"lg"}>
                                 <svg class="h-8 w-8 flex align-items-center"
                                      xmlns="http://www.w3.org/2000/svg"
