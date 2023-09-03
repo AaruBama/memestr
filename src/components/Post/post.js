@@ -6,10 +6,10 @@ import { sendNewZaps, upvotePost } from "../Posts";
 import { SimplePool } from "nostr-tools";
 import Comments, { saveComment } from "../Comments";
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
-import {useHashTagContext} from "../HashtagTool";
+// import {useHashTagContext} from "../HashtagTool";
 
 function Post(props) {
-    const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
+    // const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
     let params = useParams();
     const [searchParams] = useSearchParams();
     const title = searchParams.get("title");
@@ -40,19 +40,20 @@ function Post(props) {
     }, [postId]);
 
     function captureNewComment(newComment) {
+        console.log("Inside the capture comment", newComment)
         // Update the notes state with the new comment
-        const updatedNotes = notes.map((note) => {
-            if (note.id === postId) {
-                // Check if the note matches the current post
-                const updatedNote = { ...note };
-                updatedNote.comments.push(newComment);
-                return updatedNote;
-            }
-            return note;
-        });
-
-        // Update the context's notes state
-        setNotes(updatedNotes);
+        // const updatedNotes = notes.map((note) => {
+        //     if (note.id === postId) {
+        //         // Check if the note matches the current post
+        //         const updatedNote = { ...note };
+        //         updatedNote.comments.push(newComment);
+        //         return updatedNote;
+        //     }
+        //     return note;
+        // });
+        //
+        // // Update the context's notes state
+        // setNotes(updatedNotes);
 
         // Clear the comment input field
         setComment("");
@@ -76,7 +77,7 @@ function Post(props) {
                 Zap
             </Button>{" "}
             <div className="commentBox">
-                <div>
+                <div class="mb-4 ml-1">
                     <form
                         onSubmit={() => {
                             captureNewComment(comment);
@@ -84,16 +85,16 @@ function Post(props) {
                     >
                         <input
                             type="text"
-                            placeholder="Add a comment"
+                            placeholder=" Add a reply..."
                             className={"comment-form"}
                             value={comment}
                             onChange={captureComment}
                             required
                         />
 
-                        <Button variant="secondary" type="submit">
+                        <button class="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded " variant="secondary" type="submit">
                             Submit
-                        </Button>
+                        </button>
                     </form>
                 </div>
             </div>
