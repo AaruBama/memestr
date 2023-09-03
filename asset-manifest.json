@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/memestr/static/css/main.ce22e3bb.css",
-    "main.js": "/memestr/static/js/main.8c7365ee.js",
-    "index.html": "/memestr/index.html"
+    "main.css": "/static/css/main.ce22e3bb.css",
+    "main.js": "/static/js/main.8c7365ee.js",
+    "index.html": "/index.html"
   },
   "entrypoints": [
     "static/css/main.ce22e3bb.css",
