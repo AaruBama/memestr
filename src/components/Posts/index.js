@@ -170,7 +170,7 @@ function Posts(props) {
     }
 
     return (
-            <div class="flex flex-col bg-black divide-y mt-2">
+            <div class="flex flex-col bg-black divide-y mt-2 overflow-hidden">
 
                 <div class="bg-gray-200 rounded-lg my-2 shadow-sm shadow-gray-400">
                     <div className="px-2 pt-2 text-black font-medium">
