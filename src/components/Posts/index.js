@@ -175,6 +175,7 @@ function Posts(props) {
                 <div class="bg-gray-200 rounded-lg my-2 shadow-sm shadow-gray-400">
                     <div className="px-2 pt-2 text-black font-medium">
                         {title}
+                        {/*{new Date(props.note.created_at).toString()}*/}
                     </div>
                     <div class="p-2 max-w-fit">
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>

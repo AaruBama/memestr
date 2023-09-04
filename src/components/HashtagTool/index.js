@@ -8,6 +8,7 @@ const HashTagContext = React.createContext();
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children }) {
     const [notes, setNotes] = useState([]);
+    const [lastCreatedAt, setLastCreatedAt] = useState();
 
     const [scrollPosition, setScrollPosition] = useState(0);
 
@@ -47,50 +48,58 @@ export function HashTagToolProvider({ children }) {
     }
 
     useEffect(() => {
-        const LoadMedia = async () => {
-            // Fetch notes and update the context state
-            // ...
-            const relayPool = new SimplePool();
-            const filters = {
-                limit: 15,
+            const LoadMedia = async () => {
+                // Fetch notes and update the context state
+                // ...
+                const relayPool = new SimplePool();
+                const filters = {
+                    limit: 15,
+                };
+
+                const relays = ["wss://relay.damus.io/",
+                    "wss://offchain.pub/",
+                    "wss://nos.lol/",
+                    "wss://relay.nostr.wirednet.jp/",
+                    "wss://nostr.wine/",
+                ];
+                // For Memes
+                filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+
+                // For both
+                // filters["#t"] = ["boobstr", "memestr"]
+
+                // For Studies
+                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+                filters["until"] = Date.now()
+                let notes = await relayPool.list(relays, [filters]);
+                notes = notes.filter((note) => {
+                    return containsJpgOrMp4Link(note.content)
+                })
+                // console.log("notes are ", notes)
+                // GET VOTES COMBINED
+                let createdAt = []
+                let postIds = []
+                notes.forEach(function (note) {
+                    var id = note.id;
+                    createdAt.push(note.created_at)
+                    postIds.push(id)
+                });
+                createdAt.sort(function (a, b) {
+                    return a - b
+                });
+
+                let groupedByPostId = await getVotes(postIds)
+                for (const note of notes) {
+                    note["voteCount"] = groupedByPostId[note.id] || 0;
+                }
+                setNotes(notes);
+                setLastCreatedAt(createdAt[0])
+                relayPool.close(relays)
             };
 
-            const relays = ["wss://relay.damus.io/",
-                "wss://offchain.pub/",
-                "wss://nos.lol/",
-                "wss://relay.nostr.wirednet.jp/",
-                "wss://nostr.wine/",
-            ];
-            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-            const currentTimeMillis = Date.now();
-            const twoHoursAgoMillis = currentTimeMillis - 2 * 60 * 60 * 1000;
-            const unixTimestampInSeconds = Math.floor(twoHoursAgoMillis / 1000);
-            filters["since"] = unixTimestampInSeconds
-            console.log(unixTimestampInSeconds);
-
-            let notes = await relayPool.list(relays, [filters]);
-            notes = notes.filter((note) => {
-                return containsJpgOrMp4Link(note.content)
-            })
-            // console.log("notes are ", notes)
-            // GET VOTES COMBINED
-            let postIds = []
-            notes.forEach(function (note) {
-                var id = note.id;
-                postIds.push(id)
-            });
-            // console.log("PostIds is ", postIds)
-            let groupedByPostId = await getVotes(postIds)
-            for (const note of notes) {
-                note["voteCount"] = groupedByPostId[note.id] || 0;
-            }
-            // console.log("Vote infused notes are", notes)
-            setNotes(notes);
-            relayPool.close(relays)
-        };
-
-        LoadMedia();
-    }, []);
+            LoadMedia();
+        },
+        []);
 
         const LoadMoreMedia = async (since) => {
             // Fetch more notes with offset and update the context state
@@ -102,9 +111,18 @@ export function HashTagToolProvider({ children }) {
             };
 
             const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
+
+            // For Memes
             filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-            let lastPostSince = (notes[notes.length - 1].created_at)
-            filters["until"] = lastPostSince + (5*60)
+
+            // For both
+            // filters["#t"] = ["boobstr", "memestr"]
+
+            // For Studies
+            // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+            // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
+            // let lastPostSince = (notes[notes.length - 1].created_at)
+            filters["until"] = lastCreatedAt - (5*60)
             // filters["since"] = lastPostSince + (60*60)
 
 
@@ -112,7 +130,21 @@ export function HashTagToolProvider({ children }) {
             newNotes = newNotes.filter((note) => {
                 return containsJpgOrMp4Link(note.content)
             })
+
+            let createdAt = []
+            let postIds = []
+            newNotes.forEach(function (note) {
+                var id = note.id;
+                createdAt.push(note.created_at)
+                postIds.push(id)
+            });
+            createdAt.sort(function(a, b){return a-b});
+            let groupedByPostId = await getVotes(postIds)
+            for (const note of newNotes) {
+                note["voteCount"] = groupedByPostId[note.id] || 0;
+            }
             setNotes(notes => [...notes, ...newNotes]);
+            setLastCreatedAt(createdAt[0])
             relayPool.close(relays)
             // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
         };
