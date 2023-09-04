@@ -62,7 +62,11 @@ export function HashTagToolProvider({ children }) {
                 "wss://nostr.wine/",
             ];
             filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-
+            const currentTimeMillis = Date.now();
+            const twoHoursAgoMillis = currentTimeMillis - 2 * 60 * 60 * 1000;
+            const unixTimestampInSeconds = Math.floor(twoHoursAgoMillis / 1000);
+            filters["since"] = unixTimestampInSeconds
+            console.log(unixTimestampInSeconds);
 
             let notes = await relayPool.list(relays, [filters]);
             notes = notes.filter((note) => {
@@ -100,7 +104,8 @@ export function HashTagToolProvider({ children }) {
             const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
             filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
             let lastPostSince = (notes[notes.length - 1].created_at)
-            filters["until"] = lastPostSince - 1000
+            filters["until"] = lastPostSince + (5*60)
+            // filters["since"] = lastPostSince + (60*60)
 
 
             let newNotes = await relayPool.list(relays, [filters]);
