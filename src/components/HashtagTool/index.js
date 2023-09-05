@@ -5,9 +5,17 @@ import Feed from "../Feed";
 // Create a context to manage shared state
 const HashTagContext = React.createContext();
 
+const relays = ["wss://relay.damus.io/",
+    "wss://offchain.pub/",
+    "wss://nos.lol/",
+    "wss://relay.nostr.wirednet.jp/",
+    "wss://nostr.wine/",
+];
+
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children }) {
     const [notes, setNotes] = useState([]);
+    const [lastCreatedAt, setLastCreatedAt] = useState();
 
     const [scrollPosition, setScrollPosition] = useState(0);
 
@@ -22,12 +30,6 @@ export function HashTagToolProvider({ children }) {
             "#e": postIds
         };
         const relayPool = new SimplePool();
-        const relays = ["wss://relay.damus.io/",
-            "wss://offchain.pub/",
-            "wss://nos.lol/",
-            "wss://relay.nostr.wirednet.jp/",
-            "wss://nostr.wine/",
-        ];
         let votes = await relayPool.list(relays, [voteFilters]);
         const groupedByPostId = {};
 
@@ -47,46 +49,51 @@ export function HashTagToolProvider({ children }) {
     }
 
     useEffect(() => {
-        const LoadMedia = async () => {
-            // Fetch notes and update the context state
-            // ...
-            const relayPool = new SimplePool();
-            const filters = {
-                limit: 5,
+            const LoadMedia = async () => {
+                // Fetch notes and update the context state
+                // ...
+                const relayPool = new SimplePool();
+                const filters = {
+                    limit: 10,
+                };
+
+                // For Memes
+                filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+
+                // For both
+                // filters["#t"] = ["boobstr", "memestr"]
+
+                // For Studies
+                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+                let notes = await relayPool.list(relays, [filters]);
+                notes = notes.filter((note) => {
+                    return containsJpgOrMp4Link(note.content)
+                })
+                // console.log("notes are ", notes)
+                // GET VOTES COMBINED
+                let createdAt = []
+                let postIds = []
+                notes.forEach(function (note) {
+                    var id = note.id;
+                    createdAt.push(note.created_at)
+                    postIds.push(id)
+                });
+                createdAt.sort(function (a, b) {
+                    return a - b
+                });
+
+                let groupedByPostId = await getVotes(postIds)
+                for (const note of notes) {
+                    note["voteCount"] = groupedByPostId[note.id] || 0;
+                }
+                setNotes(notes);
+                setLastCreatedAt(createdAt[0])
+                relayPool.close(relays)
             };
 
-            const relays = ["wss://relay.damus.io/",
-                "wss://offchain.pub/",
-                "wss://nos.lol/",
-                "wss://relay.nostr.wirednet.jp/",
-                "wss://nostr.wine/",
-            ];
-            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-
-
-            let notes = await relayPool.list(relays, [filters]);
-            notes = notes.filter((note) => {
-                return containsJpgOrMp4Link(note.content)
-            })
-            // console.log("notes are ", notes)
-            // GET VOTES COMBINED
-            let postIds = []
-            notes.forEach(function (note) {
-                var id = note.id;
-                postIds.push(id)
-            });
-            // console.log("PostIds is ", postIds)
-            let groupedByPostId = await getVotes(postIds)
-            for (const note of notes) {
-                note["voteCount"] = groupedByPostId[note.id] || 0;
-            }
-            // console.log("Vote infused notes are", notes)
-            setNotes(notes);
-            relayPool.close(relays)
-        };
-
-        LoadMedia();
-    }, []);
+            LoadMedia();
+        },
+        []);
 
         const LoadMoreMedia = async (since) => {
             // Fetch more notes with offset and update the context state
@@ -94,20 +101,44 @@ export function HashTagToolProvider({ children }) {
 
             const relayPool = new SimplePool();
             const filters = {
-                limit: 20,
+                limit: 10,
             };
 
             const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
+
+            // For Memes
             filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-            let lastPostSince = (notes[notes.length - 1].created_at)
-            filters["until"] = lastPostSince - 1000
+
+            // For both
+            // filters["#t"] = ["boobstr", "memestr"]
+
+            // For Studies
+            // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+            // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
+            // let lastPostSince = (notes[notes.length - 1].created_at)
+            filters["until"] = lastCreatedAt - (5*60)
+            // filters["since"] = lastPostSince + (60*60)
 
 
             let newNotes = await relayPool.list(relays, [filters]);
             newNotes = newNotes.filter((note) => {
                 return containsJpgOrMp4Link(note.content)
             })
+
+            let createdAt = []
+            let postIds = []
+            newNotes.forEach(function (note) {
+                var id = note.id;
+                createdAt.push(note.created_at)
+                postIds.push(id)
+            });
+            createdAt.sort(function(a, b){return a-b});
+            let groupedByPostId = await getVotes(postIds)
+            for (const note of newNotes) {
+                note["voteCount"] = groupedByPostId[note.id] || 0;
+            }
             setNotes(notes => [...notes, ...newNotes]);
+            setLastCreatedAt(createdAt[0])
             relayPool.close(relays)
             // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
         };
@@ -149,9 +180,9 @@ export function HashtagTool() {
                 onClick={() => {
                     LoadMoreMedia();
                 }}
-                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                className="ml-[32%] px-10 bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 border border-blue-500 hover:border-transparent rounded "
             >
-                Load More.
+                Load More
             </button>
         </>
     );

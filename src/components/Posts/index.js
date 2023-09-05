@@ -20,10 +20,10 @@ function extractLinksFromText(text) {
 
 const removeHashtagsAndLinks = (text) => {
     // Remove hashtags
-    const withoutHashtags = text.replace(/#\w+/g, '');
+    // const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
+    return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId, OpPubKey) {
@@ -104,9 +104,11 @@ function Posts(props) {
     const [votesCount, setVotesCount] = useState(0)
     const [fillLike, setFillLike] = useState(false)
     const [fillZap, setFillZap] = useState(false)
+    const [timeDifference, setTimeDifference] = useState({ unit: '', duration: 0 });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [processedValue, setProcessedValue] = useState(null);
+    let postCreatedAt = props.note.created_at
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -121,6 +123,35 @@ function Posts(props) {
         sendNewZaps(postId, opPubKey, value)
         setProcessedValue(value);
     };
+
+
+    useEffect(() => {
+        const currentTime = Math.floor(Date.now() / 1000); // Convert milliseconds to seconds
+        const secondsDifference = currentTime - postCreatedAt;
+        console.log("Seconds difference is ", secondsDifference)
+        let unit = ''
+        let duration = 0
+        if (secondsDifference < 60) {
+            unit = "seconds"
+            duration = secondsDifference
+        } else if (secondsDifference < 3600) {
+            unit = "minutes"
+            duration = Math.floor(secondsDifference / 60)
+        } else if (secondsDifference < 86400) {
+            unit = "hours"
+            duration = Math.floor(secondsDifference / 3600)
+        } else {
+            unit = "days"
+            duration = Math.floor(secondsDifference / 86400)
+        }
+        if ( duration === 1) {
+            unit = unit.slice(0,-1)
+        }
+        if (duration !== 0) {
+            setTimeDifference({unit: unit, duration: duration});
+        }
+
+    }, [postCreatedAt]);
 
     useEffect(() => {
         setVotesCount(props.note.voteCount)
@@ -170,26 +201,28 @@ function Posts(props) {
     }
 
     return (
-            <div class="flex flex-col bg-black divide-y mt-2 overflow-hidden">
+            <div class="flex flex-col bg-black divide-y mt-2 overflow-scroll">
 
-                <div class="bg-gray-200 rounded-lg my-2 shadow-sm shadow-gray-400">
-                    <div className="px-2 pt-2 text-black font-medium">
-                        {title}
-                    </div>
-                    <div class="p-2 max-h-fit">
+                <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
+                    <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
+                        <span class={"flex basis-[80%]"}>{title}</span>
+                        <span class="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">{timeDifference.duration} {timeDifference.unit} ago </span>
+                        {/*{new Date(props.note.created_at).toString()}*/}
+                    </span>
+                    <div class="py-2 px-1 max-w-fit">
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <img alt={""} src={imageLink}/>
                         </Link>
                     </div>
 
 
-                    <div class="pl-2 mt-2 pb-2 flex flex-row gap-x-3 justify-start bg-gray-200 border-b-4 border-white">
+                    <div class="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
 
                         {/*Comments button*/}
 
                         <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                             <button variant="light" size={"lg"}>
-                                <svg class="h-8 w-8 flex align-items-center"
+                                <svg class="h-8 w-8"
                                      xmlns="http://www.w3.org/2000/svg"
                                      x="0"
                                      y="0"
@@ -206,12 +239,12 @@ function Posts(props) {
                         </Link>
 
 
-                        <button className="flex justify-content-center"
+                        <button className="flex align-items-center"
                                 onClick={() => {
                                     handleZapButton();
                                 }
                                 }>
-                            <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } flex align-items-center h-8 w-8`}
+                            <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } h-8 w-8`}
                                 xmlns="http://www.w3.org/2000/svg"
                                 x="0"
                                 y="0"
@@ -231,7 +264,7 @@ function Posts(props) {
                             />
                         </button>
 
-                        <button className="flex justify-content-center pr-4"
+                        <button className="flex"
                                 onClick={() => {
                                     upvotePost(props.note.id,props.note.pubkey);
                                     voteIncrement();
@@ -253,6 +286,27 @@ function Posts(props) {
                                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                             </svg>{votesCount}
                         </button>
+
+
+                        {/*Share Button*/}
+                        {/*<button>*/}
+                        {/*    <svg*/}
+                        {/*        xmlns="http://www.w3.org/2000/svg"*/}
+                        {/*        x="0"*/}
+                        {/*        y="0"*/}
+                        {/*        fill="none"*/}
+                        {/*        stroke="currentColor"*/}
+                        {/*        strokeLinecap="round"*/}
+                        {/*        strokeLinejoin="round"*/}
+                        {/*        strokeWidth="2"*/}
+                        {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
+                        {/*        viewBox="0 0 24 30"*/}
+                        {/*    >*/}
+                        {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
+                        {/*        <path d="M17 16L21 12 17 8"></path>*/}
+                        {/*        <path d="M21 12L9 12"></path>*/}
+                        {/*    </svg>*/}
+                        {/*</button>*/}
 
                     </div>
                 </div>
