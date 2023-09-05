@@ -132,20 +132,17 @@ function Posts(props) {
         let unit = ''
         let duration = 0
         if (secondsDifference < 60) {
-            unit = "seconds"
+            unit = "s"
             duration = secondsDifference
         } else if (secondsDifference < 3600) {
-            unit = "minutes"
+            unit = "m"
             duration = Math.floor(secondsDifference / 60)
         } else if (secondsDifference < 86400) {
-            unit = "hours"
+            unit = "h"
             duration = Math.floor(secondsDifference / 3600)
         } else {
-            unit = "days"
+            unit = "d"
             duration = Math.floor(secondsDifference / 86400)
-        }
-        if ( duration === 1) {
-            unit = unit.slice(0,-1)
         }
         if (duration !== 0) {
             setTimeDifference({unit: unit, duration: duration});
@@ -205,8 +202,8 @@ function Posts(props) {
 
                 <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                     <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                        <span class={"flex basis-[80%]"}>{title}</span>
-                        <span class="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">{timeDifference.duration} {timeDifference.unit} ago </span>
+                        <span class={"flex basis-[90%]"}>{title}</span>
+                        <span class="flex basis-[20%] justify-end text-gray-500 text-sm pr-1">{timeDifference.duration}{timeDifference.unit}</span>
                         {/*{new Date(props.note.created_at).toString()}*/}
                     </span>
                     <div class="py-2 px-1 max-w-fit">
