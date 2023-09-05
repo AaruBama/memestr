@@ -38,21 +38,21 @@ export default function Header() {
                             <a class={"mb-2"} href="/">Home</a>
                         </section>
                         <span class={"px-4 pt-2"}>Categories</span>
-                        <section id="categories" className="flex flex-col items-start justify-between w-full px-4 border-b-4">
-                            <ul className="flex flex-col items-start justify-between px-4">
+                        {/*<section id="categories" className="flex flex-col items-start justify-between w-full px-4 border-b-4">*/}
+                        {/*    <ul className="flex flex-col items-start justify-between px-4">*/}
 
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/">Home</a>
-                                </li>
+                        {/*        <li className="border-b border-gray-400 my-2 uppercase">*/}
+                        {/*            <a href="/">Home</a>*/}
+                        {/*        </li>*/}
 
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/portfolio">Portfolio</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Contact</a>
-                                </li>
-                            </ul>
-                        </section>
+                        {/*        <li className="border-b border-gray-400 my-2 uppercase">*/}
+                        {/*            <a href="/portfolio">Portfolio</a>*/}
+                        {/*        </li>*/}
+                        {/*        <li className="border-b border-gray-400 my-2 uppercase">*/}
+                        {/*            <a href="/contact">Contact</a>*/}
+                        {/*        </li>*/}
+                        {/*    </ul>*/}
+                        {/*</section>*/}
 
                     </div>
                 </section>
