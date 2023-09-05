@@ -5,6 +5,13 @@ import Feed from "../Feed";
 // Create a context to manage shared state
 const HashTagContext = React.createContext();
 
+const relays = ["wss://relay.damus.io/",
+    "wss://offchain.pub/",
+    "wss://nos.lol/",
+    "wss://relay.nostr.wirednet.jp/",
+    "wss://nostr.wine/",
+];
+
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children }) {
     const [notes, setNotes] = useState([]);
@@ -23,12 +30,6 @@ export function HashTagToolProvider({ children }) {
             "#e": postIds
         };
         const relayPool = new SimplePool();
-        const relays = ["wss://relay.damus.io/",
-            "wss://offchain.pub/",
-            "wss://nos.lol/",
-            "wss://relay.nostr.wirednet.jp/",
-            "wss://nostr.wine/",
-        ];
         let votes = await relayPool.list(relays, [voteFilters]);
         const groupedByPostId = {};
 
@@ -53,15 +54,9 @@ export function HashTagToolProvider({ children }) {
                 // ...
                 const relayPool = new SimplePool();
                 const filters = {
-                    limit: 15,
+                    limit: 10,
                 };
 
-                const relays = ["wss://relay.damus.io/",
-                    "wss://offchain.pub/",
-                    "wss://nos.lol/",
-                    "wss://relay.nostr.wirednet.jp/",
-                    "wss://nostr.wine/",
-                ];
                 // For Memes
                 filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
 
@@ -70,7 +65,6 @@ export function HashTagToolProvider({ children }) {
 
                 // For Studies
                 // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-                filters["until"] = Date.now()
                 let notes = await relayPool.list(relays, [filters]);
                 notes = notes.filter((note) => {
                     return containsJpgOrMp4Link(note.content)

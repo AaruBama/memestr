@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import getUserDetailsFromPrivateKey from '../Profile';
 import './profile.css'
-import { getPublicKey, nip19 } from 'nostr-tools';
+import {getPublicKey, nip19} from 'nostr-tools';
+import Menu from "../Menu";
 
 function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
@@ -19,7 +20,7 @@ function Login(props) {
             setisLoggedIn(true);
             const display_name = userDetails.display_name
             const profile_picture = userDetails.picture
-            setLoggedInUser({ display_name, profile_picture });
+            setLoggedInUser({display_name, profile_picture});
         }
     };
 
@@ -37,7 +38,7 @@ function Login(props) {
             setisLoggedIn(true);
             const display_name = userDetails.display_name
             const profile_picture = userDetails.picture
-            setLoggedInUser({ display_name, profile_picture });
+            setLoggedInUser({display_name, profile_picture});
         } else {
             userDetails = getUserDetailsFromPrivateKey(privateKey)
         }
@@ -50,7 +51,7 @@ function Login(props) {
             value["privateKey"] = privateKey //Encrypt it.
             setShowLogin(false);
             setisLoggedIn(true);
-            setLoggedInUser({ display_name, profile_picture });
+            setLoggedInUser({display_name, profile_picture});
             localStorage.setItem('memestr', JSON.stringify(value));
         });
 
@@ -64,30 +65,48 @@ function Login(props) {
     }
 
     return (
-        <div class="relative flex flex-wrap bg-gray-200 pt-2 pb-1 text-neutral-500 shadow-lg mb-1 ">
-            <header>
+        <div class="relative flex-column bg-gray-100 text-neutral-500 shadow-lg rounded">
+            <header className={"flex flex-row items-center h-14"}>
+                <div class="pl-3 basis-[50%]">
+                    <Menu/>
+                </div>
                 {isLoggedIn ?
-                    <div class="flex w-full grow gap-3">
-                        <img className='profile1' src={loggedInUser.profile_picture} alt="Profile" />
-                        <div className='pt-2'><code>{loggedInUser.display_name}</code></div>
-                        <div className='flex w-full justify-end rounded bg-white px-3 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]'><button onClick={logoutUser}>Logout</button></div>
-                    </div>
-                    :
-                    <div className='flex self-end'>
-                        {/*<button onClick={handleLoginClick}>Login</button>*/}
+                    <div class="flex w-full grow gap-3 mr-2">
+                        <img className='profile1' src={loggedInUser.profile_picture} alt="Profile"/>
+                        <div className='pt-2 invisible'><code>{loggedInUser.display_name}</code></div>
+                        <div
+                            className='flex w-full justify-end rounded bg-white px-4 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca]'>
+                            <button onClick={logoutUser}>Logout</button>
+                        </div>
+                    </div> :
+                    <div class={"basis-[50%] flex justify-end pr-4"}>
                         <button
                             type="button"
                             data-te-ripple-init
                             data-te-ripple-color="light"
                             onClick={handleLoginClick}
-                            class="rounded bg-white px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]">
+                            class="rounded
+                                 bg-blue-500
+                                  px-6
+                                   pb-2
+                                    pt-2.5
+                                     text-xs
+                                      font-medium
+                                       uppercase
+                                        leading-normal
+                                         text-white
+                                          shadow-[0_4px_9px_-4px_#3b71ca]
+                                           transition
+                                            duration-150
+                                             ease-in-out
+                                              hover:bg-primary-600
+                                               hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)
+                                               ]">
                             Login
                         </button>
-                    </div>
-                }
+                    </div>}
             </header>
-            {showLogin && (
-                <div>
+            {showLogin && (<div>
                     <div className="popup-inner">
                         <form onSubmit={handleLoginSubmit}>
                             <label>
@@ -102,10 +121,9 @@ function Login(props) {
                             </label>
                             <button type="submit">Login</button>
                         </form>
-                    </div> </div>
-            )}
+                    </div>
+                </div>)}
 
-        </div>
-    )
+        </div>)
 }
 export default Login;
