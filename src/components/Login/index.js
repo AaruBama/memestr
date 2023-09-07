@@ -4,14 +4,31 @@ import './profile.css'
 import {getPublicKey, nip19, generatePrivateKey} from 'nostr-tools';
 import Menu from "../Menu";
 import NewKeysNavBar from "../LoginComponent";
+import DropdownComponent from "../LoginComponent/login-dropdown";
+
+export function generateNewKeys() {
+    const pk = generatePrivateKey()
+    const pubKey = getPublicKey(pk)
+    const epk = nip19.nsecEncode(pk)
+    const ePubKey = nip19.npubEncode(pubKey)
+    return [epk, ePubKey]
+}
+
+export function createNewAccount() {
+
+    const [ epk, epubkey ] = generateNewKeys();
+    console.log("kidda")
+    console.log("epk and ePk", epk, epubkey)
+
+    // setNewKeys({"epk": epk, "ePubKey": epubkey})
+    // setAccountCreateModal(true);
+}
 
 function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
     const [privateKey, setPrivateKey] = useState('');
     const [isLoggedIn, setisLoggedIn] = useState(false)
     const [loggedInUser, setLoggedInUser] = useState(null);
-    const [accountCreateModal, setAccountCreateModal] = useState(false);
-    const [newKeys, setNewKeys] = useState({});
 
 
     const handleLoginClick = () => {
@@ -68,21 +85,7 @@ function Login(props) {
         alert("Logged out successfully!")
     }
 
-    function createNewAccount() {
-        function generateNewKeys() {
-            const pk = generatePrivateKey()
-            const pubKey = getPublicKey(pk)
-            const epk = nip19.nsecEncode(pk)
-            const ePubKey = nip19.npubEncode(pubKey)
-            console.log("epk", epk)
-            console.log("ePubKey", ePubKey)
-            setNewKeys({"epk": epk, "ePubKey": ePubKey});
 
-        }
-
-        generateNewKeys();
-        setAccountCreateModal(true);
-    }
 
     return (
         <div class="relative flex-column bg-gray-100 text-neutral-500 shadow-lg rounded">
@@ -125,37 +128,8 @@ function Login(props) {
                             Login
                         </button>
 
+                        <button><DropdownComponent /></button>
 
-                        <button
-                            type="button"
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                            onClick={createNewAccount}
-                            className="rounded
-                                 bg-blue-500
-                                  px-6
-                                   pb-2
-                                    pt-2.5
-                                     text-xs
-                                      font-medium
-                                       uppercase
-                                        leading-normal
-                                         text-white
-                                          shadow-[0_4px_9px_-4px_#3b71ca]
-                                           transition
-                                            duration-150
-                                             ease-in-out
-                                              hover:bg-primary-600
-                                               hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)
-                                               ]">
-                            Create Account
-
-                            <NewKeysNavBar
-                                isOpen={accountCreateModal}
-                                keys={newKeys}
-
-                            />
-                        </button>
                     </div>}
             </header>
             {showLogin && (<div>

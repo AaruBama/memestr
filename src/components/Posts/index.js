@@ -128,7 +128,6 @@ function Posts(props) {
     useEffect(() => {
         const currentTime = Math.floor(Date.now() / 1000); // Convert milliseconds to seconds
         const secondsDifference = currentTime - postCreatedAt;
-        console.log("Seconds difference is ", secondsDifference)
         let unit = ''
         let duration = 0
         if (secondsDifference < 60) {
