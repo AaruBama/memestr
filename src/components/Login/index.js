@@ -3,7 +3,7 @@ import getUserDetailsFromPrivateKey from '../Profile';
 import './profile.css'
 import {getPublicKey, nip19, generatePrivateKey} from 'nostr-tools';
 import Menu from "../Menu";
-import NewKeysNavBar from "../LoginComponent";
+// import NewKeysNavBar from "../LoginComponent";
 import DropdownComponent from "../LoginComponent/login-dropdown";
 
 export function generateNewKeys() {
@@ -11,7 +11,7 @@ export function generateNewKeys() {
     const pubKey = getPublicKey(pk)
     const epk = nip19.nsecEncode(pk)
     const ePubKey = nip19.npubEncode(pubKey)
-    return [epk, ePubKey]
+    return {"epk": epk, "epubKey": ePubKey}
 }
 
 export function createNewAccount() {
