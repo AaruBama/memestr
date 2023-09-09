@@ -1,28 +1,28 @@
 import React, {useState} from 'react';
 import getUserDetailsFromPrivateKey from '../Profile';
 import './profile.css'
-import {getPublicKey, nip19} from 'nostr-tools';
+import {getPublicKey, nip19, generatePrivateKey} from 'nostr-tools';
 import Menu from "../Menu";
+// import NewKeysNavBar from "../LoginComponent";
+import DropdownComponent from "../LoginDropDownComponent/DropDownComponent";
+
+export function generateNewKeys() {
+    const pk = generatePrivateKey()
+
+    const pubKey = getPublicKey(pk)
+    const epk = nip19.nsecEncode(pk)
+    const ePubKey = nip19.npubEncode(pubKey)
+    console.log("epk, epubKey", epk, ePubKey)
+    console.log("pk, pubKey", pk, pubKey)
+    return {"epk": epk, "epubKey": ePubKey}
+}
+
 
 function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
     const [privateKey, setPrivateKey] = useState('');
     const [isLoggedIn, setisLoggedIn] = useState(false)
     const [loggedInUser, setLoggedInUser] = useState(null);
-
-    const handleLoginClick = () => {
-        const storedData = localStorage.getItem('memestr')
-        if (!storedData) {
-            setShowLogin(true);
-        } else {
-            const userDetails = JSON.parse(storedData);
-            setShowLogin(false);
-            setisLoggedIn(true);
-            const display_name = userDetails.display_name
-            const profile_picture = userDetails.picture
-            setLoggedInUser({display_name, profile_picture});
-        }
-    };
 
     const handlePrivateKeyChange = (event) => {
         setPrivateKey(event.target.value);
@@ -64,6 +64,8 @@ function Login(props) {
         alert("Logged out successfully!")
     }
 
+
+
     return (
         <div class="relative flex-column bg-gray-100 text-neutral-500 shadow-lg rounded">
             <header className={"flex flex-row items-center h-14"}>
@@ -80,30 +82,33 @@ function Login(props) {
                         </div>
                     </div> :
                     <div class={"basis-[50%] flex justify-end pr-4"}>
-                        <button
-                            type="button"
-                            data-te-ripple-init
-                            data-te-ripple-color="light"
-                            onClick={handleLoginClick}
-                            class="rounded
-                                 bg-blue-500
-                                  px-6
-                                   pb-2
-                                    pt-2.5
-                                     text-xs
-                                      font-medium
-                                       uppercase
-                                        leading-normal
-                                         text-white
-                                          shadow-[0_4px_9px_-4px_#3b71ca]
-                                           transition
-                                            duration-150
-                                             ease-in-out
-                                              hover:bg-primary-600
-                                               hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)
-                                               ]">
-                            Login
-                        </button>
+                        {/*<button*/}
+                        {/*    type="button"*/}
+                        {/*    data-te-ripple-init*/}
+                        {/*    data-te-ripple-color="light"*/}
+                        {/*    onClick={handleLoginClick}*/}
+                        {/*    class="rounded*/}
+                        {/*         bg-blue-500*/}
+                        {/*          px-6*/}
+                        {/*           pb-2*/}
+                        {/*            pt-2.5*/}
+                        {/*             text-xs*/}
+                        {/*              font-medium*/}
+                        {/*               uppercase*/}
+                        {/*                leading-normal*/}
+                        {/*                 text-white*/}
+                        {/*                  shadow-[0_4px_9px_-4px_#3b71ca]*/}
+                        {/*                   transition*/}
+                        {/*                    duration-150*/}
+                        {/*                     ease-in-out*/}
+                        {/*                      hover:bg-primary-600*/}
+                        {/*                       hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)*/}
+                        {/*                       ]">*/}
+                        {/*    Login*/}
+                        {/*</button>*/}
+
+                        <button><DropdownComponent /></button>
+
                     </div>}
             </header>
             {showLogin && (<div>

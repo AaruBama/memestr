@@ -23,13 +23,12 @@ async function getUserDetailsFromPrivateKey(skk) {
     "authors": [pubKey]
   };
   let profile = await relayPool.list(relays, [filters])
-  if (profile.length > 0) {
-    let content = profile[0].content
+  // profile = Promise.all(profile)
 
-    content = JSON.parse(content)
-    return content
-  }
+  let content = profile[0].content
+  content = JSON.parse(content)
   relayPool.close(relays);
+  return content
 }
 
 
