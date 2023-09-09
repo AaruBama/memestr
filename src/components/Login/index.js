@@ -1,9 +1,7 @@
-import React, {useState} from 'react';
-import getUserDetailsFromPrivateKey from '../Profile';
+import React from 'react';
 import './profile.css'
 import {getPublicKey, nip19, generatePrivateKey} from 'nostr-tools';
 import Menu from "../Menu";
-// import NewKeysNavBar from "../LoginComponent";
 import DropdownComponent from "../LoginDropDownComponent/DropDownComponent";
 
 export function generateNewKeys() {

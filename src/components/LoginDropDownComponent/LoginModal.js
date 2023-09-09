@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import {Dialog, Transition} from "@headlessui/react";
 import getUserDetailsFromPrivateKey from "../Profile";
 import {getPublicKey, nip19} from "nostr-tools";
@@ -20,11 +20,8 @@ function LoginModal({ isOpen, onClose}) {
             const profile_picture = userDetails.picture
             setLoggedInUserDetails({"display_name": display_name, "picture": profile_picture,"name": name});
         } else {
-            console.log('Fetching login Details')
             userDetails = getUserDetailsFromPrivateKey(privateKey)
-            console.log('Fetched user Details', userDetails)
             userDetails.then((value) => {
-                console.log("value is ", value)
                 const display_name = value.display_name
                 const profile_picture = value.picture
                 const name = value.name
@@ -34,11 +31,17 @@ function LoginModal({ isOpen, onClose}) {
                 value["pubKey"] = publicKey
                 value["privateKey"] = privateKey //Encrypt it.
                 localStorage.setItem('memestr', JSON.stringify(value));
-                onClose(loggedInUserDetails)
+                console.log("Calling on close method.", loggedInUserDetails)
             })
         }
 
     }
+
+    useEffect(() => {
+        if(Object.keys(loggedInUserDetails).length !== 0) {
+            onClose(loggedInUserDetails)
+        }
+    }, [onClose, loggedInUserDetails]);
 
     return (
         <Transition.Root show={isOpen} as={Fragment}>
@@ -73,6 +76,7 @@ function LoginModal({ isOpen, onClose}) {
                                             <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900 pb-6">
                                                 Login
                                             </Dialog.Title>
+
 
                                             <Dialog.Description>
                                                 <div class="mb-4">
@@ -111,7 +115,5 @@ function LoginModal({ isOpen, onClose}) {
         </Transition.Root>
     )
 }
-
-// NewKeysNavBar.propTypes = {isOpen: PropTypes.bool};
 
 export default LoginModal;
