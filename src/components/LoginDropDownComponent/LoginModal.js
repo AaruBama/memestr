@@ -20,8 +20,11 @@ function LoginModal({ isOpen, onClose}) {
             const profile_picture = userDetails.picture
             setLoggedInUserDetails({"display_name": display_name, "picture": profile_picture,"name": name});
         } else {
+            console.log('Fetching login Details')
             userDetails = getUserDetailsFromPrivateKey(privateKey)
+            console.log('Fetched user Details', userDetails)
             userDetails.then((value) => {
+                console.log("value is ", value)
                 const display_name = value.display_name
                 const profile_picture = value.picture
                 const name = value.name
@@ -31,6 +34,7 @@ function LoginModal({ isOpen, onClose}) {
                 value["pubKey"] = publicKey
                 value["privateKey"] = privateKey //Encrypt it.
                 localStorage.setItem('memestr', JSON.stringify(value));
+                onClose(loggedInUserDetails)
             })
         }
 
@@ -91,7 +95,7 @@ function LoginModal({ isOpen, onClose}) {
                                         className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                         onClick={() => {
                                             logUserIn();
-                                            onClose(loggedInUserDetails);}
+                                            }
                                     }
                                     >
                                         Login
