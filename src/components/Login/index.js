@@ -8,9 +8,12 @@ import DropdownComponent from "../LoginComponent/login-dropdown";
 
 export function generateNewKeys() {
     const pk = generatePrivateKey()
+
     const pubKey = getPublicKey(pk)
     const epk = nip19.nsecEncode(pk)
     const ePubKey = nip19.npubEncode(pubKey)
+    console.log("epk, epubKey", epk, ePubKey)
+    console.log("pk, pubKey", pk, pubKey)
     return {"epk": epk, "epubKey": ePubKey}
 }
 

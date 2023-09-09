@@ -1,42 +1,7 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment} from "react";
 import {Dialog, Transition} from "@headlessui/react";
-import {createNewAccount, generateNewKeys} from "../Login";
-import {getEventHash, getSignature, nip19, SimplePool} from "nostr-tools";
 
-
-function createAccount(pk, sk, username, about) {
-    console.log("sk, pk is ",sk,pk)
-    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
-    const pool = new SimplePool();
-    sk = nip19.decode(sk)
-    pk = nip19.decode(pk)
-    console.log("sk, pk is ",sk,pk)
-    let UserRegistrationEvent = {
-        kind: 0,
-        pubkey: pk,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [["p", pk]],
-        content: "User Registrations",
-    }
-
-    UserRegistrationEvent.id = getEventHash(UserRegistrationEvent)
-    UserRegistrationEvent.sig = getSignature(UserRegistrationEvent, sk.data)
-    let xx = pool.publish(relays, UserRegistrationEvent)
-    console.log("xx is ", xx)
-
-    pool.close(relays);
-}
-
-function RegistrationModal({ isOpen, onClose }) {
-    var x, pk, sk;
-    if (isOpen) {
-        x = generateNewKeys()
-        pk = x["epk"]
-        sk = x["epubKey"]
-    }
-
-    const [username, setUsername] = useState('')
-    const [about, setAbout] = useState('')
+function RegistrationModal({ isOpen, onClose, sk, pk }) {
 
     function copyKey(value) {
         console.log("Copying value")
@@ -48,9 +13,6 @@ function RegistrationModal({ isOpen, onClose }) {
         document.body.removeChild(textarea);
     }
 
-    function handleUsernameChange(event) {
-        setUsername(event.target.value)
-    }
 
     return (
         <Transition.Root show={isOpen} as={Fragment}>

@@ -1,15 +1,21 @@
 import React, {useState} from "react";
 import {Menu, Transition} from "@headlessui/react";
-import RegistrationModal from "./index";
+import RegistrationModal from "./NewKeysModal";
+import UserDetailsForAccountCreationModal from "./UserDetailsForAccountCreationModal";
+import {generateNewKeys} from "../Login";
 
 
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
-    const [username, setNewUsername] = useState('');
+    const [sk, setSk] = useState('');
+    const [pk, setPk] = useState('');
 
     const openModal = () => {
         setNewKeysModal(true);
+        let x = generateNewKeys()
+        setSk(x["epk"])
+        setPk(x["epubKey"])
     }
     const openUserDetailsModal = () => {
         setNewUserDetailsModal(true);
@@ -23,7 +29,6 @@ function DropdownComponent() {
     const closeUserDetailModal = () => {
         setNewUserDetailsModal(false);
     }
-
 
 
     return (
@@ -59,8 +64,8 @@ function DropdownComponent() {
 
             </Transition>
         </Menu>
-        <RegistrationModal isOpen={newKeysModal} onClose={closeModal}/>
-        <RegistrationModal isOpen={newUserDetailsModal} onClose={closeUserDetailModal}/>
+        <RegistrationModal isOpen={newKeysModal} onClose={closeModal} sk={sk} pk={pk}/>
+        <UserDetailsForAccountCreationModal isOpen={newUserDetailsModal} onClose={closeUserDetailModal} sk={sk} pk={pk}/>
 </div>
 
     );

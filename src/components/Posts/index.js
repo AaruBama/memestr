@@ -1,4 +1,4 @@
-import {getEventHash, getPublicKey, getSignature, nip19, SimplePool} from 'nostr-tools'
+import {getEventHash, getSignature, nip19, SimplePool} from 'nostr-tools'
 import {fetchInvoice, getProfileMetadata, getZapEndpoint,} from "../ZapHelper";
 import {Link} from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
@@ -32,21 +32,24 @@ export async function upvotePost(noteId, OpPubKey) {
         alert("Login required to upvote.")
         return
     }
+    let uesrPublicKey = JSON.parse(storedData).pubKey
+    let userPrivateKey = JSON.parse(storedData).privateKey
+    let sk = nip19.decode(userPrivateKey)
+
     const pool = new SimplePool()
     let relays = ['wss://relay.damus.io', 'wss://relay.primal.net']
-    let privateKey = "nsec1mf54zukt27mr9ry5pv853qa470280scua4sqvfs3ftnxuayks8dqr3q9z2"
-    let sk = nip19.decode(privateKey)
-    let publicKey = getPublicKey(sk.data) // `pk` is a hex string
+
     let upvoteEvent = {
         kind: 7,
-        pubkey: publicKey,
+        pubkey: uesrPublicKey,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [["e", noteId], ["p", OpPubKey]],
+        tags: [["e", noteId], ["p", uesrPublicKey]],
         content: '+'
     }
     upvoteEvent.id = getEventHash(upvoteEvent)
     upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-    pool.publish(relays, upvoteEvent)
+    let c=pool.publish(relays, upvoteEvent)
+    console.log("c is ",c)
     if (pool) {
         pool.close(relays);
         return true
