@@ -1,7 +1,7 @@
 import "./App.css";
 import { HashTagToolProvider} from "./components/HashtagTool";
 import PostViewTool from "./components/Post/post.js"
-import Login from "./components/Login";
+import HeaderBar from "./components/Login";
 import React from "react";
 import {
     HashRouter as Router,
@@ -18,7 +18,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Login/>
+                <HeaderBar/>
                 <Router>
                     <HashTagToolProvider>
                         <Routes>
