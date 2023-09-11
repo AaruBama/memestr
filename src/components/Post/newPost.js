@@ -21,19 +21,8 @@ const PostUpload = () => {
 
             // Step 3: Make a curl call
             const response = await uploadToImgur(file);
-            console.log("24, response is", response)
+            console.log("24, response is", response.data.link)
 
-            // Step 4: Parse the JSON response
-            // const jsonResponse = JSON.parse(response);
-            const jsonResponse = response.data;
-            console.log("28, response is", jsonResponse.data)
-
-            // Step 5: Return the JSON on success
-            if (jsonResponse.data) {
-                console.log('Upload successful:', jsonResponse);
-            } else {
-                console.error('Upload failed:', jsonResponse);
-            }
         } catch (error) {
             console.error('An error occurred:', error);
         }
@@ -93,11 +82,12 @@ const PostUpload = () => {
 
         });
 
+        const parsedjson = await response.json()
 
         if (!response.ok) {
             throw new Error('Upload failed');
         }
-        return response.json()
+        return parsedjson
     };
 
     return (
