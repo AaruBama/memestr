@@ -183,6 +183,10 @@ export function HashtagTool() {
         setNewPostModal(true)
     }
 
+    function closePostModal() {
+        setNewPostModal(false)
+    }
+
     return (
         <>
             {/*<NewPostButton />*/}
@@ -201,7 +205,7 @@ export function HashtagTool() {
                     title="Upload"
                     className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">➕
             </button>
-            {newPostModal && <PostUpload />}
+            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal} />}
         </>
     );
 }
