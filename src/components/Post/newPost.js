@@ -30,11 +30,11 @@ const PostUpload = ({ isOpen, onClose}) => {
 
 
     const sendNewPostEvent = () => {
-        const uploaded = checkFileUploaded(retryCount)
-        if (!uploaded){
-            alert("sww");
-            return;
-        }
+        // const uploaded = checkFileUploaded(retryCount)
+        // if (!uploaded){
+        //     alert("sww");
+        //     return;
+        // }
         if (postStage === 0 || title === '') {
             alert("Can not create post without media and title.")
             return;
