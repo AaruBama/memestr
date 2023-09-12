@@ -56,12 +56,12 @@ export function HashTagToolProvider({children}) {
                 // ...
                 const relayPool = new SimplePool();
                 const filters = {
-                    limit: 1,
+                    limit: 20,
                 };
 
                 // For Memes
-                // filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-                filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
+                filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+                // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
 
                 // For both
                 // filters["#t"] = ["boobstr", "memestr"]
@@ -110,14 +110,14 @@ export function HashTagToolProvider({children}) {
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
 
         // For Memes
-        // filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+        filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
 
         // For both
         // filters["#t"] = ["boobstr", "memestr"]
 
         // For Studies
         // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-        filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
+        // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
         // let lastPostSince = (notes[notes.length - 1].created_at)
         filters["until"] = lastCreatedAt - (5 * 60)
         // filters["since"] = lastPostSince + (60*60)
