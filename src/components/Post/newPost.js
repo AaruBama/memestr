@@ -8,25 +8,25 @@ const PostUpload = ({ isOpen, onClose}) => {
     const [retryCount, setRetryCount] = useState(0);
     const [postStage, setPostStage] = useState(0)
 
-    function checkFileUploaded(retryCount) {
-        console.log("running checkFileUploaded", retryCount)
-        if (retryCount >= 5) {
-            console.error('Upload failed after 5 retries. Please try later.');
-            alert('Upload failed after 5 retries. Please try later.');
-            return false;
-        }
-
-        if (postStage === 2) {
-            // Execute your function when postStage is 3
-            console.log('Post submitted successfully.');
-            return true
-            // Add your logic here
-        } else {
-            setTimeout(() => {
-                checkFileUploaded(retryCount + 1);
-            }, 1000);
-        }
-    };
+    // function checkFileUploaded(retryCount) {
+    //     console.log("running checkFileUploaded", retryCount)
+    //     if (retryCount >= 5) {
+    //         console.error('Upload failed after 5 retries. Please try later.');
+    //         alert('Upload failed after 5 retries. Please try later.');
+    //         return false;
+    //     }
+    //
+    //     if (postStage === 2) {
+    //         // Execute your function when postStage is 3
+    //         console.log('Post submitted successfully.');
+    //         return true
+    //         // Add your logic here
+    //     } else {
+    //         setTimeout(() => {
+    //             checkFileUploaded(retryCount + 1);
+    //         }, 1000);
+    //     }
+    // };
 
 
     const sendNewPostEvent = () => {
