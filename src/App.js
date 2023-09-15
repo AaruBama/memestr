@@ -9,8 +9,9 @@ import {
     Route
 } from "react-router-dom";
 
-import HashtagTool from "./components/HashtagTool";
+// import HashtagTool from "./components/HashtagTool";
 import ReactGA from "react-ga4";
+import TabsRender from "./components/Tabs";
 
 ReactGA.initialize('G-K500PHWCNK');
 
@@ -23,11 +24,14 @@ const App = () => {
 
         return (
             <div>
+
                 <HeaderBar/>
+
                 <Router>
                     <HashTagToolProvider>
                         <Routes>
-                            <Route exact path="/" element={<HashtagTool />}/>
+                            {/*<Route exact path="/" element={<HashtagTool />}/>*/}
+                            <Route exact path="/" element={<TabsRender />}/>
                             <Route path="/post/:postId" element={<PostViewTool/>}/>
                         </Routes>
                     </HashTagToolProvider>

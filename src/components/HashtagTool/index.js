@@ -15,11 +15,11 @@ const relays = ["wss://relay.damus.io/",
 ];
 
 // Create a provider component to wrap your application
-export function HashTagToolProvider({children}) {
+export function HashTagToolProvider({children, feedType}) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
-
     const [scrollPosition, setScrollPosition] = useState(0);
+
 
     const containsJpgOrMp4Link = (text) => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
@@ -52,23 +52,19 @@ export function HashTagToolProvider({children}) {
 
     useEffect(() => {
             const LoadMedia = async () => {
-                // Fetch notes and update the context state
-                // ...
                 const relayPool = new SimplePool();
                 const filters = {
                     limit: 20,
                 };
+                let notes = []
+                if (feedType == 'trending') {
+                    filters["#t"] = ['nsfw', 'titstr','boobstr','ass'];
+                    notes = await relayPool.list(relays, [filters]);
+                } else {
+                    filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+                    notes = await relayPool.list(relays, [filters]);
+                }
 
-                // For Memes
-                filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-                // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
-
-                // For both
-                // filters["#t"] = ["boobstr", "memestr"]
-
-                // For Studies
-                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-                let notes = await relayPool.list(relays, [filters]);
                 notes = notes.filter((note) => {
                     return containsJpgOrMp4Link(note.content)
                 })
@@ -98,7 +94,7 @@ export function HashTagToolProvider({children}) {
         },
         []);
 
-    const LoadMoreMedia = async (since) => {
+    const LoadMoreMedia = async (feedType) => {
         // Fetch more notes with offset and update the context state
         // ...
 
@@ -106,24 +102,19 @@ export function HashTagToolProvider({children}) {
         const filters = {
             limit: 10,
         };
+        filters["until"] = lastCreatedAt - (5 * 60)
 
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
 
-        // For Memes
-        filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+        let newNotes = []
+        if (feedType == 'trending') {
+            filters["#t"] = ['ass', 'boobs', 'boobstr', 'nsfw'];
+            newNotes = await relayPool.list(relays, [filters]);
 
-        // For both
-        // filters["#t"] = ["boobstr", "memestr"]
-
-        // For Studies
-        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-        // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
-        // let lastPostSince = (notes[notes.length - 1].created_at)
-        filters["until"] = lastCreatedAt - (5 * 60)
-        // filters["since"] = lastPostSince + (60*60)
-
-
-        let newNotes = await relayPool.list(relays, [filters]);
+        } else {
+            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+            newNotes = await relayPool.list(relays, [filters]);
+        }
         newNotes = newNotes.filter((note) => {
             return containsJpgOrMp4Link(note.content)
         })
@@ -156,6 +147,7 @@ export function HashTagToolProvider({children}) {
         scrollPosition,
         setScrollPosition,
         LoadMoreMedia,
+        feedType
     };
 
     return (
@@ -176,7 +168,7 @@ export function useHashTagContext() {
 
 // The HashtagTool component
 export function HashtagTool() {
-    const {notes, LoadMoreMedia} = useHashTagContext();
+    const {notes, LoadMoreMedia, feedType} = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false)
 
     function showNewPostModal() {
@@ -193,7 +185,7 @@ export function HashtagTool() {
             <Feed notes={notes}/>
             <button
                 onClick={() => {
-                    LoadMoreMedia();
+                    LoadMoreMedia(feedType);
                 }}
                 className="ml-[32%] px-10 bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 border border-blue-500 hover:border-transparent rounded "
             >
