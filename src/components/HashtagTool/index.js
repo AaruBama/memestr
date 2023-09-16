@@ -57,8 +57,8 @@ export function HashTagToolProvider({children, feedType}) {
                     limit: 20,
                 };
                 let notes = []
-                if (feedType == 'trending') {
-                    filters["#t"] = ['nsfw', 'titstr','boobstr','ass'];
+                if (feedType === 'trending') {
+                    filters["#t"] = ['nsfw', 'titstr', 'boobstr', 'ass'];
                     notes = await relayPool.list(relays, [filters]);
                 } else {
                     filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
@@ -92,7 +92,7 @@ export function HashTagToolProvider({children, feedType}) {
 
             LoadMedia();
         },
-        []);
+        [feedType]);
 
     const LoadMoreMedia = async (feedType) => {
         // Fetch more notes with offset and update the context state
@@ -107,7 +107,7 @@ export function HashTagToolProvider({children, feedType}) {
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
 
         let newNotes = []
-        if (feedType == 'trending') {
+        if (feedType === 'trending') {
             filters["#t"] = ['ass', 'boobs', 'boobstr', 'nsfw'];
             newNotes = await relayPool.list(relays, [filters]);
 
@@ -197,7 +197,7 @@ export function HashtagTool() {
                     title="Upload"
                     className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">➕
             </button>
-            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal} />}
+            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal}/>}
         </>
     );
 }
