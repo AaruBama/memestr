@@ -20,10 +20,10 @@ function extractLinksFromText(text) {
 
 const removeHashtagsAndLinks = (text) => {
     // Remove hashtags
-    // const withoutHashtags = text.replace(/#\w+/g, '');
+    const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return text.replace(/(https?:\/\/[^\s]+)/g, '');
+    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId, OpPubKey) {

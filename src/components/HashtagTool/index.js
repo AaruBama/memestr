@@ -13,7 +13,8 @@ const relays = ["wss://relay.damus.io/",
 ];
 
 // Create a provider component to wrap your application
-export function HashTagToolProvider({ children }) {
+export function HashTagToolProvider({ children, filterTags }) {
+    console.log("Running hashtagToolProvider", filterTags)
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
 
@@ -58,8 +59,11 @@ export function HashTagToolProvider({ children }) {
                 };
 
                 // For Memes
-                filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-
+                if (filterTags) {
+                    filters["#t"] = filterTags
+                } else {
+                    filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+                }
                 // For both
                 // filters["#t"] = ["boobstr", "memestr"]
 
@@ -93,7 +97,7 @@ export function HashTagToolProvider({ children }) {
 
             LoadMedia();
         },
-        []);
+        [filterTags]);
 
         const LoadMoreMedia = async (since) => {
             // Fetch more notes with offset and update the context state

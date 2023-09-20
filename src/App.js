@@ -10,26 +10,31 @@ import {
 } from "react-router-dom";
 
 import HashtagTool from "./components/HashtagTool";
+import CategorizedFeed from "./components/CategoryView/CategorizedFeed";
 
-class App extends React.Component {
-    shouldComponentUpdate() {
-        return false;
-    }
-    render() {
+function App(){
+    const pageFilters = {
+        "/": null, // Default filters (null or any other default filters you want to use)
+        "/nsfw": ["tits", "boobs", "ass"],
+    };
+
+
         return (
             <div>
-                <HeaderBar/>
+
                 <Router>
+                    <HeaderBar/>
                     <HashTagToolProvider>
                         <Routes>
                             <Route exact path="/" element={<HashtagTool />}/>
                             <Route path="/post/:postId" element={<PostViewTool/>}/>
+                            <Route exact path="/nsfw" element={<CategorizedFeed filters={pageFilters["/nsfw"]}/>}/>
                         </Routes>
                     </HashTagToolProvider>
                 </Router>
             </div>
         );
     }
-}
+
 
 export default App;
