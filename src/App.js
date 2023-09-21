@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 import HashtagTool from "./components/HashtagTool";
-import CategorizedFeed from "./components/CategoryView/CategorizedFeed";
+import CategorizedFeed, {NFSWProvider} from "./components/CategoryView/CategorizedFeed";
 
 function App(){
     const pageFilters = {
@@ -28,9 +28,13 @@ function App(){
                         <Routes>
                             <Route exact path="/" element={<HashtagTool />}/>
                             <Route path="/post/:postId" element={<PostViewTool/>}/>
-                            <Route exact path="/nsfw" element={<CategorizedFeed filters={pageFilters["/nsfw"]}/>}/>
                         </Routes>
                     </HashTagToolProvider>
+                    <NFSWProvider filterTags={pageFilters["/nsfw"]}>
+                        <Routes>
+                            <Route exact path="/nsfw" element={<CategorizedFeed />}/>
+                        </Routes>
+                    </NFSWProvider>
                 </Router>
             </div>
         );
