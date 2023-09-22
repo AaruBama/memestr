@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useContext } from "react";
-import { SimplePool } from "nostr-tools";
+import React, {useContext, useEffect, useState} from "react";
+import {SimplePool} from "nostr-tools";
 import Feed from "../Feed";
+import PostUpload from "../Post/newPost";
+// import NewPostButton from "../Post/newPost";
 
 // Create a context to manage shared state
 const HashTagContext = React.createContext();
@@ -13,7 +15,7 @@ const relays = ["wss://relay.damus.io/",
 ];
 
 // Create a provider component to wrap your application
-export function HashTagToolProvider({ children }) {
+export function HashTagToolProvider({children}) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
 
@@ -54,11 +56,12 @@ export function HashTagToolProvider({ children }) {
                 // ...
                 const relayPool = new SimplePool();
                 const filters = {
-                    limit: 10,
+                    limit: 20,
                 };
 
                 // For Memes
                 filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+                // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
 
                 // For both
                 // filters["#t"] = ["boobstr", "memestr"]
@@ -95,54 +98,56 @@ export function HashTagToolProvider({ children }) {
         },
         []);
 
-        const LoadMoreMedia = async (since) => {
-            // Fetch more notes with offset and update the context state
-            // ...
+    const LoadMoreMedia = async (since) => {
+        // Fetch more notes with offset and update the context state
+        // ...
 
-            const relayPool = new SimplePool();
-            const filters = {
-                limit: 10,
-            };
-
-            const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
-
-            // For Memes
-            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-
-            // For both
-            // filters["#t"] = ["boobstr", "memestr"]
-
-            // For Studies
-            // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-            // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
-            // let lastPostSince = (notes[notes.length - 1].created_at)
-            filters["until"] = lastCreatedAt - (5*60)
-            // filters["since"] = lastPostSince + (60*60)
-
-
-            let newNotes = await relayPool.list(relays, [filters]);
-            newNotes = newNotes.filter((note) => {
-                return containsJpgOrMp4Link(note.content)
-            })
-
-            let createdAt = []
-            let postIds = []
-            newNotes.forEach(function (note) {
-                var id = note.id;
-                createdAt.push(note.created_at)
-                postIds.push(id)
-            });
-            createdAt.sort(function(a, b){return a-b});
-            let groupedByPostId = await getVotes(postIds)
-            for (const note of newNotes) {
-                note["voteCount"] = groupedByPostId[note.id] || 0;
-            }
-            setNotes(notes => [...notes, ...newNotes]);
-            setLastCreatedAt(createdAt[0])
-            relayPool.close(relays)
-            // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
+        const relayPool = new SimplePool();
+        const filters = {
+            limit: 10,
         };
+
+        const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
+
+        // For Memes
+        filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+
+        // For both
+        // filters["#t"] = ["boobstr", "memestr"]
+
+        // For Studies
+        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+        // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
+        // let lastPostSince = (notes[notes.length - 1].created_at)
+        filters["until"] = lastCreatedAt - (5 * 60)
+        // filters["since"] = lastPostSince + (60*60)
+
+
+        let newNotes = await relayPool.list(relays, [filters]);
+        newNotes = newNotes.filter((note) => {
+            return containsJpgOrMp4Link(note.content)
+        })
+
+        let createdAt = []
+        let postIds = []
+        newNotes.forEach(function (note) {
+            var id = note.id;
+            createdAt.push(note.created_at)
+            postIds.push(id)
+        });
+        createdAt.sort(function (a, b) {
+            return a - b
+        });
+        let groupedByPostId = await getVotes(postIds)
+        for (const note of newNotes) {
+            note["voteCount"] = groupedByPostId[note.id] || 0;
+        }
+        setNotes(notes => [...notes, ...newNotes]);
+        setLastCreatedAt(createdAt[0])
+        relayPool.close(relays)
         // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
+    };
+    // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
 
 
     // Store the context value
@@ -171,11 +176,21 @@ export function useHashTagContext() {
 
 // The HashtagTool component
 export function HashtagTool() {
-    const { notes, LoadMoreMedia } = useHashTagContext();
+    const {notes, LoadMoreMedia} = useHashTagContext();
+    const [newPostModal, setNewPostModal] = useState(false)
+
+    function showNewPostModal() {
+        setNewPostModal(true)
+    }
+
+    function closePostModal() {
+        setNewPostModal(false)
+    }
 
     return (
         <>
-            <Feed notes={notes} />
+            {/*<NewPostButton />*/}
+            <Feed notes={notes}/>
             <button
                 onClick={() => {
                     LoadMoreMedia();
@@ -184,6 +199,13 @@ export function HashtagTool() {
             >
                 Load More
             </button>
+            <button onClick={() => {
+                showNewPostModal();
+            }}
+                    title="Upload"
+                    className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">➕
+            </button>
+            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal} />}
         </>
     );
 }
