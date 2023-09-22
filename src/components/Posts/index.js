@@ -26,7 +26,7 @@ const removeHashtagsAndLinks = (text) => {
     return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
-export async function upvotePost(noteId, OpPubKey) {
+export async function upvotePost(noteId) {
     const storedData = localStorage.getItem('memestr')
     if (!storedData) {
         alert("Login required to upvote.")
