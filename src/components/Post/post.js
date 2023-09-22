@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./post.css";
 import Button from "react-bootstrap/Button";
 import { sendNewZaps, upvotePost } from "../Posts";
-import { SimplePool } from "nostr-tools";
+import {getEventHash, getSignature, nip19, SimplePool} from "nostr-tools";
 import Comments, { saveComment } from "../Comments";
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -27,39 +27,58 @@ function Post(props) {
     useEffect(() => {
         const getComments = async (event) => {
             const relayPool = new SimplePool();
-            const relays = ["wss://relay.damus.io", "wss://relay.primal.net"];
+            const relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"];
             const filters = {
                 kinds: [1],
                 "#e": [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
+            console.log("replies1 is", replies1)
             setReplies(replies1);
             relayPool.close(relays);
         };
         getComments();
     }, [postId]);
 
-    function captureNewComment(newComment) {
-        console.log("Inside the capture comment", newComment)
-        // Update the notes state with the new comment
-        // const updatedNotes = notes.map((note) => {
-        //     if (note.id === postId) {
-        //         // Check if the note matches the current post
-        //         const updatedNote = { ...note };
-        //         updatedNote.comments.push(newComment);
-        //         return updatedNote;
-        //     }
-        //     return note;
-        // });
-        //
-        // // Update the context's notes state
-        // setNotes(updatedNotes);
+    const captureNewComment = async (comment) => {
+        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol"]
+        const pool = new SimplePool();
+        const storedData = localStorage.getItem('memestr')
+        if (!storedData) {
+            alert("Login required to comment.")
+            return
+        }
+        let uesrPublicKey = JSON.parse(storedData).pubKey
+        let userPrivateKey = JSON.parse(storedData).privateKey
+        let sk = nip19.decode(userPrivateKey)
+        let commentEvent = {
+            kind: 1,
+            pubkey: uesrPublicKey,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [["e", postId], ["p", uesrPublicKey], ["alt", "reply"]],
+            content: comment,
+        }
 
-        // Clear the comment input field
-        setComment("");
-
-        // Save the comment
-        saveComment(postId, newComment);
+        commentEvent.id = getEventHash(commentEvent)
+        commentEvent.sig = getSignature(commentEvent, sk.data)
+        console.log("CommenteventId is ", commentEvent.id)
+        console.log("calling pool", commentEvent)
+        try {
+            let x = await pool.publish(relays, commentEvent);
+            console.log("called pool", x);
+            let c = Promise.resolve(x)
+            console.log("c is", c)
+        } catch (error) {
+            console.error("Error while publishing comment:", error);
+        }
+        const commentObject = [{
+            "content": comment,
+            "pubkey": uesrPublicKey
+        }]
+        setReplies(replies => [...commentObject, ...replies])
+        console.log("replies after updation is", replies)
+        setComment("")
+        // c.map((cc) => {console.log(cc)})
     }
 
     return (
@@ -70,17 +89,19 @@ function Post(props) {
             <div className={"post-content"}>
                 <img alt={""} className={"post-content"} src={imageLink} />
             </div>
-            <Button variant="light" size={"lg"} onClick={() => upvotePost(postId, OpPubKey)}>
+            <Button variant="light" size={"lg"} class="bg-white" onClick={() => upvotePost(postId, OpPubKey)}>
                 + {voteCount}
             </Button>{" "}
-            <Button variant="light" size={"lg"} onClick={() => sendNewZaps(postId, OpPubKey)}>
+            <Button variant="light" class="bg-white" size={"lg"} onClick={() => sendNewZaps(postId, OpPubKey)}>
                 Zap
             </Button>{" "}
             <div className="commentBox">
                 <div class="mb-4 ml-1">
                     <form
-                        onSubmit={() => {
-                            captureNewComment(comment);
+                        onSubmit={async (event) => {
+                            event.preventDefault(); // Prevent the default form submission behavior
+                            await captureNewComment(comment); // Wait for comment to be captured and saved
+                            // Additional actions after comment is saved can be added here
                         }}
                     >
                         <input
@@ -91,10 +112,7 @@ function Post(props) {
                             onChange={captureComment}
                             required
                         />
-
-                        <button class="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded " variant="secondary" type="submit">
-                            Submit
-                        </button>
+                        <input class="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded " type="submit" />
                     </form>
                 </div>
             </div>

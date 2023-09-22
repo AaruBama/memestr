@@ -5,7 +5,7 @@ import {getEventHash, getSignature, nip19, SimplePool} from "nostr-tools";
 
 export const saveComment = (postId, comment) => {
     console.log("Saving comment. ", comment)
-    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
+    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol"]
     const pool = new SimplePool();
     const storedData = localStorage.getItem('memestr')
     if (!storedData) {
@@ -25,8 +25,18 @@ export const saveComment = (postId, comment) => {
 
     commentEvent.id = getEventHash(commentEvent)
     commentEvent.sig = getSignature(commentEvent, sk.data)
-    pool.publish(relays, commentEvent)
-    pool.close(relays);
+    console.log("calling pool")
+    let x = pool.publish(relays, commentEvent)
+    console.log("called pool", x)
+    x.map(
+        (p1) => {
+            p1.then((resposne) => {
+                console.log("Pool resolved", resposne)
+            }
+            ).catch((error) => {
+                console.log("Pool is fucked", error)
+            })
+        })
 }
 
 function Comments(props) {
@@ -49,7 +59,6 @@ function Comments(props) {
     return (<div className={"comment-container"}>
             <img className='profile1' src={picture} alt="Profile"/>
             <div>
-                {/*<div className={"username-comment"}>{username} @{name}</div>*/}
                 <span className={"username-comment"}>{username}</span>
                 <span className={"name-comment"}>@{name}</span>
                 <div className={"comment"}>{comment.content}</div>
