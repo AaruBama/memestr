@@ -26,7 +26,7 @@ const removeHashtagsAndLinks = (text) => {
     return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
-export async function upvotePost(noteId, OpPubKey) {
+export async function upvotePost(noteId) {
     const storedData = localStorage.getItem('memestr')
     if (!storedData) {
         alert("Login required to upvote.")
@@ -158,7 +158,7 @@ function Posts(props) {
 
     let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
-        title = "Title"
+        title = " "
     }
     const imageLink = mediaLinks[0]
 

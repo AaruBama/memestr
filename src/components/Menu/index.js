@@ -62,6 +62,12 @@ export default function Header() {
                                     <li className="border-b border-gray-400 my-2 uppercase">
                                         <Link to="/nature" onClick={() => handleLinkClick()}><span>Nature 🔭</span></Link>
                                     </li>
+                                    <li className="border-b border-gray-400 my-2 uppercase">
+                                        <Link to="/food" onClick={() => handleLinkClick()}><span>Food 🍔</span></Link>
+                                    </li>
+                                    <li className="border-b border-gray-400 my-2 uppercase">
+                                        <Link to="/photography" onClick={() => handleLinkClick()}><span>Photography 📷</span></Link>
+                                    </li>
 
                             </ul>
                         </section>
