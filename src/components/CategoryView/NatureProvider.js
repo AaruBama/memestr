@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState} from "react";
-import HashtagTool, {HashTagToolProvider} from "../HashtagTool";
 import {SimplePool} from "nostr-tools";
 import Feed from "../Feed";
 import PostUpload from "../Post/newPost";
@@ -13,7 +12,8 @@ const relays = ["wss://relay.damus.io/",
 ];
 
 const CategorizedContext = React.createContext();
-export function NatureProvider({ children, filterTags }) {
+
+export function NatureProvider({children, filterTags}) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -48,53 +48,53 @@ export function NatureProvider({ children, filterTags }) {
         return groupedByPostId;
     }
 
-    const LoadMedia = async () => {
-        // Fetch notes and update the context state
-        // ...
-        const relayPool = new SimplePool();
-        const filters = {
-            limit: 10,
-        };
 
-        // For Memes
-        if (filterTags) {
-            filters["#t"] = filterTags
-        } else {
-            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-        }
-        // For both
-        // filters["#t"] = ["boobstr", "memestr"]
-
-        // For Studies
-        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-        let notes = await relayPool.list(relays, [filters]);
-        notes = notes.filter((note) => {
-            return containsJpgOrMp4Link(note.content)
-        })
-        // console.log("notes are ", notes)
-        // GET VOTES COMBINED
-        let createdAt = []
-        let postIds = []
-        notes.forEach(function (note) {
-            var id = note.id;
-            createdAt.push(note.created_at)
-            postIds.push(id)
-        });
-        createdAt.sort(function (a, b) {
-            return a - b
-        });
-
-        let groupedByPostId = await getVotes(postIds)
-        for (const note of notes) {
-            note["voteCount"] = groupedByPostId[note.id] || 0;
-        }
-        setNotes(notes);
-        setLastCreatedAt(createdAt[0])
-        relayPool.close(relays)
-    };
 
     useEffect(() => {
+            const LoadMedia = async () => {
+                // Fetch notes and update the context state
+                // ...
+                const relayPool = new SimplePool();
+                const filters = {
+                    limit: 10,
+                };
 
+                // For Memes
+                if (filterTags) {
+                    filters["#t"] = filterTags
+                } else {
+                    filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+                }
+                // For both
+                // filters["#t"] = ["boobstr", "memestr"]
+
+                // For Studies
+                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+                let notes = await relayPool.list(relays, [filters]);
+                notes = notes.filter((note) => {
+                    return containsJpgOrMp4Link(note.content)
+                })
+                // console.log("notes are ", notes)
+                // GET VOTES COMBINED
+                let createdAt = []
+                let postIds = []
+                notes.forEach(function (note) {
+                    var id = note.id;
+                    createdAt.push(note.created_at)
+                    postIds.push(id)
+                });
+                createdAt.sort(function (a, b) {
+                    return a - b
+                });
+
+                let groupedByPostId = await getVotes(postIds)
+                for (const note of notes) {
+                    note["voteCount"] = groupedByPostId[note.id] || 0;
+                }
+                setNotes(notes);
+                setLastCreatedAt(createdAt[0])
+                relayPool.close(relays)
+            };
             LoadMedia();
         },
         [filterTags]);
@@ -168,7 +168,7 @@ export function useHashTagContext() {
 }
 
 function NatureFeed() {
-    const { notes, LoadMoreMedia } = useHashTagContext();
+    const {notes, LoadMoreMedia} = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
 
 
@@ -182,7 +182,7 @@ function NatureFeed() {
 
     return (
         <>
-            <Feed notes={notes} />
+            <Feed notes={notes}/>
             <button
                 onClick={() => {
                     LoadMoreMedia();
@@ -197,7 +197,7 @@ function NatureFeed() {
                     title="Upload"
                     className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">➕
             </button>
-            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal} />}
+            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal}/>}
         </>
     );
 }
