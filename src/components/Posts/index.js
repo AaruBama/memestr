@@ -158,7 +158,7 @@ function Posts(props) {
 
     let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
-        title = "Title"
+        title = " "
     }
     const imageLink = mediaLinks[0]
 

@@ -56,7 +56,7 @@ export function NatureProvider({children, filterTags}) {
                 // ...
                 const relayPool = new SimplePool();
                 const filters = {
-                    limit: 10,
+                    limit: 20,
                 };
 
                 // For Memes
@@ -65,11 +65,6 @@ export function NatureProvider({children, filterTags}) {
                 } else {
                     filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
                 }
-                // For both
-                // filters["#t"] = ["boobstr", "memestr"]
-
-                // For Studies
-                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
                 let notes = await relayPool.list(relays, [filters]);
                 notes = notes.filter((note) => {
                     return containsJpgOrMp4Link(note.content)
@@ -105,7 +100,7 @@ export function NatureProvider({children, filterTags}) {
 
         const relayPool = new SimplePool();
         const filters = {
-            limit: 10,
+            limit: 20,
         };
 
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];

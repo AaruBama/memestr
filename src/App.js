@@ -21,6 +21,9 @@ function App(){
         "/": null, // Default filters (null or any other default filters you want to use)
         "/nsfw": ["tits", "boobs", "ass"],
         "/nature": ["nature", "flowers", "sky", "sea"],
+        "/food": ["food"],
+        "/photography": ["photography"],
+
     };
 
     // const location = useLocation();
@@ -46,6 +49,16 @@ function App(){
                     <NatureProvider filterTags={pageFilters["/nature"]}>
                         <Routes>
                             <Route exact path="/nature" element={<NatureFeed />}/>
+                        </Routes>
+                    </NatureProvider>
+                    <NatureProvider filterTags={pageFilters["/food"]}>
+                        <Routes>
+                            <Route exact path="/food" element={<NatureFeed />}/>
+                        </Routes>
+                    </NatureProvider>
+                    <NatureProvider filterTags={pageFilters["/photography"]}>
+                        <Routes>
+                            <Route exact path="/photography" element={<NatureFeed />}/>
                         </Routes>
                     </NatureProvider>
                 </Router>

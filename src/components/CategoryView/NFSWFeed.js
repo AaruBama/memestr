@@ -99,7 +99,7 @@ export function NFSWProvider({children, filterTags}) {
                 // ...
                 const relayPool = new SimplePool();
                 const filters = {
-                    limit: 10,
+                    limit: 20,
                 };
 
                 // For Memes
@@ -148,7 +148,7 @@ export function NFSWProvider({children, filterTags}) {
 
         const relayPool = new SimplePool();
         const filters = {
-            limit: 10,
+            limit: 20,
         };
 
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
