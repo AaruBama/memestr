@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import HashtagTool, {HashTagToolProvider} from "../HashtagTool";
 import {SimplePool} from "nostr-tools";
 import Feed from "../Feed";
+import PostUpload from "../Post/newPost";
 
 
 const relays = ["wss://relay.damus.io/",
@@ -12,10 +13,11 @@ const relays = ["wss://relay.damus.io/",
 ];
 
 const CategorizedContext = React.createContext();
-export function NFSWProvider({ children, filterTags }) {
+export function NatureProvider({ children, filterTags }) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
     const [scrollPosition, setScrollPosition] = useState(0);
+
 
     const containsJpgOrMp4Link = (text) => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
@@ -165,8 +167,18 @@ export function useHashTagContext() {
     return context;
 }
 
-function CategorizedFeed() {
+function NatureFeed() {
     const { notes, LoadMoreMedia } = useHashTagContext();
+    const [newPostModal, setNewPostModal] = useState(false);
+
+
+    function showNewPostModal() {
+        setNewPostModal(true)
+    }
+
+    function closePostModal() {
+        setNewPostModal(false)
+    }
 
     return (
         <>
@@ -179,8 +191,15 @@ function CategorizedFeed() {
             >
                 Load More
             </button>
+            <button onClick={() => {
+                showNewPostModal();
+            }}
+                    title="Upload"
+                    className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">➕
+            </button>
+            {newPostModal && <PostUpload isOpen={newPostModal} onClose={closePostModal} />}
         </>
     );
 }
 
-export default CategorizedFeed;
+export default NatureFeed;

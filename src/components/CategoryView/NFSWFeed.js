@@ -1,11 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
+import HashtagTool, {HashTagToolProvider} from "../HashtagTool";
 import {SimplePool} from "nostr-tools";
 import Feed from "../Feed";
 import PostUpload from "../Post/newPost";
-// import NewPostButton from "../Post/newPost";
 
-// Create a context to manage shared state
-const HashTagContext = React.createContext();
 
 const relays = ["wss://relay.damus.io/",
     "wss://offchain.pub/",
@@ -14,13 +12,12 @@ const relays = ["wss://relay.damus.io/",
     "wss://nostr.wine/",
 ];
 
-// Create a provider component to wrap your application
-export function HashTagToolProvider({ children, filterTags }) {
-    console.log("Running hashtagToolProvider", filterTags)
+const CategorizedContext = React.createContext();
+export function NFSWProvider({ children, filterTags }) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
-
     const [scrollPosition, setScrollPosition] = useState(0);
+
 
     const containsJpgOrMp4Link = (text) => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
@@ -51,52 +48,52 @@ export function HashTagToolProvider({ children, filterTags }) {
         return groupedByPostId;
     }
 
+    const LoadMedia = async () => {
+        // Fetch notes and update the context state
+        // ...
+        const relayPool = new SimplePool();
+        const filters = {
+            limit: 10,
+        };
+
+        // For Memes
+        if (filterTags) {
+            filters["#t"] = filterTags
+        } else {
+            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+        }
+        // For both
+        // filters["#t"] = ["boobstr", "memestr"]
+
+        // For Studies
+        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
+        let notes = await relayPool.list(relays, [filters]);
+        notes = notes.filter((note) => {
+            return containsJpgOrMp4Link(note.content)
+        })
+        // console.log("notes are ", notes)
+        // GET VOTES COMBINED
+        let createdAt = []
+        let postIds = []
+        notes.forEach(function (note) {
+            var id = note.id;
+            createdAt.push(note.created_at)
+            postIds.push(id)
+        });
+        createdAt.sort(function (a, b) {
+            return a - b
+        });
+
+        let groupedByPostId = await getVotes(postIds)
+        for (const note of notes) {
+            note["voteCount"] = groupedByPostId[note.id] || 0;
+        }
+        setNotes(notes);
+        setLastCreatedAt(createdAt[0])
+        relayPool.close(relays)
+    };
+
     useEffect(() => {
-            const LoadMedia = async () => {
-                // Fetch notes and update the context state
-                // ...
-                const relayPool = new SimplePool();
-                const filters = {
-                    limit: 20,
-                };
-
-                // For Memes
-                if (filterTags) {
-                    filters["#t"] = filterTags
-                } else {
-                    filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-                }
-
-                // For both
-                // filters["#t"] = ["boobstr", "memestr"]
-
-                // For Studies
-                // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-                let notes = await relayPool.list(relays, [filters]);
-                notes = notes.filter((note) => {
-                    return containsJpgOrMp4Link(note.content)
-                })
-                // console.log("notes are ", notes)
-                // GET VOTES COMBINED
-                let createdAt = []
-                let postIds = []
-                notes.forEach(function (note) {
-                    var id = note.id;
-                    createdAt.push(note.created_at)
-                    postIds.push(id)
-                });
-                createdAt.sort(function (a, b) {
-                    return a - b
-                });
-
-                let groupedByPostId = await getVotes(postIds)
-                for (const note of notes) {
-                    note["voteCount"] = groupedByPostId[note.id] || 0;
-                }
-                setNotes(notes);
-                setLastCreatedAt(createdAt[0])
-                relayPool.close(relays)
-            };
 
             LoadMedia();
         },
@@ -114,18 +111,13 @@ export function HashTagToolProvider({ children, filterTags }) {
         const relays = ["wss://relay.damus.io/", "wss://offchain.pub/", "wss://nos.lol/", "wss://relay.nostr.wirednet.jp/", "wss://nostr.wine/",];
 
         // For Memes
-        filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+        if (filterTags) {
+            filters["#t"] = filterTags
+        } else {
+            filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
+        }
 
-        // For both
-        // filters["#t"] = ["boobstr", "memestr"]
-
-        // For Studies
-        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-        // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
-        // let lastPostSince = (notes[notes.length - 1].created_at)
         filters["until"] = lastCreatedAt - (5 * 60)
-        // filters["since"] = lastPostSince + (60*60)
-
 
         let newNotes = await relayPool.list(relays, [filters]);
         newNotes = newNotes.filter((note) => {
@@ -149,9 +141,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         setNotes(notes => [...notes, ...newNotes]);
         setLastCreatedAt(createdAt[0])
         relayPool.close(relays)
-        // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
     };
-    // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
 
 
     // Store the context value
@@ -163,25 +153,24 @@ export function HashTagToolProvider({ children, filterTags }) {
     };
 
     return (
-        <HashTagContext.Provider value={contextValue}>
+        <CategorizedContext.Provider value={contextValue}>
             {children}
-        </HashTagContext.Provider>
+        </CategorizedContext.Provider>
     );
 }
 
-// Custom hook to access the context
 export function useHashTagContext() {
-    const context = useContext(HashTagContext);
+    const context = useContext(CategorizedContext);
     if (!context) {
         throw new Error("useHashTagContext must be used within a HashTagToolProvider");
     }
     return context;
 }
 
-// The HashtagTool component
-export function HashtagTool() {
-    const {notes, LoadMoreMedia} = useHashTagContext();
-    const [newPostModal, setNewPostModal] = useState(false)
+function NFSWFeed() {
+    const { notes, LoadMoreMedia } = useHashTagContext();
+    const [newPostModal, setNewPostModal] = useState(false);
+
 
     function showNewPostModal() {
         setNewPostModal(true)
@@ -193,8 +182,7 @@ export function HashtagTool() {
 
     return (
         <>
-            {/*<NewPostButton />*/}
-            <Feed notes={notes}/>
+            <Feed notes={notes} />
             <button
                 onClick={() => {
                     LoadMoreMedia();
@@ -214,4 +202,4 @@ export function HashtagTool() {
     );
 }
 
-export default HashtagTool
+export default NFSWFeed;

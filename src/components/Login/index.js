@@ -4,6 +4,7 @@ import {getPublicKey, nip19, generatePrivateKey} from 'nostr-tools';
 import Menu from "../Menu";
 import DropdownComponent from "../LoginDropDownComponent/DropDownComponent";
 
+
 export function generateNewKeys() {
     const pk = generatePrivateKey()
 

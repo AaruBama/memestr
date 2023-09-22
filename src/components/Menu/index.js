@@ -46,41 +46,23 @@ export default function Header() {
                                  className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
                             <a class={"mb-2"} href="/">Home</a>
                         </section>
-                        <span class={"px-4 pt-2"}>Categories</span>
+                        <span class={"px-4 pt-2 font-bold"}>Categories</span>
                         <section id="categories"
                                  className="flex flex-col items-start justify-between w-full px-4 border-b-4">
                             <ul className="flex flex-col items-start justify-between px-4">
 
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/">Memes</a>
-                                </li>
+                                {/*<li className="border-b border-gray-400 my-2 uppercase">*/}
+                                {/*    <a href="/">Memes</a>*/}
+                                {/*</li>*/}
 
-                                <Link to="/nsfw" onClick={() => handleLinkClick()}>
+
                                     <li className="border-b border-gray-400 my-2 uppercase">
-                                        <span>NSFW</span>
+                                        <Link to="/nsfw" onClick={() => handleLinkClick()}><span>NSFW 🌶️</span></Link>
                                     </li>
-                                </Link>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Nature</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Pets</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Random</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Bitcoin</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">PlebChain</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Food and Coffee</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">News</a>
-                                </li>
+                                    <li className="border-b border-gray-400 my-2 uppercase">
+                                        <Link to="/nature" onClick={() => handleLinkClick()}><span>Nature 🔭</span></Link>
+                                    </li>
+
                             </ul>
                         </section>
 
