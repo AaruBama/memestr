@@ -1,7 +1,15 @@
-import { useState } from "react";
+import {useState} from "react";
+import {Link} from "react-router-dom";
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
+
+    const closeSidebar = () => {
+        setIsNavOpen(false);
+    };
+    const handleLinkClick = () => {
+        closeSidebar();
+    };
 
     return (
         <div className="flex items-center justify-between border-gray-400 py-8">
@@ -30,27 +38,31 @@ export default function Header() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             >
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>
                         </div>
-                        <section id="main-section" className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
+                        <section id="main-section"
+                                 className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
                             <a class={"mb-2"} href="/">Home</a>
                         </section>
-                        <span class={"px-4 pt-2"}>Categories</span>
-                        <section id="categories" className="flex flex-col items-start justify-between w-full px-4 border-b-4">
+                        <span class={"px-4 pt-2 font-bold"}>Categories</span>
+                        <section id="categories"
+                                 className="flex flex-col items-start justify-between w-full px-4 border-b-4">
                             <ul className="flex flex-col items-start justify-between px-4">
 
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/">Home</a>
-                                </li>
+                                {/*<li className="border-b border-gray-400 my-2 uppercase">*/}
+                                {/*    <a href="/">Memes</a>*/}
+                                {/*</li>*/}
 
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/portfolio">Portfolio</a>
-                                </li>
-                                <li className="border-b border-gray-400 my-2 uppercase">
-                                    <a href="/contact">Contact</a>
-                                </li>
+
+                                    <li className="border-b border-gray-400 my-2 uppercase">
+                                        <Link to="/nsfw" onClick={() => handleLinkClick()}><span>NSFW 🌶️</span></Link>
+                                    </li>
+                                    <li className="border-b border-gray-400 my-2 uppercase">
+                                        <Link to="/nature" onClick={() => handleLinkClick()}><span>Nature 🔭</span></Link>
+                                    </li>
+
                             </ul>
                         </section>
 
