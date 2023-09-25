@@ -48,8 +48,7 @@ export async function upvotePost(noteId) {
     }
     upvoteEvent.id = getEventHash(upvoteEvent)
     upvoteEvent.sig = getSignature(upvoteEvent, sk.data)
-    let c=pool.publish(relays, upvoteEvent)
-    console.log("c is ",c)
+    pool.publish(relays, upvoteEvent)
     if (pool) {
         pool.close(relays);
         return true
@@ -57,8 +56,7 @@ export async function upvotePost(noteId) {
     return false
 }
 
-export const sendNewZaps = async  (postId, opPubKey, sats = 11) => {
-    console.log("Sending zaps")
+export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
     const pubKey = opPubKey
     let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol", "wss://nostr.bitcoiner.social"]
     const encodedNoteId = nip19.noteEncode(postId)
@@ -103,12 +101,12 @@ export const saveComment = (postId, comment) => {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
+    console.log("medialinks", mediaLinks[0])
     // const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0)
     const [fillLike, setFillLike] = useState(false)
     const [fillZap, setFillZap] = useState(false)
-    const [timeDifference, setTimeDifference] = useState({ unit: '', duration: 0 });
-
+    const [timeDifference, setTimeDifference] = useState({unit: '', duration: 0});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [processedValue, setProcessedValue] = useState(null);
     let postCreatedAt = props.note.created_at
@@ -121,7 +119,6 @@ function Posts(props) {
         // Process the value internally here or update state as needed
         const postId = props.note.id;
         let opPubKey = props.note.pubkey
-        console.log(`Processing value: ${value}`);
 
         sendNewZaps(postId, opPubKey, value)
         setProcessedValue(value);
@@ -152,20 +149,30 @@ function Posts(props) {
 
     }, [postCreatedAt]);
 
+
     useEffect(() => {
         setVotesCount(props.note.voteCount)
     }, [props.note.voteCount])
 
     let title = removeHashtagsAndLinks(props.note.content).trimLeft().trimRight()
     if (title.length === 0) {
-        title = " "
+        title = "memestr"
     }
-    const imageLink = mediaLinks[0]
+    const imageLink = String(mediaLinks[0])
+    if (imageLink === undefined) {
+        console.log("Undefined Imagelink", imageLink)
+        return;
+    }
+    const extension = imageLink.split(".").pop();
+    if (extension === undefined) {
+        console.log("Undefined Imagelink", imageLink)
+        return;
+    }
 
     function voteIncrement() {
         const storedData = localStorage.getItem('memestr')
         if (storedData) {
-            setVotesCount(votesCount+1);
+            setVotesCount(votesCount + 1);
         }
     }
 
@@ -199,79 +206,48 @@ function Posts(props) {
         setFillZap(true);
     }
 
-    return (
-            <div class="flex flex-col bg-black divide-y mt-2 overflow-scroll">
+    function renderContent(imageLink) {
+        if (imageLink === undefined || extension === 'undefined') {
+            return
+        }
+        console.log("extension is ", extension)
+        if (["jpg", "jpeg", "gif", "png"].includes(extension)) {
+            return <img alt={""} src={imageLink}/>
+        } else {
+            console.log("Rendering Video with link ", imageLink);
+            return <video autoPlay controls muted playsInline src={imageLink}/>
+        }
+    }
 
-                <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
+    return (
+        <div class="flex flex-col bg-black divide-y mt-2 overflow-scroll">
+
+            <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                     <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
                         <span class={"flex basis-[80%]"}>{title}</span>
-                        <span class="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">{timeDifference.duration}{timeDifference.unit} </span>
+                        <span
+                            class="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">{timeDifference.duration}{timeDifference.unit} </span>
                         {/*{new Date(props.note.created_at).toString()}*/}
                     </span>
-                    <div class="py-2 px-1 max-w-fit">
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
-                            <img alt={""} src={imageLink}/>
-                        </Link>
-                    </div>
+                <div class="py-2 px-1 max-w-fit">
+                    <Link
+                        to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
+                        {
+                            renderContent(imageLink)
+                        }
+
+                    </Link>
+                </div>
 
 
-                    <div class="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
+                <div class="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
 
-                        {/*Comments button*/}
+                    {/*Comments button*/}
 
-                        <Link to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
-                            <button variant="light" size={"lg"}>
-                                <svg class="h-8 w-8"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     x="0"
-                                     y="0"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     strokeLinecap="round"
-                                     strokeLinejoin="round"
-                                     strokeWidth="2"
-                                     viewBox="0 0 24 30"
-                                >
-                                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-                                </svg>
-                            </button>
-                        </Link>
-
-
-                        <button className="flex align-items-center"
-                                onClick={() => {
-                                    handleZapButton();
-                                }
-                                }>
-                            <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black" } h-8 w-8`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                viewBox="0 0 24 30"
-                            >
-                                <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path></svg>
-                            {processedValue && <p>{processedValue}</p>}
-
-                            <ZapModal
-                                isOpenm={isModalOpen}
-                                onConfirm={handleConfirm}
-                            />
-                        </button>
-
-                        <button className="flex"
-                                onClick={() => {
-                                    upvotePost(props.note.id,props.note.pubkey);
-                                    voteIncrement();
-                                    fillColor();
-                                }} disabled={isTodisabled()}>
-                            <svg className={`${
-                                fillLike && "fill-current text-red-600"
-                            } h-8 w-8`}
+                    <Link
+                        to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
+                        <button variant="light" size={"lg"}>
+                            <svg class="h-8 w-8"
                                  xmlns="http://www.w3.org/2000/svg"
                                  x="0"
                                  y="0"
@@ -282,35 +258,90 @@ function Posts(props) {
                                  strokeWidth="2"
                                  viewBox="0 0 24 30"
                             >
-                                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                            </svg>{votesCount}
+                                <path
+                                    d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                            </svg>
                         </button>
+                    </Link>
 
 
-                        {/*Share Button*/}
-                        {/*<button>*/}
-                        {/*    <svg*/}
-                        {/*        xmlns="http://www.w3.org/2000/svg"*/}
-                        {/*        x="0"*/}
-                        {/*        y="0"*/}
-                        {/*        fill="none"*/}
-                        {/*        stroke="currentColor"*/}
-                        {/*        strokeLinecap="round"*/}
-                        {/*        strokeLinejoin="round"*/}
-                        {/*        strokeWidth="2"*/}
-                        {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
-                        {/*        viewBox="0 0 24 30"*/}
-                        {/*    >*/}
-                        {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
-                        {/*        <path d="M17 16L21 12 17 8"></path>*/}
-                        {/*        <path d="M21 12L9 12"></path>*/}
-                        {/*    </svg>*/}
-                        {/*</button>*/}
+                    <button className="flex align-items-center"
+                            onClick={() => {
+                                handleZapButton();
+                            }
+                            }>
+                        <svg class={`${fillZap && "fill-current text-yellow-300 stroke-black"} h-8 w-8`}
+                             xmlns="http://www.w3.org/2000/svg"
+                             x="0"
+                             y="0"
+                             fill="none"
+                             stroke="currentColor"
+                             strokeLinecap="round"
+                             strokeLinejoin="round"
+                             strokeWidth="2"
+                             viewBox="0 0 24 30"
+                        >
+                            <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
+                        </svg>
+                        {processedValue && <p>{processedValue}</p>}
 
-                    </div>
+                        <ZapModal
+                            isOpenm={isModalOpen}
+                            onConfirm={handleConfirm}
+                        />
+                    </button>
+
+                    <button className="flex"
+                            onClick={() => {
+                                upvotePost(props.note.id, props.note.pubkey);
+                                voteIncrement();
+                                fillColor();
+                            }} disabled={isTodisabled()}>
+                        <svg className={`${
+                            fillLike && "fill-current text-red-600"
+                        } h-8 w-8`}
+                             xmlns="http://www.w3.org/2000/svg"
+                             x="0"
+                             y="0"
+                             fill="none"
+                             stroke="currentColor"
+                             strokeLinecap="round"
+                             strokeLinejoin="round"
+                             strokeWidth="2"
+                             viewBox="0 0 24 30"
+                        >
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+                        </svg>
+                        {votesCount}
+                    </button>
+
+
+                    {/*Share Button*/}
+                    {/*<button>*/}
+                    {/*    <svg*/}
+                    {/*        xmlns="http://www.w3.org/2000/svg"*/}
+                    {/*        x="0"*/}
+                    {/*        y="0"*/}
+                    {/*        fill="none"*/}
+                    {/*        stroke="currentColor"*/}
+                    {/*        strokeLinecap="round"*/}
+                    {/*        strokeLinejoin="round"*/}
+                    {/*        strokeWidth="2"*/}
+                    {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
+                    {/*        viewBox="0 0 24 30"*/}
+                    {/*    >*/}
+                    {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
+                    {/*        <path d="M17 16L21 12 17 8"></path>*/}
+                    {/*        <path d="M21 12L9 12"></path>*/}
+                    {/*    </svg>*/}
+                    {/*</button>*/}
+
                 </div>
             </div>
+        </div>
     );
 }
+
 
 export default Posts;
