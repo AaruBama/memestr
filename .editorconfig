@@ -11,3 +11,6 @@ trim_trailing_whitespace = true
 charset = utf-8
 end_of_line = lf
 max_line_length = 80
+
+[*.{css,json}]
+indent_size = 2
