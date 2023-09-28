@@ -1,7 +1,9 @@
 node_modules
 build
 .idea
+.env
 
 # System files
 .DS_Store
 Thumbs.db
+
