@@ -1,17 +1,12 @@
-import {
-    nip19,
-    nip57,
-    finishEvent,
-    SimplePool,
-} from "nostr-tools";
+import { nip19, nip57, finishEvent, SimplePool } from "nostr-tools";
 
-export const decodeNpub = (npub) => nip19.decode(npub).data;
+export const decodeNpub = npub => nip19.decode(npub).data;
 
-const decodeNoteId = (noteId) => nip19.decode(noteId).data;
+const decodeNoteId = noteId => nip19.decode(noteId).data;
 
 let cachedProfileMetadata = {};
 
-export const getProfileMetadata = async (authorId) => {
+export const getProfileMetadata = async authorId => {
     if (cachedProfileMetadata[authorId]) {
         return cachedProfileMetadata[authorId];
     }
@@ -36,10 +31,10 @@ export const getProfileMetadata = async (authorId) => {
     }
 };
 
-export const extractProfileMetadataContent = (profileMetadata) =>
+export const extractProfileMetadataContent = profileMetadata =>
     JSON.parse(profileMetadata.content);
 
-export const getZapEndpoint = async (profileMetadata) => {
+export const getZapEndpoint = async profileMetadata => {
     const zapEndpoint = await nip57.getZapEndpoint(profileMetadata);
 
     if (!zapEndpoint) {
@@ -49,7 +44,7 @@ export const getZapEndpoint = async (profileMetadata) => {
     return zapEndpoint;
 };
 
-const signEvent = async (zapEvent) => {
+const signEvent = async zapEvent => {
     if (isNipO7ExtAvailable()) {
         try {
             return await window.nostr.signEvent(zapEvent);
@@ -57,13 +52,13 @@ const signEvent = async (zapEvent) => {
             // fail silently and sign event as an anonymous user
         }
     }
-    const storedData = localStorage.getItem('memestr')
+    const storedData = localStorage.getItem("memestr");
     if (!storedData) {
-        alert("Login required to upvote.")
-        return
+        alert("Login required to upvote.");
+        return;
     }
-    let userPrivateKey = JSON.parse(storedData).privateKey
-    let privateKey = nip19.decode(userPrivateKey).data
+    let userPrivateKey = JSON.parse(storedData).privateKey;
+    let privateKey = nip19.decode(userPrivateKey).data;
     return finishEvent(zapEvent, privateKey);
 };
 
@@ -80,13 +75,13 @@ const makeZapEvent = async ({ profile, event, amount, relays, comment }) => {
 };
 
 export const fetchInvoice = async ({
-                                       zapEndpoint,
-                                       amount,
-                                       comment,
-                                       authorId,
-                                       noteId,
-                                       normalizedRelays,
-                                   }) => {
+    zapEndpoint,
+    amount,
+    comment,
+    authorId,
+    noteId,
+    normalizedRelays,
+}) => {
     const zapEvent = await makeZapEvent({
         profile: authorId,
         event: noteId ? decodeNoteId(noteId) : undefined,
@@ -95,7 +90,7 @@ export const fetchInvoice = async ({
         comment,
     });
     let url = `${zapEndpoint}?amount=${amount}&nostr=${encodeURIComponent(
-        JSON.stringify(zapEvent)
+        JSON.stringify(zapEvent),
     )}`;
 
     if (comment) {
@@ -115,7 +110,7 @@ export const isNipO7ExtAvailable = () => {
 export const listenForZapReceipt = ({ relays, invoice }) => {
     const pool = new SimplePool();
     const normalizedRelays = Array.from(
-        new Set([...relays, "wss://relay.nostr.band"])
+        new Set([...relays, "wss://relay.nostr.band"]),
     );
     const closePool = () => {
         if (pool) {
@@ -133,8 +128,8 @@ export const listenForZapReceipt = ({ relays, invoice }) => {
             },
         ]);
 
-        sub.on("event", (event) => {
-            if (event.tags.find((t) => t[0] === "bolt11" && t[1] === invoice)) {
+        sub.on("event", event => {
+            if (event.tags.find(t => t[0] === "bolt11" && t[1] === invoice)) {
                 closePool();
                 clearInterval(intervalId);
             }
