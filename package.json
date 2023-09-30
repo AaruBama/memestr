@@ -66,6 +66,7 @@
     ]
   },
   "lint-staged": {
-    "*.{md,yml,json,html,css,js,jsx,ts,tsx}": "prettier --write"
+    "*.{md,yml,json,html,css,js,jsx,ts,tsx}": "prettier --write",
+    "src/**/*.js": "eslint . --max-warnings 0 --fix"
   }
 }
