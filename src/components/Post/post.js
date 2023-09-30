@@ -8,7 +8,7 @@ import ZapModal from "../ZapHelper/ZapModal";
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
 
-function Post(props) {
+function Post() {
     // const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
     let params = useParams();
     const [searchParams] = useSearchParams();
@@ -25,7 +25,7 @@ function Post(props) {
     };
 
     useEffect(() => {
-        const getComments = async event => {
+        const getComments = async () => {
             const relayPool = new SimplePool();
             const relays = [
                 "wss://relay.damus.io",

@@ -155,7 +155,7 @@ const PostUpload = ({ isOpen, onClose }) => {
         // if (!validateFile(file)) {
         //     alert("Only jpg,jpeg,mp4 allowed")
         // }
-        const apiUrl = `https://api.imgur.com/3/upload`;
+        const apiUrl = "https://api.imgur.com/3/upload";
 
         const formData = new FormData();
         formData.append("image", media);

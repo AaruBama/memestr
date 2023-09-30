@@ -5,15 +5,14 @@ function setContentForMetadata(userDetails) {
     let content = null;
     let lnurl = null;
     if ("lud06" in userDetails && userDetails.lud06.length > 0) {
-        content = '{"lud06": "' + userDetails.lud06 + '"}';
+        content = JSON.stringify({ lud06: userDetails.lud06 });
         lnurl = userDetails.lud06;
     } else if ("lud16" in userDetails && userDetails.lud16.length > 0) {
-        content = '{"lud16": "' + userDetails.lud16 + '"}';
+        content = JSON.stringify({ lud16: userDetails.lud16 });
         let [name, domain] = userDetails.lud16.split("@");
         lnurl = "https://" + domain + "/.well-known/lnurlp/" + name;
         // let encodedlnurl = nip19.encode(lnurl)
         // console.log("encoded lnurl is ", encodedlnurl)
-    } else {
     }
 
     return { content: content, lnurl: lnurl };

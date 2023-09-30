@@ -61,7 +61,7 @@ const UploadAndDisplayImage = ({ setPicture }) => {
                 });
             };
 
-            reader.onerror = event => {
+            reader.onerror = () => {
                 reject(new Error("Error reading file for SHA-256 calculation"));
             };
 
