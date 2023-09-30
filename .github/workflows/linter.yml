@@ -1,0 +1,16 @@
+name: Linter
+
+on:
+  pull_request:
+
+jobs:
+  code-linter:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Run linter
+        run: npm run lint
