@@ -1,6 +1,6 @@
-import "./index.css"
-import {getUserDetailsFromPublicKey} from "../Profile";
-import React, {useEffect, useState} from "react";
+import "./index.css";
+import { getUserDetailsFromPublicKey } from "../Profile";
+import React, { useEffect, useState } from "react";
 
 // export const saveComment = (postId, comment) => {
 //     console.log("Saving comment. ", comment)
@@ -39,31 +39,35 @@ import React, {useEffect, useState} from "react";
 // }
 
 function Comments(props) {
-    const [picture, setpicture] = useState('')
-    const [username, setUsername] = useState(null)
-    const [name, setName] = useState('Anonymous')
+    const [picture, setpicture] = useState("");
+    const [username, setUsername] = useState(null);
+    const [name, setName] = useState("Anonymous");
 
-
-    let comment = props.reply
-    const commentatorPubKey = comment.pubkey
+    let comment = props.reply;
+    const commentatorPubKey = comment.pubkey;
     useEffect(() => {
         let a = getUserDetailsFromPublicKey(commentatorPubKey);
-        a.then((value) => {
-            setpicture(value.picture)
-            setUsername(value.display_name)
-            setName(value.name)
-        }).catch(console.log("something went wrong fetching comment from the pubkey"));
-    }, [commentatorPubKey])
+        a.then(value => {
+            setpicture(value.picture);
+            setUsername(value.display_name);
+            setName(value.name);
+        }).catch(
+            console.log(
+                "something went wrong fetching comment from the pubkey",
+            ),
+        );
+    }, [commentatorPubKey]);
 
-    return (<div className={"comment-container"}>
-        <img className='profile1' src={picture} alt="Profile"/>
-        <div>
-            <span className={"username-comment"}>{username}</span>
-            <span className={"name-comment"}>@{name}</span>
-            <div className={"comment"}>{comment.content}</div>
+    return (
+        <div className={"comment-container"}>
+            <img className="profile1" src={picture} alt="Profile" />
+            <div>
+                <span className={"username-comment"}>{username}</span>
+                <span className={"name-comment"}>@{name}</span>
+                <div className={"comment"}>{comment.content}</div>
+            </div>
         </div>
-    </div>)
-
+    );
 }
 
 export default Comments;

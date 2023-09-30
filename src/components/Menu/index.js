@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {Link} from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -17,8 +17,7 @@ export default function Header() {
                 <section className="MOBILE-MENU flex">
                     <div
                         className="HAMBURGER-ICON space-y-2"
-                        onClick={() => setIsNavOpen((prev) => !prev)}
-                    >
+                        onClick={() => setIsNavOpen(prev => !prev)}>
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
@@ -27,8 +26,7 @@ export default function Header() {
                     <div className={isNavOpen ? "showMenuNav" : "hideMenuNav"}>
                         <div
                             className="absolute top-0 left-0 px-4 py-4"
-                            onClick={() => setIsNavOpen(false)}
-                        >
+                            onClick={() => setIsNavOpen(false)}>
                             <svg
                                 className="h-8 w-8 text-black font-bold"
                                 viewBox="0 0 24 24"
@@ -36,42 +34,57 @@ export default function Header() {
                                 stroke="currentColor"
                                 strokeWidth="2"
                                 strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
+                                strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
                         </div>
-                        <section id="main-section"
-                                 className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
-                            <a class={"mb-2"} href="/">Home</a>
+                        <section
+                            id="main-section"
+                            className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
+                            <a class={"mb-2"} href="/">
+                                Home
+                            </a>
                         </section>
                         <span class={"px-4 pt-2 font-bold"}>Categories</span>
-                        <section id="categories"
-                                 className="flex flex-col items-start justify-between w-full px-4 border-b-4">
+                        <section
+                            id="categories"
+                            className="flex flex-col items-start justify-between w-full px-4 border-b-4">
                             <ul className="flex flex-col items-start justify-between px-4">
-
                                 {/*<li className="border-b border-gray-400 my-2 uppercase">*/}
                                 {/*    <a href="/">Memes</a>*/}
                                 {/*</li>*/}
 
-
-                                    <li className="border-b border-gray-400 my-2 uppercase">
-                                        <Link to="/nsfw" onClick={() => handleLinkClick()}><span>NSFW 🌶️</span></Link>
-                                    </li>
-                                    <li className="border-b border-gray-400 my-2 uppercase">
-                                        <Link to="/nature" onClick={() => handleLinkClick()}><span>Nature 🔭</span></Link>
-                                    </li>
-                                    <li className="border-b border-gray-400 my-2 uppercase">
-                                        <Link to="/food" onClick={() => handleLinkClick()}><span>Food 🍔</span></Link>
-                                    </li>
-                                    <li className="border-b border-gray-400 my-2 uppercase">
-                                        <Link to="/photography" onClick={() => handleLinkClick()}><span>Photography 📷</span></Link>
-                                    </li>
-
+                                <li className="border-b border-gray-400 my-2 uppercase">
+                                    <Link
+                                        to="/nsfw"
+                                        onClick={() => handleLinkClick()}>
+                                        <span>NSFW 🌶️</span>
+                                    </Link>
+                                </li>
+                                <li className="border-b border-gray-400 my-2 uppercase">
+                                    <Link
+                                        to="/nature"
+                                        onClick={() => handleLinkClick()}>
+                                        <span>Nature 🔭</span>
+                                    </Link>
+                                </li>
+                                <li className="border-b border-gray-400 my-2 uppercase">
+                                    <Link
+                                        to="/food"
+                                        onClick={() => handleLinkClick()}>
+                                        <span>Food 🍔</span>
+                                    </Link>
+                                </li>
+                                <li className="border-b border-gray-400 my-2 uppercase">
+                                    <Link
+                                        to="/photography"
+                                        onClick={() => handleLinkClick()}>
+                                        <span>Photography 📷</span>
+                                    </Link>
+                                </li>
                             </ul>
                         </section>
-
                     </div>
                 </section>
 

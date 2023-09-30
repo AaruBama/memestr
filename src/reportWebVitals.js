@@ -23,6 +23,4 @@
 // onCLS(sendToGoogleAnalytics);
 // onFID(sendToGoogleAnalytics);
 // onLCP(sendToGoogleAnalytics)
-export default function reportWebVitals() {
-
-}
+export default function reportWebVitals() {}
