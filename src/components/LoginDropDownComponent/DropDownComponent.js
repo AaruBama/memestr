@@ -96,13 +96,13 @@ function DropdownComponent() {
 
                 <Transition
                     as={Fragment}
-                    enter="transition ease-in-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95">
-                    <Menu.Items className="absolute p-4 right-0 w-40 mt-2 origin-top-right bg-black/[0.9] text-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    enter="transition ease-out duration-300 transform"
+                    enterFrom="translate-y-full opacity-0"
+                    enterTo="translate-y-0 opacity-100"
+                    leave="transition ease-in duration-300 transform"
+                    leaveFrom="translate-y-0 opacity-100"
+                    leaveTo="translate-y-full opacity-0">
+                    <Menu.Items className="fixed p-4 bottom-0 right-0 left-0 w-full mt-2 h-[30%] origin-bottom bg-black/[0.9] text-white rounded-t-md rounded-bl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {!isLoggedIn && (
                             <Menu.Item
                                 as="div"
@@ -110,7 +110,7 @@ function DropdownComponent() {
                                     openNewKeysModal();
                                 }}
                                 disabled={isLoggedIn}
-                                className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black">
+                                className="text-white">
                                 Create Account
                             </Menu.Item>
                         )}
@@ -121,7 +121,7 @@ function DropdownComponent() {
                                 onClick={() => {
                                     openLoginModal();
                                 }}
-                                className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black">
+                                className="">
                                 Login
                             </Menu.Item>
                         )}
