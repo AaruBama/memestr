@@ -26,6 +26,17 @@
     "utf8": "^3.0.0",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "@svgr/cli": "^8.1.0",
+    "@svgr/webpack": "^8.1.0",
+    "gh-pages": "^5.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.3",
+    "prettier-plugin-tailwindcss": "^0.5.3",
+    "source-map-loader": "^4.0.1",
+    "tailwindcss": "^3.3.3"
+  },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
@@ -53,17 +64,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@svgr/cli": "^8.1.0",
-    "@svgr/webpack": "^8.1.0",
-    "gh-pages": "^5.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
-    "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.3",
-    "source-map-loader": "^4.0.1",
-    "tailwindcss": "^3.3.3"
   },
   "lint-staged": {
     "*.{md,yml,json,html,css,js,jsx,ts,tsx}": "prettier --write"
