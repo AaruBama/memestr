@@ -7,7 +7,8 @@ Try Now 🎊 https://memestr.app
 
 ## What is Memestr?
 
-Memestr is a vibrant community where humour takes centre stage. As an
+Memestr is a nostr-powered vibrant community where humour takes centre stage. As
+an
 open-source platform, Memestr empowers users to express themselves through the
 art of memes and engage with a diverse community of meme enthusiasts.
 
@@ -17,6 +18,8 @@ together!
 
 ## What sets it apart from similar projects?
 
+Memestr is a nostr based web application that creates a global stage for memes
+and trending content.
 Memestr sets itself apart from other similar websites like 9gag in several
 unique ways:
 
