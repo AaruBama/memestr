@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { SimplePool } from "nostr-tools";
 import Feed from "../Feed";
 import PostUpload from "../Post/newPost";
-// import NewPostButton from "../Post/newPost";
+import Spinner from "../Spinner";
 
-// Create a context to manage shared state
 const HashTagContext = React.createContext();
 
 const relays = [
@@ -17,11 +16,10 @@ const relays = [
 
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children, filterTags }) {
-    console.log("Running hashtagToolProvider", filterTags);
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
-
     const [scrollPosition, setScrollPosition] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const containsJpgOrMp4Link = text => {
         const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
@@ -56,9 +54,10 @@ export function HashTagToolProvider({ children, filterTags }) {
         const LoadMedia = async () => {
             // Fetch notes and update the context state
             // ...
+            setIsLoading(true);
             const relayPool = new SimplePool();
             const filters = {
-                limit: 20,
+                limit: 3,
             };
 
             // For Memes
@@ -68,16 +67,10 @@ export function HashTagToolProvider({ children, filterTags }) {
                 filters["#t"] = ["memes", "meme", "funny", "memestr"];
             }
 
-            // For both
-            // filters["#t"] = ["boobstr", "memestr"]
-
-            // For Studies
-            // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
             let notes = await relayPool.list(relays, [filters]);
             notes = notes.filter(note => {
                 return containsJpgOrMp4Link(note.content);
             });
-            // console.log("notes are ", notes)
             // GET VOTES COMBINED
             let createdAt = [];
             let postIds = [];
@@ -95,6 +88,7 @@ export function HashTagToolProvider({ children, filterTags }) {
                 note["voteCount"] = groupedByPostId[note.id] || 0;
             }
             setNotes(notes);
+            setIsLoading(false);
             setLastCreatedAt(createdAt[0]);
             relayPool.close(relays);
         };
@@ -105,10 +99,9 @@ export function HashTagToolProvider({ children, filterTags }) {
     const LoadMoreMedia = async since => {
         // Fetch more notes with offset and update the context state
         // ...
-
         const relayPool = new SimplePool();
         const filters = {
-            limit: 20,
+            limit: 3,
         };
 
         const relays = [
@@ -122,15 +115,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         // For Memes
         filters["#t"] = ["memes", "meme", "funny", "memestr"];
 
-        // For both
-        // filters["#t"] = ["boobstr", "memestr"]
-
-        // For Studies
-        // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-        // filters["#t"] = ["titstr", "memestr", "pornstr", "boobstr" ]
-        // let lastPostSince = (notes[notes.length - 1].created_at)
         filters["until"] = lastCreatedAt - 5 * 60;
-        // filters["since"] = lastPostSince + (60*60)
 
         let newNotes = await relayPool.list(relays, [filters]);
         newNotes = newNotes.filter(note => {
@@ -154,11 +139,8 @@ export function HashTagToolProvider({ children, filterTags }) {
         setNotes(notes => [...notes, ...newNotes]);
         setLastCreatedAt(createdAt[0]);
         relayPool.close(relays);
-        // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
     };
-    // setNotes((prevNotes) => [...prevNotes, ...newNotes]);
 
-    // Store the context value
     const contextValue = {
         notes,
         scrollPosition,
@@ -168,7 +150,7 @@ export function HashTagToolProvider({ children, filterTags }) {
 
     return (
         <HashTagContext.Provider value={contextValue}>
-            {children}
+            {isLoading ? <Spinner /> : children}
         </HashTagContext.Provider>
     );
 }
