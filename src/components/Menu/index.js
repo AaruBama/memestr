@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import "./index.css";
+// import { Transition } from "@headlessui/react";
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -12,9 +14,9 @@ export default function Header() {
     };
 
     return (
-        <div className="flex items-center justify-between border-gray-400 py-8">
+        <div className="flex items-center justify-between border-gray-400">
             <nav>
-                <section className="MOBILE-MENU flex">
+                <section className='MOBILE-MENU flex style={{ transform: isNavOpen ? "translateX(0)" : "translateX(-100%)" }}'>
                     <div
                         className="HAMBURGER-ICON space-y-2"
                         onClick={() => setIsNavOpen(prev => !prev)}>
@@ -22,13 +24,27 @@ export default function Header() {
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                     </div>
+                    {/*<Transition*/}
+                    {/*    show={isNavOpen}*/}
+                    {/*    enter='transition ease-in duration-300 transform'*/}
+                    {/*    enterFrom='translate-x-[-100%] opacity-0'*/}
+                    {/*    enterTo='translate-x-0 opacity-100'*/}
+                    {/*    leave='transition ease-out duration-300 transform'*/}
+                    {/*    leaveFrom='translate-x-0 opacity-100'*/}
+                    {/*    leaveTo='translate-x-[-100%] opacity-0'>*/}
 
-                    <div className={isNavOpen ? "showMenuNav" : "hideMenuNav"}>
+                    <div
+                        className={
+                            isNavOpen
+                                ? "absolute flex flex-col justify-start top-0 left-0 h-screen align-baseline z-100 text-white bg-black w-400"
+                                : "hideMenuNav"
+                        }>
                         <div
-                            className="absolute top-0 left-0 px-4 py-4"
+                            // Cancel X button on nav bar
+                            className="absolute top-0 left-0 p-4"
                             onClick={() => setIsNavOpen(false)}>
                             <svg
-                                className="h-8 w-8 text-black font-bold"
+                                className="h-8 w-8 text-white font-bold"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -41,7 +57,7 @@ export default function Header() {
                         </div>
                         <section
                             id="main-section"
-                            className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
+                            className="flex flex-col items-start justify-between min-h-[20px] w-full pt-12 px-4 border-b-4">
                             <a class={"mb-2"} href="/">
                                 Home
                             </a>
@@ -86,6 +102,7 @@ export default function Header() {
                             </ul>
                         </section>
                     </div>
+                    {/*</Transition>*/}
                 </section>
 
                 {/*<ul className="DESKTOP-MENU hidden space-x-8 lg:flex">*/}
@@ -100,24 +117,8 @@ export default function Header() {
                 {/*    </li>*/}
                 {/*</ul>*/}
             </nav>
-            <style>{`
-      .hideMenuNav {
-        display: none;
-      }
-      .showMenuNav {
-        position: absolute;
-        width: 100%;
-        height: 100vh;
-        background: white;
-        top: 0;
-        left: 0;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: baseline;
-      }
-    `}</style>
+            {/*        <style>{`*/}
+            {/*`}</style>*/}
         </div>
     );
 }
