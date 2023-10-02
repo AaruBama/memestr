@@ -15,7 +15,7 @@ export function generateNewKeys() {
     return { epk: epk, epubKey: ePubKey };
 }
 
-function HeaderBar(props) {
+function HeaderBar() {
     return (
         <div class="relative flex-column bg-gray-100 text-neutral-500 shadow-lg rounded">
             <header className={"flex flex-row items-center h-14"}>

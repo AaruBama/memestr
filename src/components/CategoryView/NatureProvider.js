@@ -90,7 +90,7 @@ export function NatureProvider({ children, filterTags }) {
         LoadMedia();
     }, [filterTags]);
 
-    const LoadMoreMedia = async since => {
+    const LoadMoreMedia = async () => {
         // Fetch more notes with offset and update the context state
         // ...
 

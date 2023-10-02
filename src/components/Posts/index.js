@@ -12,7 +12,9 @@ function extractLinksFromText(text) {
     const gifRegex = /\.gif$/i;
 
     const links = text.match(linkRegex);
-    if (!links) return [];
+    if (!links) {
+        return [];
+    }
 
     return links.filter(
         link =>
