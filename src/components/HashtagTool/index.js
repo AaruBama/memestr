@@ -57,7 +57,7 @@ export function HashTagToolProvider({ children, filterTags }) {
             setIsLoading(true);
             const relayPool = new SimplePool();
             const filters = {
-                limit: 3,
+                limit: 20,
             };
 
             // For Memes
@@ -101,7 +101,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         // ...
         const relayPool = new SimplePool();
         const filters = {
-            limit: 3,
+            limit: 20,
         };
 
         const relays = [
