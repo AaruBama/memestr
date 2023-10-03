@@ -9,7 +9,7 @@ Try Now 🎊 https://memestr.app
 
 Memestr is a community where humour takes centre stage. As
 an
-open-source platform. Memestr empowers users to express themselves through the
+open-source platform, Memestr empowers users to express themselves through the
 art of memes and engage with a diverse community of meme enthusiasts.
 
 ## What sets it apart from similar projects?
