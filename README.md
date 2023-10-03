@@ -17,8 +17,8 @@ art of memes and engage with a diverse community of meme enthusiasts.
 Memestr is a nostr based web application that creates a global stage for memes
 and trending content.
 Memestr is a community for people who like seeing all their
-memes/news/trending-content random
-stuff at one place without having to go through a lot of text statuses.
+memes, news, trending-content, random-stuff at one place without having to go
+through a lot of text statuses.
 
 ## why should people use it?
 
