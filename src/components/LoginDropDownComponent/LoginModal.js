@@ -1,18 +1,19 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import getUserDetailsFromPrivateKey from "../Profile";
-import { getPublicKey, nip19 } from "nostr-tools";
+import React, { Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import getUserDetailsFromPrivateKey from '../Profile';
+import { getPublicKey, nip19 } from 'nostr-tools';
 
 function LoginModal({ isOpen, onClose }) {
     const [loggedInUserDetails, setLoggedInUserDetails] = useState({});
-    const [privateKey, setPrivateKey] = useState("");
+    const [privateKey, setPrivateKey] = useState('');
+
     function handlePrivateKeyChange(event) {
         setPrivateKey(event.target.value);
     }
 
     function logUserIn() {
         let userDetails = null;
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             userDetails = JSON.parse(storedData);
             const display_name = userDetails.display_name;
@@ -36,10 +37,10 @@ function LoginModal({ isOpen, onClose }) {
                 });
                 let decodedpk = nip19.decode(privateKey);
                 let publicKey = getPublicKey(decodedpk.data);
-                value["pubKey"] = publicKey;
-                value["privateKey"] = privateKey; //Encrypt it.
-                localStorage.setItem("memestr", JSON.stringify(value));
-                console.log("Calling on close method.", loggedInUserDetails);
+                value['pubKey'] = publicKey;
+                value['privateKey'] = privateKey; //Encrypt it.
+                localStorage.setItem('memestr', JSON.stringify(value));
+                console.log('Calling on close method.', loggedInUserDetails);
             });
         }
     }
@@ -90,7 +91,7 @@ function LoginModal({ isOpen, onClose }) {
                                             </Dialog.Title>
 
                                             <Dialog.Description>
-                                                <div class="mb-4">
+                                                <div className="mb-4">
                                                     <label
                                                         htmlFor="loginKey"
                                                         className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">

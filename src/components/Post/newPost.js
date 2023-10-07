@@ -1,10 +1,10 @@
-import React, { Fragment, useState } from "react";
-import { getEventHash, getSignature, nip19, SimplePool } from "nostr-tools";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment, useState } from 'react';
+import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { Dialog, Transition } from '@headlessui/react';
 
 const PostUpload = ({ isOpen, onClose }) => {
     const [link, setLink] = useState(null);
-    const [title, setTitle] = useState("");
+    const [title, setTitle] = useState('');
     const [retryCount, setRetryCount] = useState(0);
     const [postStage, setPostStage] = useState(0);
 
@@ -34,8 +34,8 @@ const PostUpload = ({ isOpen, onClose }) => {
         //     alert("sww");
         //     return;
         // }
-        if (postStage === 0 || title === "") {
-            alert("Can not create post without media and title.");
+        if (postStage === 0 || title === '') {
+            alert('Can not create post without media and title.');
             return;
         }
         if (postStage !== 2) {
@@ -44,15 +44,15 @@ const PostUpload = ({ isOpen, onClose }) => {
                     setRetryCount(prevRetryCount => prevRetryCount + 1);
                 }, 1000);
             } else {
-                alert("Timed out before we could upload post. Try again later");
+                alert('Timed out before we could upload post. Try again later');
                 return;
             }
         }
-        let relays = ["wss://relay.damus.io"];
+        let relays = ['wss://relay.damus.io'];
         const pool = new SimplePool();
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (!storedData) {
-            alert("Login required to Upload Post.");
+            alert('Login required to Upload Post.');
             return;
         }
         let uesrPublicKey = JSON.parse(storedData).pubKey;
@@ -63,12 +63,12 @@ const PostUpload = ({ isOpen, onClose }) => {
             pubkey: uesrPublicKey,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ["d", "memestr"],
-                ["url", link],
-                ["p", uesrPublicKey],
-                ["category", "memestrrr"],
+                ['d', 'memestr'],
+                ['url', link],
+                ['p', uesrPublicKey],
+                ['category', 'memestrrr'],
             ],
-            content: title + " " + link,
+            content: title + ' ' + link,
         };
 
         // console.log("event", commentEvent)
@@ -79,11 +79,11 @@ const PostUpload = ({ isOpen, onClose }) => {
         // console.log("p1", p1)
         Promise.resolve(p1).then(
             value => {
-                console.log("Success", value);
+                console.log('Success', value);
                 setPostStage(4); // Success!
             },
             reason => {
-                console.error("something went wrong", reason); // Error!
+                console.error('something went wrong', reason); // Error!
             },
         );
     };
@@ -106,11 +106,11 @@ const PostUpload = ({ isOpen, onClose }) => {
 
             // Step 3: Make a curl call
             const response = await uploadToImgur(file);
-            console.log("24, response is", response.data.link);
+            console.log('24, response is', response.data.link);
             setLink(response.data.link);
             setPostStage(2);
         } catch (error) {
-            console.error("An error occurred:", error);
+            console.error('An error occurred:', error);
             setLink(null);
         }
     };
@@ -155,15 +155,15 @@ const PostUpload = ({ isOpen, onClose }) => {
         // if (!validateFile(file)) {
         //     alert("Only jpg,jpeg,mp4 allowed")
         // }
-        const apiUrl = "https://api.imgur.com/3/upload";
+        const apiUrl = 'https://api.imgur.com/3/upload';
 
         const formData = new FormData();
-        formData.append("image", media);
+        formData.append('image', media);
         const headers = new Headers();
-        headers.append("Authorization", "Client-ID c41537d03e6c984");
+        headers.append('Authorization', 'Client-ID c41537d03e6c984');
 
         const response = await fetch(apiUrl, {
-            method: "POST",
+            method: 'POST',
             headers,
             body: formData,
         });
@@ -171,7 +171,7 @@ const PostUpload = ({ isOpen, onClose }) => {
         const parsedjson = await response.json();
 
         if (!response.ok) {
-            throw new Error("Upload failed");
+            throw new Error('Upload failed');
         }
         return parsedjson;
     };
@@ -221,7 +221,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                 </Dialog.Title>
 
                                                 <Dialog.Description>
-                                                    <div class="mb-4 required">
+                                                    <div className="mb-4 required">
                                                         <label
                                                             htmlFor="title"
                                                             className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">

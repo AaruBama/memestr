@@ -1,9 +1,9 @@
-import { getEventHash, getSignature, nip19, SimplePool } from "nostr-tools";
-import { fetchInvoice, getProfileMetadata, getZapEndpoint } from "../ZapHelper";
-import { Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import "./index.css";
-import ZapModal from "../ZapHelper/ZapModal";
+import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
+import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import './index.css';
+import ZapModal from '../ZapHelper/ZapModal';
 
 function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -24,16 +24,16 @@ function extractLinksFromText(text) {
 
 const removeHashtagsAndLinks = text => {
     // Remove hashtags
-    const withoutHashtags = text.replace(/#\w+/g, "");
+    const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, "");
+    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId) {
-    const storedData = localStorage.getItem("memestr");
+    const storedData = localStorage.getItem('memestr');
     if (!storedData) {
-        alert("Login required to upvote.");
+        alert('Login required to upvote.');
         return;
     }
     let uesrPublicKey = JSON.parse(storedData).pubKey;
@@ -41,22 +41,22 @@ export async function upvotePost(noteId) {
     let sk = nip19.decode(userPrivateKey);
 
     const pool = new SimplePool();
-    let relays = ["wss://relay.damus.io", "wss://relay.primal.net"];
+    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
 
     let upvoteEvent = {
         kind: 7,
         pubkey: uesrPublicKey,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
-            ["e", noteId],
-            ["p", uesrPublicKey],
+            ['e', noteId],
+            ['p', uesrPublicKey],
         ],
-        content: "+",
+        content: '+',
     };
     upvoteEvent.id = getEventHash(upvoteEvent);
     upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
     let c = pool.publish(relays, upvoteEvent);
-    console.log("c is ", c);
+    console.log('c is ', c);
     if (pool) {
         pool.close(relays);
         return true;
@@ -65,13 +65,13 @@ export async function upvotePost(noteId) {
 }
 
 export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
-    console.log("Sending zaps");
+    console.log('Sending zaps');
     const pubKey = opPubKey;
     let relays = [
-        "wss://relay.damus.io",
-        "wss://relay.primal.net",
-        "wss://nos.lol",
-        "wss://nostr.bitcoiner.social",
+        'wss://relay.damus.io',
+        'wss://relay.primal.net',
+        'wss://nos.lol',
+        'wss://nostr.bitcoiner.social',
     ];
     const encodedNoteId = nip19.noteEncode(postId);
     let userDetails = await getProfileMetadata(pubKey);
@@ -79,26 +79,26 @@ export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
     let invoice = await fetchInvoice({
         zapEndpoint: zapEndpoint,
         amount: sats * 1000,
-        comment: "You got zapped!",
+        comment: 'You got zapped!',
         authorId: pubKey,
         noteId: encodedNoteId,
         normalizedRelays: relays,
     });
-    let zapUrl = "lightning:" + invoice;
+    let zapUrl = 'lightning:' + invoice;
     window.location.assign(zapUrl);
 };
 
 export const saveComment = (postId, comment) => {
     let relays = [
-        "wss://relay.damus.io",
-        "wss://relay.primal.net",
-        "wss://nos.lol",
-        "wss://nostr.bitcoiner.social",
+        'wss://relay.damus.io',
+        'wss://relay.primal.net',
+        'wss://nos.lol',
+        'wss://nostr.bitcoiner.social',
     ];
     const pool = new SimplePool();
-    const storedData = localStorage.getItem("memestr");
+    const storedData = localStorage.getItem('memestr');
     if (!storedData) {
-        alert("Login required to upvote.");
+        alert('Login required to upvote.');
         return;
     }
     let uesrPublicKey = JSON.parse(storedData).pubKey;
@@ -109,9 +109,9 @@ export const saveComment = (postId, comment) => {
         pubkey: uesrPublicKey,
         created_at: Math.floor(Date.now() / 1000),
         tags: [
-            ["e", postId],
-            ["p", uesrPublicKey],
-            ["alt", "reply"],
+            ['e', postId],
+            ['p', uesrPublicKey],
+            ['alt', 'reply'],
         ],
         content: comment,
     };
@@ -129,7 +129,7 @@ function Posts(props) {
     const [fillLike, setFillLike] = useState(false);
     const [fillZap, setFillZap] = useState(false);
     const [timeDifference, setTimeDifference] = useState({
-        unit: "",
+        unit: '',
         duration: 0,
     });
 
@@ -154,19 +154,19 @@ function Posts(props) {
     useEffect(() => {
         const currentTime = Math.floor(Date.now() / 1000); // Convert milliseconds to seconds
         const secondsDifference = currentTime - postCreatedAt;
-        let unit = "";
+        let unit = '';
         let duration = 0;
         if (secondsDifference < 60) {
-            unit = "seconds";
+            unit = 'seconds';
             duration = secondsDifference;
         } else if (secondsDifference < 3600) {
-            unit = "m";
+            unit = 'm';
             duration = Math.floor(secondsDifference / 60);
         } else if (secondsDifference < 86400) {
-            unit = "h";
+            unit = 'h';
             duration = Math.floor(secondsDifference / 3600);
         } else {
-            unit = "d";
+            unit = 'd';
             duration = Math.floor(secondsDifference / 86400);
         }
         if (duration !== 0) {
@@ -182,19 +182,19 @@ function Posts(props) {
         .trimLeft()
         .trimRight();
     if (title.length === 0) {
-        title = " ";
+        title = ' ';
     }
     const imageLink = mediaLinks[0];
 
     function voteIncrement() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             setVotesCount(votesCount + 1);
         }
     }
 
     function fillColor() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             setFillLike(true);
         }
@@ -214,9 +214,9 @@ function Posts(props) {
     }
 
     function handleZapButton() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (!storedData) {
-            alert("Login to send zaps.");
+            alert('Login to send zaps.');
             return false;
         }
         openModal();
@@ -224,31 +224,31 @@ function Posts(props) {
     }
 
     return (
-        <div class="flex flex-col bg-black divide-y mt-2 overflow-scroll">
-            <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
+        <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
+            <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                 <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                    <span class={"flex basis-[80%]"}>{title}</span>
-                    <span class="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">
+                    <span className={'flex basis-[80%]'}>{title}</span>
+                    <span className="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">
                         {timeDifference.duration}
-                        {timeDifference.unit}{" "}
+                        {timeDifference.unit}{' '}
                     </span>
                     {/*{new Date(props.note.created_at).toString()}*/}
                 </span>
-                <div class="py-2 px-1 max-w-fit">
+                <div className="py-2 px-1 max-w-fit">
                     <Link
                         to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
-                        <img alt={""} src={imageLink} />
+                        <img alt={''} src={imageLink} />
                     </Link>
                 </div>
 
-                <div class="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
+                <div className="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
                     {/*Comments button*/}
 
                     <Link
                         to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
-                        <button variant="light" size={"lg"}>
+                        <button variant="light" size={'lg'}>
                             <svg
-                                class="h-8 w-8"
+                                className="h-8 w-8"
                                 xmlns="http://www.w3.org/2000/svg"
                                 x="0"
                                 y="0"
@@ -269,9 +269,9 @@ function Posts(props) {
                             handleZapButton();
                         }}>
                         <svg
-                            class={`${
+                            className={`${
                                 fillZap &&
-                                "fill-current text-yellow-300 stroke-black"
+                                'fill-current text-yellow-300 stroke-black'
                             } h-8 w-8`}
                             xmlns="http://www.w3.org/2000/svg"
                             x="0"
@@ -302,7 +302,7 @@ function Posts(props) {
                         disabled={isTodisabled()}>
                         <svg
                             className={`${
-                                fillLike && "fill-current text-red-600"
+                                fillLike && 'fill-current text-red-600'
                             } h-8 w-8`}
                             xmlns="http://www.w3.org/2000/svg"
                             x="0"

@@ -1,40 +1,41 @@
-import React, { Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { getEventHash, getSignature, nip19, SimplePool } from "nostr-tools";
-import UploadAndDisplayImage from "./UploadUserPicture";
+import React, { Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import UploadAndDisplayImage from './UploadUserPicture';
 
 function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
-    const [username, setUsername] = useState("");
-    const [aboutMe, setAboutMe] = useState("");
-    const [fileString, setFileString] = useState("");
+    const [username, setUsername] = useState('');
+    const [aboutMe, setAboutMe] = useState('');
+    const [fileString, setFileString] = useState('');
 
     const choosePicture = url => {
-        console.log("url being sent is ", url, "and length is  ", url.length);
+        console.log('url being sent is ', url, 'and length is  ', url.length);
         setFileString(url);
     };
+
     function handleUsernameChange(event) {
         setUsername(event.target.value);
     }
 
     function registerAccount(sk, pk) {
         let relays = [
-            "wss://relay.damus.io",
-            "wss://relay.primal.net",
-            "wss://nos.lol",
-            "wss://nostr.bitcoiner.social",
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://nos.lol',
+            'wss://nostr.bitcoiner.social',
         ];
         const pool = new SimplePool();
 
         sk = nip19.decode(sk);
         pk = nip19.decode(pk);
-        console.log("sk pk is", sk, pk);
+        console.log('sk pk is', sk, pk);
         let content = {
             name: username,
             about: aboutMe,
         };
 
         if (fileString.length > 0) {
-            content["picture"] = fileString;
+            content['picture'] = fileString;
         }
         content = JSON.stringify(content);
         let userRegisterEvent = {
@@ -42,8 +43,8 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
             pubkey: pk.data,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ["p", pk.data],
-                ["w", "memestrAccount"],
+                ['p', pk.data],
+                ['w', 'memestrAccount'],
             ],
             content: content,
         };
@@ -52,8 +53,8 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
 
         userRegisterEvent.sig = getSignature(userRegisterEvent, sk.data);
         let x = pool.publish(relays, userRegisterEvent);
-        console.log("userRegistration Event", userRegisterEvent);
-        console.log("o=o=o", x);
+        console.log('userRegistration Event', userRegisterEvent);
+        console.log('o=o=o', x);
 
         pool.close(relays);
     }
@@ -102,7 +103,7 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                                             </Dialog.Title>
 
                                             <Dialog.Description>
-                                                <div class="mb-4">
+                                                <div className="mb-4">
                                                     <label
                                                         htmlFor="username"
                                                         className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">
