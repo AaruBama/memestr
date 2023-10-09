@@ -1,14 +1,14 @@
-import React, { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 
 function RegistrationModal({ isOpen, onClose, sk, pk }) {
     function copyKey(value) {
-        console.log("Copying value");
-        const textarea = document.createElement("textarea");
+        console.log('Copying value');
+        const textarea = document.createElement('textarea');
         textarea.value = value;
         document.body.appendChild(textarea);
         textarea.select();
-        document.execCommand("copy");
+        document.execCommand('copy');
         document.body.removeChild(textarea);
     }
 
@@ -56,9 +56,9 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                                 </span>
                                                 :
                                                 <div
-                                                    class={
-                                                        "px-2 py-1 text-sm bg-yellow-200 bg-opacity-10 text-slate-700 border-2 rounded border-black break-all shadow-yellow-300 font-semibold" +
-                                                        "font-sans"
+                                                    className={
+                                                        'px-2 py-1 text-sm bg-yellow-200 bg-opacity-10 text-slate-700 border-2 rounded border-black break-all shadow-yellow-300 font-semibold' +
+                                                        'font-sans'
                                                     }>
                                                     {pk}
                                                 </div>
@@ -70,16 +70,16 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                                 </span>
                                                 :
                                                 <div
-                                                    class={
-                                                        "px-2 py-1 text-sm bg-yellow-200 bg-opacity-10 text-slate-700 border-2 rounded border-black break-all shadow-yellow-300 font-semibold" +
-                                                        "font-sans"
+                                                    className={
+                                                        'px-2 py-1 text-sm bg-yellow-200 bg-opacity-10 text-slate-700 border-2 rounded border-black break-all shadow-yellow-300 font-semibold' +
+                                                        'font-sans'
                                                     }>
                                                     {sk}
                                                 </div>
                                             </Dialog.Title>
 
                                             {/*<Dialog.Description>*/}
-                                            {/*    <div class="mb-4">*/}
+                                            {/*    <div className="mb-4">*/}
                                             {/*    <label htmlFor="username" className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">Username</label>*/}
                                             {/*    <input type="text"*/}
                                             {/*           id="username"*/}

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function Header() {
                         <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                     </div>
 
-                    <div className={isNavOpen ? "showMenuNav" : "hideMenuNav"}>
+                    <div className={isNavOpen ? 'showMenuNav' : 'hideMenuNav'}>
                         <div
                             className="absolute top-0 left-0 px-4 py-4"
                             onClick={() => setIsNavOpen(false)}>
@@ -42,11 +42,13 @@ export default function Header() {
                         <section
                             id="main-section"
                             className="flex flex-col items-start justify-between min-h-[20px] w-full pt-24 px-4 border-b-4">
-                            <a class={"mb-2"} href="/">
+                            <a className={'mb-2'} href="/">
                                 Home
                             </a>
                         </section>
-                        <span class={"px-4 pt-2 font-bold"}>Categories</span>
+                        <span className={'px-4 pt-2 font-bold'}>
+                            Categories
+                        </span>
                         <section
                             id="categories"
                             className="flex flex-col items-start justify-between w-full px-4 border-b-4">

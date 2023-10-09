@@ -1,24 +1,24 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import RegistrationModal from "./NewKeysModal";
-import UserDetailsForAccountCreationModal from "./UserDetailsForAccountCreationModal";
-import { generateNewKeys } from "../Login";
-import LoginModal from "./LoginModal";
+import React, { Fragment, useEffect, useState } from 'react';
+import { Menu, Transition } from '@headlessui/react';
+import RegistrationModal from './NewKeysModal';
+import UserDetailsForAccountCreationModal from './UserDetailsForAccountCreationModal';
+import { generateNewKeys } from '../Login';
+import LoginModal from './LoginModal';
 
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
     const [loginModal, setLoginModal] = useState(false);
-    const [sk, setSk] = useState("");
+    const [sk, setSk] = useState('');
     const [userDetails, setUserDetails] = useState(null);
-    const [pk, setPk] = useState("");
+    const [pk, setPk] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const openNewKeysModal = () => {
         setNewKeysModal(true);
         let x = generateNewKeys();
-        setSk(x["epk"]);
-        setPk(x["epubKey"]);
+        setSk(x['epk']);
+        setPk(x['epubKey']);
     };
     const openUserDetailsModal = () => {
         setNewUserDetailsModal(true);
@@ -34,7 +34,7 @@ function DropdownComponent() {
     };
 
     const openLoginModal = () => {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (!storedData) {
             setLoginModal(true);
         } else {
@@ -50,7 +50,7 @@ function DropdownComponent() {
     };
 
     useEffect(() => {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             setUserDetails(JSON.parse(storedData));
             setIsLoggedIn(true);
@@ -58,10 +58,10 @@ function DropdownComponent() {
     }, []);
 
     function logout() {
-        localStorage.removeItem("memestr");
+        localStorage.removeItem('memestr');
         setUserDetails(null);
         setIsLoggedIn(false);
-        alert("Logged out successfully!");
+        alert('Logged out successfully!');
     }
 
     return (
@@ -75,12 +75,12 @@ function DropdownComponent() {
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
-                                class="w-9 h-9 ">
+                                className="w-9 h-9 ">
                                 <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin=""
+                                    strokeLinecap="round"
+                                    strokeLinejoin=""
                                     d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
                                 />
                             </svg>
@@ -130,8 +130,8 @@ function DropdownComponent() {
                             <Menu.Item>
                                 {({ active }) => (
                                     <div
-                                        class={`${
-                                            active && "bg-yellow-500"
+                                        className={`${
+                                            active && 'bg-yellow-500'
                                         } ui-active:bg-white ui-active:text-black ui-not-active:bg-white ui-not-active:text-black`}>
                                         {userDetails.name}
                                     </div>
@@ -145,8 +145,8 @@ function DropdownComponent() {
                                         onClick={() => {
                                             logout();
                                         }}
-                                        class={`${
-                                            active && "bg-yellow-500"
+                                        className={`${
+                                            active && 'bg-yellow-500'
                                         } ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black`}>
                                         Logout
                                     </div>

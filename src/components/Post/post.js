@@ -1,10 +1,10 @@
-import { useParams, useSearchParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import "./post.css";
-import { sendNewZaps, upvotePost } from "../Posts";
-import { getEventHash, getSignature, nip19, SimplePool } from "nostr-tools";
-import Comments from "../Comments";
-import ZapModal from "../ZapHelper/ZapModal";
+import { useParams, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import './post.css';
+import { sendNewZaps, upvotePost } from '../Posts';
+import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import Comments from '../Comments';
+import ZapModal from '../ZapHelper/ZapModal';
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
 
@@ -12,13 +12,13 @@ function Post() {
     // const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
     let params = useParams();
     const [searchParams] = useSearchParams();
-    const title = searchParams.get("title");
+    const title = searchParams.get('title');
     const postId = params.postId;
-    const imageLink = searchParams.get("imageLink");
-    const voteCount = searchParams.get("voteCount");
-    const opPubKey = searchParams.get("OpPubKey");
+    const imageLink = searchParams.get('imageLink');
+    const voteCount = searchParams.get('voteCount');
+    const opPubKey = searchParams.get('OpPubKey');
     const [replies, setReplies] = useState([]);
-    const [comment, setComment] = useState("");
+    const [comment, setComment] = useState('');
 
     const captureComment = event => {
         setComment(event.target.value);
@@ -28,17 +28,17 @@ function Post() {
         const getComments = async () => {
             const relayPool = new SimplePool();
             const relays = [
-                "wss://relay.damus.io",
-                "wss://relay.primal.net",
-                "wss://nos.lol",
-                "wss://nostr.bitcoiner.social",
+                'wss://relay.damus.io',
+                'wss://relay.primal.net',
+                'wss://nos.lol',
+                'wss://nostr.bitcoiner.social',
             ];
             const filters = {
                 kinds: [1],
-                "#e": [postId],
+                '#e': [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
-            console.log("replies1 is", replies1);
+            console.log('replies1 is', replies1);
             setReplies(replies1);
             relayPool.close(relays);
         };
@@ -47,14 +47,14 @@ function Post() {
 
     const captureNewComment = async comment => {
         let relays = [
-            "wss://relay.damus.io",
-            "wss://relay.primal.net",
-            "wss://nos.lol",
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://nos.lol',
         ];
         const pool = new SimplePool();
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (!storedData) {
-            alert("Login required to comment.");
+            alert('Login required to comment.');
             return;
         }
         let uesrPublicKey = JSON.parse(storedData).pubKey;
@@ -65,24 +65,24 @@ function Post() {
             pubkey: uesrPublicKey,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ["e", postId],
-                ["p", uesrPublicKey],
-                ["alt", "reply"],
+                ['e', postId],
+                ['p', uesrPublicKey],
+                ['alt', 'reply'],
             ],
             content: comment,
         };
 
         commentEvent.id = getEventHash(commentEvent);
         commentEvent.sig = getSignature(commentEvent, sk.data);
-        console.log("CommenteventId is ", commentEvent.id);
-        console.log("calling pool", commentEvent);
+        console.log('CommenteventId is ', commentEvent.id);
+        console.log('calling pool', commentEvent);
         try {
             let x = await pool.publish(relays, commentEvent);
-            console.log("called pool", x);
+            console.log('called pool', x);
             let c = Promise.resolve(x);
-            console.log("c is", c);
+            console.log('c is', c);
         } catch (error) {
-            console.error("Error while publishing comment:", error);
+            console.error('Error while publishing comment:', error);
         }
         const commentObject = [
             {
@@ -91,8 +91,8 @@ function Post() {
             },
         ];
         setReplies(replies => [...commentObject, ...replies]);
-        console.log("replies after updation is", replies);
-        setComment("");
+        console.log('replies after updation is', replies);
+        setComment('');
         // c.map((cc) => {console.log(cc)})
     };
 
@@ -107,9 +107,9 @@ function Post() {
     }
 
     function handleZapButton() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (!storedData) {
-            alert("Login to send zaps.");
+            alert('Login to send zaps.');
             return false;
         }
         openModal();
@@ -118,20 +118,20 @@ function Post() {
 
     const handleConfirm = value => {
         // Process the value internally here or update state as needed
-        console.log("value is ", value);
+        console.log('value is ', value);
         sendNewZaps(postId, opPubKey, value);
         setProcessedValue(value);
     };
 
     function voteIncrement() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             setVotesCount(votesCount + 1);
         }
     }
 
     function fillColor() {
-        const storedData = localStorage.getItem("memestr");
+        const storedData = localStorage.getItem('memestr');
         if (storedData) {
             setFillLike(true);
         }
@@ -143,12 +143,12 @@ function Post() {
 
     return (
         <div>
-            <div class="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
-                <div class="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
+            <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
+                <div className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
                     <h1>{title}</h1>
                 </div>
-                <div className={"post-content"}>
-                    <img alt={""} className={"post-content"} src={imageLink} />
+                <div className={'post-content'}>
+                    <img alt={''} className={'post-content'} src={imageLink} />
                 </div>
             </div>
             <div className="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 pt-2">
@@ -160,7 +160,7 @@ function Post() {
                     <svg
                         className={`${
                             fillZap &&
-                            "fill-current text-yellow-300 stroke-black"
+                            'fill-current text-yellow-300 stroke-black'
                         } h-8 w-8`}
                         xmlns="http://www.w3.org/2000/svg"
                         x="0"
@@ -188,7 +188,7 @@ function Post() {
                     disabled={isTodisabled()}>
                     <svg
                         className={`${
-                            fillLike && "fill-current text-red-600"
+                            fillLike && 'fill-current text-red-600'
                         } h-8 w-8`}
                         xmlns="http://www.w3.org/2000/svg"
                         x="0"
@@ -235,13 +235,13 @@ function Post() {
                         <input
                             type="text"
                             placeholder=" Add a reply..."
-                            className={"comment-form"}
+                            className={'comment-form'}
                             value={comment}
                             onChange={captureComment}
                             required
                         />
                         <input
-                            class="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded "
+                            className="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded "
                             type="submit"
                         />
                     </form>

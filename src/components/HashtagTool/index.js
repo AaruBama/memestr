@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SimplePool } from "nostr-tools";
-import Feed from "../Feed";
-import PostUpload from "../Post/newPost";
-import Spinner from "../Spinner";
+import React, { useContext, useEffect, useState } from 'react';
+import { SimplePool } from 'nostr-tools';
+import Feed from '../Feed';
+import PostUpload from '../Post/newPost';
+import Spinner from '../Spinner';
 
 const HashTagContext = React.createContext();
 
 const relays = [
-    "wss://relay.damus.io/",
-    "wss://offchain.pub/",
-    "wss://nos.lol/",
-    "wss://relay.nostr.wirednet.jp/",
-    "wss://nostr.wine/",
+    'wss://relay.damus.io/',
+    'wss://offchain.pub/',
+    'wss://nos.lol/',
+    'wss://relay.nostr.wirednet.jp/',
+    'wss://nostr.wine/',
 ];
 
 // Create a provider component to wrap your application
@@ -29,7 +29,7 @@ export function HashTagToolProvider({ children, filterTags }) {
     async function getVotes(postIds) {
         const voteFilters = {
             kinds: [7],
-            "#e": postIds,
+            '#e': postIds,
         };
         const relayPool = new SimplePool();
         let votes = await relayPool.list(relays, [voteFilters]);
@@ -38,7 +38,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         for (const vote of votes) {
             const voteTags = vote.tags;
             for (const tag of voteTags) {
-                if (tag[0] === "e") {
+                if (tag[0] === 'e') {
                     if (groupedByPostId[tag[1]]) {
                         groupedByPostId[tag[1]] += 1;
                     } else {
@@ -57,14 +57,14 @@ export function HashTagToolProvider({ children, filterTags }) {
             setIsLoading(true);
             const relayPool = new SimplePool();
             const filters = {
-                limit: 20,
+                limit: 25,
             };
 
             // For Memes
             if (filterTags) {
-                filters["#t"] = filterTags;
+                filters['#t'] = filterTags;
             } else {
-                filters["#t"] = ["memes", "meme", "funny", "memestr"];
+                filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
             }
 
             let notes = await relayPool.list(relays, [filters]);
@@ -85,7 +85,7 @@ export function HashTagToolProvider({ children, filterTags }) {
 
             let groupedByPostId = await getVotes(postIds);
             for (const note of notes) {
-                note["voteCount"] = groupedByPostId[note.id] || 0;
+                note['voteCount'] = groupedByPostId[note.id] || 0;
             }
             setNotes(notes);
             setIsLoading(false);
@@ -99,23 +99,25 @@ export function HashTagToolProvider({ children, filterTags }) {
     const LoadMoreMedia = async () => {
         // Fetch more notes with offset and update the context state
         // ...
+        // setIsLoading(true);
+        console.log('Loading more media');
         const relayPool = new SimplePool();
         const filters = {
-            limit: 20,
+            limit: 25,
         };
 
         const relays = [
-            "wss://relay.damus.io/",
-            "wss://offchain.pub/",
-            "wss://nos.lol/",
-            "wss://relay.nostr.wirednet.jp/",
-            "wss://nostr.wine/",
+            'wss://relay.damus.io/',
+            'wss://offchain.pub/',
+            'wss://nos.lol/',
+            'wss://relay.nostr.wirednet.jp/',
+            'wss://nostr.wine/',
         ];
 
         // For Memes
-        filters["#t"] = ["memes", "meme", "funny", "memestr"];
+        filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
 
-        filters["until"] = lastCreatedAt - 5 * 60;
+        filters['until'] = lastCreatedAt - 5 * 60;
 
         let newNotes = await relayPool.list(relays, [filters]);
         newNotes = newNotes.filter(note => {
@@ -134,10 +136,11 @@ export function HashTagToolProvider({ children, filterTags }) {
         });
         let groupedByPostId = await getVotes(postIds);
         for (const note of newNotes) {
-            note["voteCount"] = groupedByPostId[note.id] || 0;
+            note['voteCount'] = groupedByPostId[note.id] || 0;
         }
         setNotes(notes => [...notes, ...newNotes]);
         setLastCreatedAt(createdAt[0]);
+        // setIsLoading(false);
         relayPool.close(relays);
     };
 
@@ -146,6 +149,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         scrollPosition,
         setScrollPosition,
         LoadMoreMedia,
+        isLoading,
     };
 
     return (
@@ -160,7 +164,7 @@ export function useHashTagContext() {
     const context = useContext(HashTagContext);
     if (!context) {
         throw new Error(
-            "useHashTagContext must be used within a HashTagToolProvider",
+            'useHashTagContext must be used within a HashTagToolProvider',
         );
     }
     return context;
@@ -168,7 +172,8 @@ export function useHashTagContext() {
 
 // The HashtagTool component
 export function HashtagTool() {
-    const { notes, LoadMoreMedia } = useHashTagContext();
+    const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
+    console.log('type of loadmore in hashtag tool', typeof LoadMoreMedia);
     const [newPostModal, setNewPostModal] = useState(false);
 
     function showNewPostModal() {
@@ -182,20 +187,17 @@ export function HashtagTool() {
     return (
         <>
             {/*<NewPostButton />*/}
-            <Feed notes={notes} />
-            <button
-                onClick={() => {
-                    LoadMoreMedia();
-                }}
-                className="ml-[32%] px-10 bg-white hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 border border-blue-500 hover:border-transparent rounded ">
-                Load More
-            </button>
+            <Feed
+                notes={notes}
+                onLoadMore={LoadMoreMedia}
+                isLoading={isLoading}
+            />
             <button
                 onClick={() => {
                     showNewPostModal();
                 }}
                 title="Upload"
-                className="fixed z-10 bottom-4 right-3 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">
+                className="fixed z-10 bottom-4 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">
                 ➕
             </button>
             {newPostModal && (
