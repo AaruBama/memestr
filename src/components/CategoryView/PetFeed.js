@@ -13,7 +13,7 @@ const relays = [
 
 const CategorizedContext = React.createContext();
 
-export function NFSWProvider({ children, filterTags }) {
+export function PetsFeedProvider({ children, filterTags }) {
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState();
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -47,51 +47,6 @@ export function NFSWProvider({ children, filterTags }) {
         }
         return groupedByPostId;
     }
-
-    // const LoadMedia = async () => {
-    //     // Fetch notes and update the context state
-    //     // ...
-    //     const relayPool = new SimplePool();
-    //     const filters = {
-    //         limit: 10,
-    //     };
-    //
-    //     // For Memes
-    //     if (filterTags) {
-    //         filters["#t"] = filterTags
-    //     } else {
-    //         filters["#t"] = ['memes', 'meme', 'funny', 'memestr'];
-    //     }
-    //     // For both
-    //     // filters["#t"] = ["boobstr", "memestr"]
-    //
-    //     // For Studies
-    //     // filters["#t"] = ["titstr", "nsfw" , "pornstr", "boobstr", "NSFW", "ass", "sex", "nude"]
-    //     let notes = await relayPool.list(relays, [filters]);
-    //     notes = notes.filter((note) => {
-    //         return containsJpgOrMp4Link(note.content)
-    //     })
-    //     // console.log("notes are ", notes)
-    //     // GET VOTES COMBINED
-    //     let createdAt = []
-    //     let postIds = []
-    //     notes.forEach(function (note) {
-    //         var id = note.id;
-    //         createdAt.push(note.created_at)
-    //         postIds.push(id)
-    //     });
-    //     createdAt.sort(function (a, b) {
-    //         return a - b
-    //     });
-    //
-    //     let groupedByPostId = await getVotes(postIds)
-    //     for (const note of notes) {
-    //         note["voteCount"] = groupedByPostId[note.id] || 0;
-    //     }
-    //     setNotes(notes);
-    //     setLastCreatedAt(createdAt[0])
-    //     relayPool.close(relays)
-    // };
 
     useEffect(() => {
         const LoadMedia = async () => {
@@ -219,7 +174,7 @@ export function useHashTagContext() {
     return context;
 }
 
-function NFSWFeed() {
+function PetFeed() {
     const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
 
@@ -254,4 +209,4 @@ function NFSWFeed() {
     );
 }
 
-export default NFSWFeed;
+export default PetFeed;

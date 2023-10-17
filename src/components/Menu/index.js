@@ -59,9 +59,9 @@ export default function Header() {
 
                                 <li className="border-b border-gray-400 my-2 uppercase">
                                     <Link
-                                        to="/nsfw"
+                                        to="/pets"
                                         onClick={() => handleLinkClick()}>
-                                        <span>NSFW 🌶️</span>
+                                        <span>Pets 🐾️</span>
                                     </Link>
                                 </li>
                                 <li className="border-b border-gray-400 my-2 uppercase">
