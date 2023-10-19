@@ -2,7 +2,6 @@ import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import './index.css';
 import ZapModal from '../ZapHelper/ZapModal';
 
 function extractLinksFromText(text) {
@@ -234,7 +233,7 @@ function Posts(props) {
                     </span>
                     {/*{new Date(props.note.created_at).toString()}*/}
                 </span>
-                <div className="py-2 px-1 max-w-fit">
+                <div className="flex justify-center py-2 px-1">
                     <Link
                         to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
                         <img alt={''} src={imageLink} />
