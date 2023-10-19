@@ -233,6 +233,7 @@ function Posts(props) {
         setFillZap(true);
     }
 
+    let postUrl = `/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`;
     return (
         <>
             <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
@@ -246,8 +247,7 @@ function Posts(props) {
                         {/*{new Date(props.note.created_at).toString()}*/}
                     </span>
                     <div className="flex justify-center py-2 px-1">
-                        <Link
-                            to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={postUrl}>
                             <img alt={''} src={imageLink} />
                         </Link>
                     </div>
@@ -255,8 +255,7 @@ function Posts(props) {
                     <div className="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
                         {/*Comments button*/}
 
-                        <Link
-                            to={`/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`}>
+                        <Link to={postUrl}>
                             <button variant="light" size={'lg'}>
                                 <svg
                                     className="h-8 w-8"
@@ -330,27 +329,32 @@ function Posts(props) {
                         </button>
 
                         {/*Share Button*/}
-                        <button onClick={() => openShareModal()}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                className="feather feather-log-out h-8 w-8 -rotate-90"
-                                viewBox="0 0 24 30">
-                                <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>
-                                <path d="M17 16L21 12 17 8"></path>
-                                <path d="M21 12L9 12"></path>
-                            </svg>
-                        </button>
+                        <div className="ml-auto mr-2 align-items-center">
+                            <button onClick={() => openShareModal()}>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    x="0"
+                                    y="0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    className="feather feather-corner-right-up h-8 w-8"
+                                    viewBox="0 0 24 30">
+                                    <path d="M10 9L15 4 20 9"></path>
+                                    <path d="M4 20h7a4 4 0 004-4V4"></path>
+                                </svg>
+                                <ShareModal
+                                    isOpen={isShareModalOpen}
+                                    onClose={closeShareModal}
+                                    postUrl={postUrl}
+                                />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <ShareModal isOpen={isShareModalOpen} onClose={closeShareModal} />
         </>
     );
 }
