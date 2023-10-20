@@ -1,17 +1,17 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-function RegistrationModal({ isOpen, onClose, sk, pk }) {
-    function copyKey(value) {
-        console.log('Copying value');
-        const textarea = document.createElement('textarea');
-        textarea.value = value;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-    }
+export function copyValueToClipboard(value) {
+    console.log('Coping');
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+}
 
+function RegistrationModal({ isOpen, onClose, sk, pk }) {
     return (
         <Transition.Root show={isOpen} as={Fragment}>
             <Dialog
@@ -50,7 +50,9 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                                 className="text-base font-semibold leading-6 text-gray-900 pb-6">
                                                 Public Key
                                                 <span
-                                                    onClick={() => copyKey(pk)}
+                                                    onClick={() =>
+                                                        copyValueToClipboard(pk)
+                                                    }
                                                     className="text-gray-600 text-sm underline hover:text-blue-600">
                                                     (Click to copy)
                                                 </span>
@@ -64,7 +66,9 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                                 </div>
                                                 Private Key
                                                 <span
-                                                    onClick={() => copyKey(sk)}
+                                                    onClick={() =>
+                                                        copyValueToClipboard(sk)
+                                                    }
                                                     className="text-gray-600 text-sm underline hover:text-blue-600">
                                                     (Click to copy)
                                                 </span>
