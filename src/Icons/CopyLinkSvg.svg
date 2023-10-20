@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" fill="none"
+     stroke="currentColor" stroke-width="2" height="2rem" width="2rem"
+     stroke-linecap="round"
+     stroke-linejoin="round" class="feather feather-link" x="0px" y="0px">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    <text x="0" y="39" fill="#000000" font-size="5px" font-weight="bold"
+          font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">
+        Created by Michiel Willemsen
+    </text>
+    <text x="0" y="44" fill="#000000" font-size="5px" font-weight="bold"
+          font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">
+        from the Noun Project
+    </text>
+</svg>

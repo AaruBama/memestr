@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 export function copyValueToClipboard(value) {
+    console.log('Coping');
     const textarea = document.createElement('textarea');
     textarea.value = value;
     document.body.appendChild(textarea);

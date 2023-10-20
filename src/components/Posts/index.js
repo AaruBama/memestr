@@ -345,16 +345,16 @@ function Posts(props) {
                                     <path d="M10 9L15 4 20 9"></path>
                                     <path d="M4 20h7a4 4 0 004-4V4"></path>
                                 </svg>
-                                <ShareModal
-                                    isOpen={isShareModalOpen}
-                                    onClose={closeShareModal}
-                                    postUrl={postUrl}
-                                />
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={closeShareModal}
+                postUrl={postUrl}
+            />
         </>
     );
 }
