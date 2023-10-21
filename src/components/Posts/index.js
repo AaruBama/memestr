@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
+import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
 
 function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -252,7 +253,7 @@ function Posts(props) {
                         </Link>
                     </div>
 
-                    <div className="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
+                    <div className="flex items-start gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
                         {/*Comments button*/}
 
                         <Link to={postUrl}>
@@ -329,22 +330,9 @@ function Posts(props) {
                         </button>
 
                         {/*Share Button*/}
-                        <div className="ml-auto mr-2 align-items-center">
+                        <div className="ml-auto mr-2 items-start inline-block">
                             <button onClick={() => openShareModal()}>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    x="0"
-                                    y="0"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    className="feather feather-corner-right-up h-8 w-8"
-                                    viewBox="0 0 24 30">
-                                    <path d="M10 9L15 4 20 9"></path>
-                                    <path d="M4 20h7a4 4 0 004-4V4"></path>
-                                </svg>
+                                <ShareButtonSvg />
                             </button>
                         </div>
                     </div>

@@ -228,7 +228,7 @@ function Post() {
                 </div>
             </div>
             <div className={'bg-gray-100 rounded-lg mt-4 mx-1'}>
-                <div className="mb-4 ml-1 ">
+                <div className="mb-1 ml-1 ">
                     <form
                         className={'commentBox'}
                         onSubmit={async event => {

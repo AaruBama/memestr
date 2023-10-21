@@ -64,7 +64,9 @@ function Comments(props) {
             <div>
                 <>
                     <span className={'username-comment'}>{username}</span>
-                    <span className={'name-comment'}>@{name}</span>
+                    <span className={'name-comment text-gray-400'}>
+                        @{name}
+                    </span>
                 </>
                 <div className={'comment'}>{comment.content}</div>
             </div>

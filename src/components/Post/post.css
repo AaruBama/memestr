@@ -19,6 +19,6 @@
 input.comment-form {
   color: black;
   flex-grow: 1;
-  border: 2px solid grey;
+  border: 2px solid dimgray;
   border-radius: 1rex;
 }

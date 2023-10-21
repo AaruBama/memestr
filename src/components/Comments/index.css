@@ -4,7 +4,7 @@
   flex-flow: row;
   gap: 10px;
   padding: 10px;
-  border-top: 1px solid dimgray;
+  border-top: 1px solid #c3c3c3;
   border-radius: 5px;
   margin-bottom: 5px;
   max-width: 100%;
@@ -26,11 +26,9 @@
 }
 
 .name-comment {
-  color: grey;
-  align-items: flex-start;
+  align-items: start;
   font-weight: bold;
   font-size: medium;
-  /*background-color: red;*/
 }
 
 .profile1 {
