@@ -273,6 +273,11 @@ function Post() {
             <div>
                 {isLoading ? (
                     <CommentSpinner />
+                ) : replies.length === 0 ? (
+                    <div className="flex text-gray-500 justify-center mt-4">
+                        {' '}
+                        No comments yet.{' '}
+                    </div>
                 ) : (
                     <div className="bg-gray-100 rounded-lg mt-2 mx-1">
                         {replies.map(function (object) {
