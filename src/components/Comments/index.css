@@ -11,19 +11,20 @@
   min-width: 400px;
 }
 
-.comment-container > div:nth-child(2) {
+.comment-container > div:nth-child(3) {
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
 }
 
 .username-comment {
   align-items: flex-start;
-  color: white;
+  color: black;
   font-weight: bold;
   font-size: medium;
   padding-right: 5px;
   /*background-color: red;*/
 }
+
 .name-comment {
   color: grey;
   align-items: flex-start;
@@ -40,12 +41,10 @@
 }
 
 .comment {
-  color: white;
-  flex: 1;
+  color: black;
+  flex-wrap: wrap;
   padding-top: 3px;
   font-size: small;
   padding-left: 3px;
   display: flex;
-  flex-wrap: wrap;
-  /*background-color: blue;*/
 }

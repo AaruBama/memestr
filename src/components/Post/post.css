@@ -12,6 +12,7 @@
   flex-wrap: wrap;
   width: auto;
   padding-top: 10px;
+  padding-bottom: 10px;
   /*align-items: stretch;*/
 }
 

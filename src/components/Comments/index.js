@@ -1,6 +1,6 @@
-import "./index.css";
-import { getUserDetailsFromPublicKey } from "../Profile";
-import React, { useEffect, useState } from "react";
+import './index.css';
+import { getUserDetailsFromPublicKey } from '../Profile';
+import React, { useEffect, useState } from 'react';
 
 // export const saveComment = (postId, comment) => {
 //     console.log("Saving comment. ", comment)
@@ -39,9 +39,9 @@ import React, { useEffect, useState } from "react";
 // }
 
 function Comments(props) {
-    const [picture, setpicture] = useState("");
+    const [picture, setpicture] = useState('');
     const [username, setUsername] = useState(null);
-    const [name, setName] = useState("Anonymous");
+    const [name, setName] = useState('Anonymous');
 
     let comment = props.reply;
     const commentatorPubKey = comment.pubkey;
@@ -53,18 +53,20 @@ function Comments(props) {
             setName(value.name);
         }).catch(
             console.log(
-                "something went wrong fetching comment from the pubkey",
+                'something went wrong fetching comment from the pubkey',
             ),
         );
     }, [commentatorPubKey]);
 
     return (
-        <div className={"comment-container"}>
+        <div className={'comment-container'}>
             <img className="profile1" src={picture} alt="Profile" />
             <div>
-                <span className={"username-comment"}>{username}</span>
-                <span className={"name-comment"}>@{name}</span>
-                <div className={"comment"}>{comment.content}</div>
+                <>
+                    <span className={'username-comment'}>{username}</span>
+                    <span className={'name-comment'}>@{name}</span>
+                </>
+                <div className={'comment'}>{comment.content}</div>
             </div>
         </div>
     );

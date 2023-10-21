@@ -143,129 +143,134 @@ function Post() {
 
     return (
         <div>
-            <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
+            <div className="bg-gray-100 rounded-lg my-1 mt-4 shadow-sm shadow-gray-400">
                 <div className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
                     <h1>{title}</h1>
                 </div>
-                <div className={'post-content'}>
-                    <img alt={''} className={'post-content'} src={imageLink} />
+                <div className={'px-2 pb-2'}>
+                    <img alt={''} src={imageLink} />
+                </div>
+                <div className="flex align-items-center gap-x-3 rounded-lg bg-gray-100 border-b-4 border-white pl-2 pt-2">
+                    <button
+                        className="flex align-items-center"
+                        onClick={() => {
+                            handleZapButton();
+                        }}>
+                        <svg
+                            className={`${
+                                fillZap &&
+                                'fill-current text-yellow-300 stroke-black'
+                            } h-8 w-8`}
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0"
+                            y="0"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 30">
+                            <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
+                        </svg>
+                        {processedValue && <p>{processedValue}</p>}
+                        <ZapModal
+                            isOpenm={isModalOpen}
+                            onConfirm={handleConfirm}
+                        />
+                    </button>
+
+                    <button
+                        className="flex"
+                        onClick={async event => {
+                            event.preventDefault();
+                            await upvotePost(postId);
+                            voteIncrement();
+                            fillColor();
+                        }}
+                        disabled={isTodisabled()}>
+                        <svg
+                            className={`${
+                                fillLike && 'fill-current text-red-600'
+                            } h-8 w-8`}
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0"
+                            y="0"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 30">
+                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+                        </svg>
+                        {votesCount}
+                    </button>
+
+                    {/*Share Button*/}
+                    {/*<button>*/}
+                    {/*    <svg*/}
+                    {/*        xmlns="http://www.w3.org/2000/svg"*/}
+                    {/*        x="0"*/}
+                    {/*        y="0"*/}
+                    {/*        fill="none"*/}
+                    {/*        stroke="currentColor"*/}
+                    {/*        strokeLinecap="round"*/}
+                    {/*        strokeLinejoin="round"*/}
+                    {/*        strokeWidth="2"*/}
+                    {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
+                    {/*        viewBox="0 0 24 30"*/}
+                    {/*    >*/}
+                    {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
+                    {/*        <path d="M17 16L21 12 17 8"></path>*/}
+                    {/*        <path d="M21 12L9 12"></path>*/}
+                    {/*    </svg>*/}
+                    {/*</button>*/}
                 </div>
             </div>
-            <div className="flex align-items-center gap-x-3 bg-gray-100 border-b-4 border-white pl-2 pt-2">
-                <button
-                    className="flex align-items-center"
-                    onClick={() => {
-                        handleZapButton();
-                    }}>
-                    <svg
-                        className={`${
-                            fillZap &&
-                            'fill-current text-yellow-300 stroke-black'
-                        } h-8 w-8`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0"
-                        y="0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        viewBox="0 0 24 30">
-                        <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
-                    </svg>
-                    {processedValue && <p>{processedValue}</p>}
-                    <ZapModal isOpenm={isModalOpen} onConfirm={handleConfirm} />
-                </button>
-
-                <button
-                    className="flex"
-                    onClick={async event => {
-                        event.preventDefault();
-                        await upvotePost(postId);
-                        voteIncrement();
-                        fillColor();
-                    }}
-                    disabled={isTodisabled()}>
-                    <svg
-                        className={`${
-                            fillLike && 'fill-current text-red-600'
-                        } h-8 w-8`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0"
-                        y="0"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        viewBox="0 0 24 30">
-                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                    </svg>
-                    {votesCount}
-                </button>
-
-                {/*Share Button*/}
-                {/*<button>*/}
-                {/*    <svg*/}
-                {/*        xmlns="http://www.w3.org/2000/svg"*/}
-                {/*        x="0"*/}
-                {/*        y="0"*/}
-                {/*        fill="none"*/}
-                {/*        stroke="currentColor"*/}
-                {/*        strokeLinecap="round"*/}
-                {/*        strokeLinejoin="round"*/}
-                {/*        strokeWidth="2"*/}
-                {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
-                {/*        viewBox="0 0 24 30"*/}
-                {/*    >*/}
-                {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
-                {/*        <path d="M17 16L21 12 17 8"></path>*/}
-                {/*        <path d="M21 12L9 12"></path>*/}
-                {/*    </svg>*/}
-                {/*</button>*/}
-            </div>
-            <div className="mb-4 ml-1">
-                <form
-                    className={'commentBox'}
-                    onSubmit={async event => {
-                        event.preventDefault(); // Prevent the default form submission behavior
-                        await captureNewComment(comment); // Wait for comment to be captured and saved
-                        // Additional actions after comment is saved can be added here
-                    }}>
-                    <input
-                        type="text"
-                        placeholder=" Add a reply..."
-                        className="comment-form"
-                        value={comment}
-                        onChange={captureComment}
-                        required
-                    />
-                    <button type="submit" className=" mx-1 rounded">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="41"
-                            fill="none"
-                            viewBox="0 0 40 41">
-                            <rect
+            <div className={'bg-gray-100 rounded-lg mt-4 mx-1'}>
+                <div className="mb-4 ml-1 ">
+                    <form
+                        className={'commentBox'}
+                        onSubmit={async event => {
+                            event.preventDefault(); // Prevent the default form submission behavior
+                            await captureNewComment(comment); // Wait for comment to be captured and saved
+                            // Additional actions after comment is saved can be added here
+                        }}>
+                        <input
+                            type="text"
+                            placeholder=" Add a reply..."
+                            className="comment-form"
+                            value={comment}
+                            onChange={captureComment}
+                            required
+                        />
+                        <button type="submit" className=" mx-1 rounded">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
                                 width="40"
-                                height="40"
-                                y="0.375"
-                                fill="#fff"
-                                rx="8"></rect>
-                            <path
-                                stroke="#000"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 20.375h16m0 0l-6-6m6 6l-6 6"></path>
-                        </svg>
-                    </button>
-                </form>
+                                height="41"
+                                fill="none"
+                                viewBox="0 0 40 41">
+                                <rect
+                                    width="40"
+                                    height="40"
+                                    y="0.375"
+                                    fill="#000"
+                                    rx="8"></rect>
+                                <path
+                                    stroke="#fff"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 20.375h16m0 0l-6-6m6 6l-6 6"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                {replies.map(function (object) {
+                    return <Comments reply={object} />;
+                })}
             </div>
-            {replies.map(function (object) {
-                return <Comments reply={object} />;
-            })}
         </div>
     );
 }
