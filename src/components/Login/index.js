@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './profile.css';
 import { getPublicKey, nip19, generatePrivateKey } from 'nostr-tools';
 import Menu from '../Menu';
@@ -14,8 +14,40 @@ export function generateNewKeys() {
 }
 
 function HeaderBar() {
+    const [isScrolled, setIsScrolled] = useState(true);
+
+    const [prevScrollY, setPrevScrollY] = useState(0);
+    const scrollThreshold = 100;
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const isScrollingUp = scrollY < prevScrollY;
+
+            if (scrollY > scrollThreshold) {
+                setIsScrolled(isScrollingUp);
+            } else {
+                setIsScrolled(true);
+            }
+
+            setPrevScrollY(scrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [prevScrollY]);
+
+    const headerClasses = `fixed w-full top-0 h-14 bg-gray-100 text-neutral-500 shadow-lg rounded justify-around ${
+        !isScrolled
+            ? 'transition-transform transform -translate-y-full ease-in-out duration-300'
+            : ''
+    }`;
+
     return (
-        <div className="relative flex-column bg-gray-100 text-neutral-500 shadow-lg rounded justify-around">
+        <div className={headerClasses}>
             <header className={'flex flex-row items-center h-14'}>
                 <div className="pl-3 basis-[50%]">
                     <Menu />
