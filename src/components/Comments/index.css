@@ -44,5 +44,5 @@
   padding-top: 3px;
   font-size: small;
   padding-left: 3px;
-  display: flex;
+  word-break: break-word;
 }

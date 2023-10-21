@@ -5,6 +5,9 @@ import { sendNewZaps, upvotePost } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
+import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
+import { ShareModal } from '../Share/modal';
+
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
 
@@ -101,10 +104,19 @@ function Post() {
     const [processedValue, setProcessedValue] = useState(null);
     const [votesCount, setVotesCount] = useState(parseInt(voteCount, 10));
     const [fillLike, setFillLike] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     function openModal() {
         setIsModalOpen(true);
     }
+
+    const closeShareModal = () => {
+        setIsShareModalOpen(false);
+    };
+
+    const openShareModal = () => {
+        setIsShareModalOpen(true);
+    };
 
     function handleZapButton() {
         const storedData = localStorage.getItem('memestr');
@@ -206,25 +218,11 @@ function Post() {
                         {votesCount}
                     </button>
 
-                    {/*Share Button*/}
-                    {/*<button>*/}
-                    {/*    <svg*/}
-                    {/*        xmlns="http://www.w3.org/2000/svg"*/}
-                    {/*        x="0"*/}
-                    {/*        y="0"*/}
-                    {/*        fill="none"*/}
-                    {/*        stroke="currentColor"*/}
-                    {/*        strokeLinecap="round"*/}
-                    {/*        strokeLinejoin="round"*/}
-                    {/*        strokeWidth="2"*/}
-                    {/*        className="feather feather-log-out h-8 w-8 -rotate-90"*/}
-                    {/*        viewBox="0 0 24 30"*/}
-                    {/*    >*/}
-                    {/*        <path d="M10 22H5a2 2 0 01-2-2V4a2 2 0 012-2h5"></path>*/}
-                    {/*        <path d="M17 16L21 12 17 8"></path>*/}
-                    {/*        <path d="M21 12L9 12"></path>*/}
-                    {/*    </svg>*/}
-                    {/*</button>*/}
+                    <div className="ml-auto mr-2 items-start inline-block">
+                        <button onClick={() => openShareModal()}>
+                            <ShareButtonSvg />
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className={'bg-gray-100 rounded-lg mt-4 mx-1'}>
@@ -271,6 +269,11 @@ function Post() {
                     return <Comments reply={object} />;
                 })}
             </div>
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={closeShareModal}
+                postUrl={decodeURIComponent(window.location.href)}
+            />
         </div>
     );
 }
