@@ -158,7 +158,7 @@ function Post() {
     }
 
     return (
-        <div>
+        <div className="mt-16">
             <div className="bg-gray-100 rounded-lg my-1 mt-4 shadow-sm shadow-gray-400">
                 <div className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
                     <h1>{title}</h1>

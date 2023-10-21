@@ -173,7 +173,6 @@ export function useHashTagContext() {
 // The HashtagTool component
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
-    console.log('type of loadmore in hashtag tool', typeof LoadMoreMedia);
     const [newPostModal, setNewPostModal] = useState(false);
 
     function showNewPostModal() {
