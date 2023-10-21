@@ -1,6 +1,7 @@
 import './index.css';
 import { getUserDetailsFromPublicKey } from '../Profile';
 import React, { useEffect, useState } from 'react';
+// import { calculateTimeDifference } from '../Posts';
 
 // export const saveComment = (postId, comment) => {
 //     console.log("Saving comment. ", comment)
@@ -44,6 +45,8 @@ function Comments(props) {
     const [name, setName] = useState('Anonymous');
 
     let comment = props.reply;
+    console.log('Comment is ', comment);
+    // let { unit, duration } = calculateTimeDifference(comment.created_at);
     const commentatorPubKey = comment.pubkey;
     useEffect(() => {
         let a = getUserDetailsFromPublicKey(commentatorPubKey);
@@ -62,12 +65,17 @@ function Comments(props) {
         <div className={'comment-container'}>
             <img className="profile1" src={picture} alt="Profile" />
             <div>
-                <>
+                <div className={'flex flex-row w-full'}>
                     <span className={'username-comment'}>{username}</span>
                     <span className={'name-comment text-gray-400'}>
                         @{name}
                     </span>
-                </>
+                    {/*<span*/}
+                    {/*    className=' pl-2 items-center text-gray-500 text-sm pr-1'>*/}
+                    {/*        {duration}*/}
+                    {/*    {unit}{' '}*/}
+                    {/*    </span>*/}
+                </div>
                 <p className={'comment'}>{comment.content}</p>
             </div>
         </div>

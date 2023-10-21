@@ -25,10 +25,10 @@ function extractLinksFromText(text) {
 
 const removeHashtagsAndLinks = text => {
     // Remove hashtags
-    const withoutHashtags = text.replace(/#\w+/g, '');
+    // const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
+    return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId) {
@@ -123,6 +123,27 @@ export const saveComment = (postId, comment) => {
     pool.close(relays);
 };
 
+export function calculateTimeDifference(postCreatedAt) {
+    const currentTime = Math.floor(Date.now() / 1000); // Convert milliseconds to seconds
+    const secondsDifference = currentTime - postCreatedAt;
+    let unit = '';
+    let duration = 0;
+    if (secondsDifference < 60) {
+        unit = 'seconds';
+        duration = secondsDifference;
+    } else if (secondsDifference < 3600) {
+        unit = 'm';
+        duration = Math.floor(secondsDifference / 60);
+    } else if (secondsDifference < 86400) {
+        unit = 'h';
+        duration = Math.floor(secondsDifference / 3600);
+    } else {
+        unit = 'd';
+        duration = Math.floor(secondsDifference / 86400);
+    }
+    return { unit, duration };
+}
+
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
     // const [votes, setVotes] = useState([])
@@ -163,23 +184,7 @@ function Posts(props) {
     };
 
     useEffect(() => {
-        const currentTime = Math.floor(Date.now() / 1000); // Convert milliseconds to seconds
-        const secondsDifference = currentTime - postCreatedAt;
-        let unit = '';
-        let duration = 0;
-        if (secondsDifference < 60) {
-            unit = 'seconds';
-            duration = secondsDifference;
-        } else if (secondsDifference < 3600) {
-            unit = 'm';
-            duration = Math.floor(secondsDifference / 60);
-        } else if (secondsDifference < 86400) {
-            unit = 'h';
-            duration = Math.floor(secondsDifference / 3600);
-        } else {
-            unit = 'd';
-            duration = Math.floor(secondsDifference / 86400);
-        }
+        let { unit, duration } = calculateTimeDifference(postCreatedAt);
         if (duration !== 0) {
             setTimeDifference({ unit: unit, duration: duration });
         }
@@ -193,7 +198,7 @@ function Posts(props) {
         .trimLeft()
         .trimRight();
     if (title.length === 0) {
-        title = ' ';
+        title = '#memes';
     }
     const imageLink = mediaLinks[0];
 
