@@ -68,12 +68,12 @@ function DropdownComponent() {
         <div>
             <Menu as="div" className="relative inline-block text-left">
                 <div>
-                    <Menu.Button className="inline-flex justify-center rounded-full w-full text-sm font-medium border-solid-2 border-bg-black text-white bg-blue-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                    <Menu.Button className="inline-flex justify-center rounded-full w-full text-sm font-medium border-solid-2 border-bg-black text-white bg-gray-400 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
                         {(userDetails && userDetails.picture === undefined) ||
                         !userDetails ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
+                                fill="None"
                                 viewBox="0 0 24 24"
                                 strokeWidth="1.5"
                                 stroke="currentColor"
