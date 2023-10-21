@@ -25,10 +25,10 @@ function extractLinksFromText(text) {
 
 const removeHashtagsAndLinks = text => {
     // Remove hashtags
-    // const withoutHashtags = text.replace(/#\w+/g, '');
+    const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return text.replace(/(https?:\/\/[^\s]+)/g, '');
+    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId) {
@@ -198,7 +198,7 @@ function Posts(props) {
         .trimLeft()
         .trimRight();
     if (title.length === 0) {
-        title = '#memes';
+        title = ' ';
     }
     const imageLink = mediaLinks[0];
 
@@ -245,7 +245,7 @@ function Posts(props) {
             <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
                 <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                     <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                        <span className={'flex basis-[80%]'}>{title}</span>
+                        <span className={'flex basis-[90%]'}>{title}</span>
                         <span className="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">
                             {timeDifference.duration}
                             {timeDifference.unit}{' '}
