@@ -7,6 +7,7 @@ import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
 import { ShareModal } from '../Share/modal';
+import CommentSpinner from '../Spinner/CommentSpinner';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -22,12 +23,14 @@ function Post() {
     const opPubKey = searchParams.get('OpPubKey');
     const [replies, setReplies] = useState([]);
     const [comment, setComment] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const captureComment = event => {
         setComment(event.target.value);
     };
 
     useEffect(() => {
+        setIsLoading(true);
         const getComments = async () => {
             const relayPool = new SimplePool();
             const relays = [
@@ -43,6 +46,7 @@ function Post() {
             let replies1 = await relayPool.list(relays, [filters]);
             console.log('replies1 is', replies1);
             setReplies(replies1);
+            setIsLoading(false);
             relayPool.close(relays);
         };
         getComments();
@@ -265,9 +269,17 @@ function Post() {
                         </button>
                     </form>
                 </div>
-                {replies.map(function (object) {
-                    return <Comments reply={object} />;
-                })}
+            </div>
+            <div>
+                {isLoading ? (
+                    <CommentSpinner />
+                ) : (
+                    <div className="bg-gray-100 rounded-lg mt-2 mx-1">
+                        {replies.map(function (object) {
+                            return <Comments reply={object} />;
+                        })}
+                    </div>
+                )}
             </div>
             <ShareModal
                 isOpen={isShareModalOpen}

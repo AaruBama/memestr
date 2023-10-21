@@ -5,10 +5,10 @@ import PostUpload from '../Post/newPost';
 
 const relays = [
     'wss://relay.damus.io/',
-    'wss://offchain.pub/',
-    'wss://nos.lol/',
-    'wss://relay.nostr.wirednet.jp/',
-    'wss://nostr.wine/',
+    // 'wss://offchain.pub/',
+    // 'wss://nos.lol/',
+    // 'wss://relay.nostr.wirednet.jp/',
+    // 'wss://nostr.wine/',
 ];
 
 const CategorizedContext = React.createContext();
