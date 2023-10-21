@@ -224,28 +224,44 @@ function Post() {
                 {/*    </svg>*/}
                 {/*</button>*/}
             </div>
-            <div className="commentBox">
-                <div className="mb-4 ml-1">
-                    <form
-                        onSubmit={async event => {
-                            event.preventDefault(); // Prevent the default form submission behavior
-                            await captureNewComment(comment); // Wait for comment to be captured and saved
-                            // Additional actions after comment is saved can be added here
-                        }}>
-                        <input
-                            type="text"
-                            placeholder=" Add a reply..."
-                            className={'comment-form'}
-                            value={comment}
-                            onChange={captureComment}
-                            required
-                        />
-                        <input
-                            className="bg-gray-200 ml-1 px-2 pt-1 pb-1.5 rounded "
-                            type="submit"
-                        />
-                    </form>
-                </div>
+            <div className="mb-4 ml-1">
+                <form
+                    className={'commentBox'}
+                    onSubmit={async event => {
+                        event.preventDefault(); // Prevent the default form submission behavior
+                        await captureNewComment(comment); // Wait for comment to be captured and saved
+                        // Additional actions after comment is saved can be added here
+                    }}>
+                    <input
+                        type="text"
+                        placeholder=" Add a reply..."
+                        className="comment-form"
+                        value={comment}
+                        onChange={captureComment}
+                        required
+                    />
+                    <button type="submit" className=" mx-1 rounded">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="40"
+                            height="41"
+                            fill="none"
+                            viewBox="0 0 40 41">
+                            <rect
+                                width="40"
+                                height="40"
+                                y="0.375"
+                                fill="#fff"
+                                rx="8"></rect>
+                            <path
+                                stroke="#000"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 20.375h16m0 0l-6-6m6 6l-6 6"></path>
+                        </svg>
+                    </button>
+                </form>
             </div>
             {replies.map(function (object) {
                 return <Comments reply={object} />;

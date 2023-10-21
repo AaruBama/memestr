@@ -7,15 +7,17 @@
 /*}*/
 
 .commentBox {
-  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: auto;
   padding-top: 10px;
-  /*background-color: yellow;*/
+  /*align-items: stretch;*/
 }
 
-.comment-form {
-  width: 70%;
-  color: white;
-  max-width: 100%;
-  background-color: black;
+input.comment-form {
+  color: black;
+  flex-grow: 1;
   border: 2px solid grey;
+  border-radius: 1rex;
 }
