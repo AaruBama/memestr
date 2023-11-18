@@ -202,8 +202,6 @@ function Post() {
             tags: [['p', theirPublicKey]],
             content: content,
         };
-        console.log('event is ', event);
-
         const signedEvent = finishEvent(event, sk.data);
         console.log('signed event is  ', signedEvent);
         console.log('Publishing event. should check DMS');
