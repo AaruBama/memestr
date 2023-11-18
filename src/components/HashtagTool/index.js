@@ -6,13 +6,7 @@ import Spinner from '../Spinner';
 
 const HashTagContext = React.createContext();
 
-const relays = [
-    'wss://relay.damus.io/',
-    'wss://offchain.pub/',
-    'wss://nos.lol/',
-    'wss://relay.nostr.wirednet.jp/',
-    'wss://nostr.wine/',
-];
+const relays = ['wss://relay.damus.io/'];
 
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children, filterTags }) {
