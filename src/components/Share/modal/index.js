@@ -2,12 +2,12 @@ import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
-import { ReactComponent as NoProfilePicture } from '../../../Icons/noImageUser.svg';
+import noProfilePictureURL from '../../../Icons/noImageUser.svg';
 
 // import ShareOnWhatsApp from '../shareOnWhatsApp';
 
 import { ReactComponent as CopyLinkSvg } from '../../../Icons/CopyLinkSvg.svg';
-import { getUserFromName } from '../../../helpers/user';
+import { getUserFromName, sendDM } from '../../../helpers/user';
 
 const Alert = ({ message, duration }) => {
     const [showAlert, setShowAlert] = useState(true);
@@ -37,34 +37,65 @@ const Alert = ({ message, duration }) => {
 
 export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+
+    const [searchedUser, setSearchedUser] = useState(null);
 
     let shareUrl = 'https://memestr.app/#' + postUrl;
 
     const [showAlert, setShowAlert] = useState(false);
+    const [sendButtonDisabled, setSendButtonDisabled] = useState(true);
+
+    const toggleUserSelection = userId => {
+        setSelectedUsers(prevSelectedUsers => {
+            const newSelectedUsers = prevSelectedUsers.includes(userId)
+                ? prevSelectedUsers.filter(id => id !== userId)
+                : [...prevSelectedUsers, userId];
+
+            setSendButtonDisabled(newSelectedUsers.length === 0);
+
+            return newSelectedUsers;
+        });
+    };
+
+    const isUserSelected = userId => {
+        return selectedUsers.includes(userId);
+    };
+
+    const handleSearch = async e => {
+        e.preventDefault();
+        setSearchedUser(null);
+        if (inputValue.trim() !== '') {
+            const userList = await getUserFromName(inputValue);
+            const parsedUsers = parseUserContent(userList);
+            setSearchedUser(parsedUsers);
+        }
+    };
 
     const handleInputChange = async e => {
         const value = e.target.value;
         setInputValue(value);
-
-        if (value.trim() === '') {
-            setSelectedUser(null);
-        } else {
-            const userList = await getUserFromName(value);
-            const parsedUsers = parseUserContent(userList);
-            setSelectedUser(parsedUsers);
-        }
     };
 
     const parseUserContent = userList => {
-        return userList.map(user => {
-            const content = JSON.parse(user.content);
-            console.log('content picture is ', content.picture);
-            return {
-                picture: content.picture,
-                name: content.display_name,
-            };
+        const uniqueKeysSet = new Set();
+        const usersWithDistinctKeys = [];
+        userList.forEach(user => {
+            if (!uniqueKeysSet.has(user.pubkey)) {
+                uniqueKeysSet.add(user.pubkey);
+                const content = JSON.parse(user.content);
+                let name = 'Anonymous';
+                if (content.name && content.name.trim !== '') {
+                    name = content.name;
+                }
+                usersWithDistinctKeys.push({
+                    id: user.pubkey,
+                    picture: content.picture,
+                    name: name,
+                });
+            }
         });
+        return usersWithDistinctKeys;
     };
 
     const showAlertWithTimeout = duration => {
@@ -73,6 +104,10 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
             setShowAlert(false);
         }, duration);
     };
+
+    function removeSelectedUsers() {
+        setSelectedUsers([]);
+    }
 
     return (
         <>
@@ -106,40 +141,71 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                         className="text-lg font-medium leading-6 text-gray-900">
                                         Share
                                     </Dialog.Title>
-                                    <input
-                                        type="text"
-                                        value={inputValue}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-gray-300 p-2 mt-2"
-                                        placeholder="Username..."
-                                    />
+                                    <form
+                                        className="flex"
+                                        onSubmit={handleSearch}>
+                                        <input
+                                            type="text"
+                                            value={inputValue}
+                                            onChange={handleInputChange}
+                                            className="flex-grow w-full border border-gray-300 p-2 mt-2"
+                                            placeholder="Username..."
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="mt-2 ml-2 p-2 bg-blue-500 text-white rounded">
+                                            Submit
+                                        </button>
+                                    </form>
 
                                     <div className="mt-4">
-                                        {selectedUser && (
+                                        {searchedUser && (
                                             <div className="flex flex-wrap pl-4 ">
-                                                {selectedUser.map(user => (
+                                                {searchedUser.map(user => (
                                                     <div
                                                         key={user.id}
-                                                        className="flex flex-col items-center m-2"
+                                                        className={
+                                                            'flex flex-col items-center m-2 ' +
+                                                            (isUserSelected(
+                                                                user.id,
+                                                            )
+                                                                ? 'selected-user'
+                                                                : '')
+                                                        }
                                                         style={{
-                                                            width: '80px',
-                                                        }}>
+                                                            width: '80px', // Add margin to create a gap
+                                                        }}
+                                                        onClick={() =>
+                                                            toggleUserSelection(
+                                                                user.id,
+                                                            )
+                                                        }>
                                                         <div className="w-full h-12 flex items-center justify-center overflow-hidden ">
                                                             <img
                                                                 src={
-                                                                    user.picture
+                                                                    user.picture ||
+                                                                    noProfilePictureURL
                                                                 }
-                                                                alt={user.name}
+                                                                alt={
+                                                                    user.name ||
+                                                                    'Anonymous'
+                                                                }
                                                                 className="w-12 h-12 rounded-full"
                                                                 onError={e => {
                                                                     e.target.src =
-                                                                        (
-                                                                            <NoProfilePicture />
-                                                                        ); // Replace with your default image URL
+                                                                        noProfilePictureURL; // Replace with your default image URL
                                                                     e.target.alt =
                                                                         'Default Image';
                                                                 }}
                                                             />
+                                                            {isUserSelected(
+                                                                user.id,
+                                                            ) && (
+                                                                <div className="selected-overlay">
+                                                                    {/* Add a tick mark or any other indicator */}
+                                                                    ✓
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <span className="mt-1 text-s text-center block">
                                                             {user.name}
@@ -179,7 +245,21 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                     <div className="my-4">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                            onClick={() => {
+                                                sendDM(selectedUsers, shareUrl);
+                                                removeSelectedUsers();
+                                            }}
+                                            className={`mt-2 p-2 bg-green-500 text-white rounded ${
+                                                sendButtonDisabled
+                                                    ? 'cursor-not-allowed opacity-50'
+                                                    : ''
+                                            }`}
+                                            disabled={sendButtonDisabled}>
+                                            Send
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mx-2 inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                             onClick={onClose}>
                                             I'm done, thanks!
                                         </button>
