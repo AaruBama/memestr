@@ -31,11 +31,17 @@ function Post() {
     const [postData, setPostData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
+    let postUrl = `/post/${postId}?voteCount=${voteCount}`;
+
     async function getPostFromId(postId) {
         const pool = new SimplePool();
 
         // const relay = relayInit('wss://relay.nostr.band/');
-        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
+        let relays = [
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://relay.snort.social',
+        ];
 
         let post = await pool.get(relays, {
             ids: [postId],
@@ -318,7 +324,7 @@ function Post() {
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={closeShareModal}
-                postUrl={decodeURIComponent(window.location.href)}
+                postUrl={postUrl}
             />
         </div>
     );
