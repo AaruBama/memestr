@@ -3,7 +3,7 @@ import { HashTagToolProvider } from './components/HashtagTool';
 import PostViewTool from './components/Post/post.js';
 import HeaderBar from './components/Login';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 import HashtagTool from './components/HashtagTool';
 import PetFeed, { PetsFeedProvider } from './components/CategoryView/PetFeed';
