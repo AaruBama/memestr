@@ -40,7 +40,6 @@ function LoginModal({ isOpen, onClose }) {
                 value['pubKey'] = publicKey;
                 value['privateKey'] = privateKey; //Encrypt it.
                 localStorage.setItem('memestr', JSON.stringify(value));
-                console.log('Calling on close method.', loggedInUserDetails);
             });
         }
     }
@@ -81,7 +80,7 @@ function LoginModal({ isOpen, onClose }) {
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                             <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                <div className="bg-white px-4 sm:p-6 sm:pb-4">
                                     <div className="sm:flex sm:items-start">
                                         <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                             <Dialog.Title
@@ -94,8 +93,9 @@ function LoginModal({ isOpen, onClose }) {
                                                 <div className="mb-4">
                                                     <label
                                                         htmlFor="loginKey"
-                                                        className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">
-                                                        Nsec Key:
+                                                        className="flex justify-start block mb-1 text-sm font-medium font-sans text-gray-500 dark:text-black">
+                                                        Insert your Nsec
+                                                        Key(starts with nsec):
                                                     </label>
                                                     <input
                                                         type="text"
@@ -108,12 +108,16 @@ function LoginModal({ isOpen, onClose }) {
                                                         placeholder="Guy_who_farted"
                                                         required
                                                     />
+                                                    <div className="flex align-middle justify-center mt text-sm text-gray-300">
+                                                        We don't store your
+                                                        keys.
+                                                    </div>
                                                 </div>
                                             </Dialog.Description>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                <div className="bg-gray-50 px-4 py-2 sm:flex sm:flex-row-reverse sm:px-6">
                                     <button
                                         type="button"
                                         className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
