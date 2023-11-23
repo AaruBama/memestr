@@ -158,6 +158,7 @@ function Posts(props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [processedValue, setProcessedValue] = useState(null);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [author, setAuthor] = useState(null);
 
     let postCreatedAt = props.note.created_at;
 
@@ -193,6 +194,44 @@ function Posts(props) {
     useEffect(() => {
         setVotesCount(props.note.voteCount);
     }, [props.note.voteCount]);
+
+    useEffect(() => {
+        async function getPostAuthorDetails(author_id) {
+            const relayPool = new SimplePool();
+            const relays = [
+                'wss://relay.damus.io/',
+                'wss://offchain.pub/',
+                'wss://nos.lol/',
+                'wss://relay.nostr.wirednet.jp/',
+                'wss://nostr.wine/',
+            ];
+
+            const author = await relayPool.list(relays, [
+                {
+                    kinds: [0],
+                    limit: 1,
+                    authors: [author_id],
+                },
+            ]);
+            return author[0];
+        }
+
+        const author = getPostAuthorDetails(props.note.pubkey);
+        author
+            .then(value => {
+                setAuthor(JSON.parse(value.content));
+            })
+            .catch(err => {
+                console.log(
+                    'Fta bete fta for noteId ',
+                    props.note.id,
+                    ' and error => ',
+                    err,
+                );
+            });
+
+        console.log('Author is ', author);
+    }, [props.note.pubkey, props.note.id]);
 
     let title = removeHashtagsAndLinks(props.note.content)
         .trimLeft()
@@ -245,7 +284,9 @@ function Posts(props) {
             <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
                 <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                     <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                        <span className={'flex basis-[90%]'}>{title}</span>
+                        <span className={'flex basis-[90%]'}>
+                            {author ? author.name : 'abc'}
+                        </span>
                         <span className="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">
                             {timeDifference.duration}
                             {timeDifference.unit}{' '}
