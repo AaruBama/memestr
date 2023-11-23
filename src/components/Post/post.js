@@ -1,7 +1,12 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import './post.css';
-import { sendNewZaps, upvotePost } from '../Posts';
+import {
+    extractLinksFromText,
+    removeHashtagsAndLinks,
+    sendNewZaps,
+    upvotePost,
+} from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
@@ -16,14 +21,43 @@ function Post() {
     // const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
     let params = useParams();
     const [searchParams] = useSearchParams();
-    const title = searchParams.get('title');
+    // const title = searchParams.get('title');
     const postId = params.postId;
-    const imageLink = searchParams.get('imageLink');
+    // const imageLink = searchParams.get('imageLink');
     const voteCount = searchParams.get('voteCount');
-    const opPubKey = searchParams.get('OpPubKey');
+    // const opPubKey = searchParams.get('OpPubKey');
     const [replies, setReplies] = useState([]);
     const [comment, setComment] = useState('');
+    const [postData, setPostData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+
+    let postUrl = `/post/${postId}?voteCount=${voteCount}`;
+
+    async function getPostFromId(postId) {
+        const pool = new SimplePool();
+
+        // const relay = relayInit('wss://relay.nostr.band/');
+        let relays = [
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://relay.snort.social',
+        ];
+
+        let post = await pool.get(relays, {
+            ids: [postId],
+        });
+        console.log('post is', post);
+        if (pool) {
+            pool.close(relays);
+        }
+
+        let data = {
+            title: removeHashtagsAndLinks(post.content),
+            imageLink: extractLinksFromText(post.content),
+            opPubKey: post.pubKey,
+        };
+        setPostData(data);
+    }
 
     const captureComment = event => {
         setComment(event.target.value);
@@ -50,6 +84,7 @@ function Post() {
             relayPool.close(relays);
         };
         getComments();
+        getPostFromId(postId);
     }, [postId]);
 
     const captureNewComment = async comment => {
@@ -135,7 +170,7 @@ function Post() {
     const handleConfirm = value => {
         // Process the value internally here or update state as needed
         console.log('value is ', value);
-        sendNewZaps(postId, opPubKey, value);
+        sendNewZaps(postId, postData['opPubKey'], value);
         setProcessedValue(value);
     };
 
@@ -161,10 +196,10 @@ function Post() {
         <div className="mt-16">
             <div className="bg-gray-100 rounded-lg my-1 mt-4 shadow-sm shadow-gray-400">
                 <div className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                    <h1>{title}</h1>
+                    <h1>{postData['title']}</h1>
                 </div>
                 <div className={'px-2 pb-2'}>
-                    <img alt={''} src={imageLink} />
+                    <img alt={''} src={postData['imageLink']} />
                 </div>
                 <div className="flex align-items-center gap-x-3 rounded-lg bg-gray-100 border-b-4 border-white pl-2 pt-2">
                     <button
@@ -289,7 +324,7 @@ function Post() {
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={closeShareModal}
-                postUrl={decodeURIComponent(window.location.href)}
+                postUrl={postUrl}
             />
         </div>
     );

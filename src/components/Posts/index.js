@@ -6,7 +6,7 @@ import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
 
-function extractLinksFromText(text) {
+export function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
     const jpgRegex = /\.(jpg|jpeg)$/i;
     const mp4Regex = /\.mp4$/i;
@@ -23,7 +23,7 @@ function extractLinksFromText(text) {
     );
 }
 
-const removeHashtagsAndLinks = text => {
+export const removeHashtagsAndLinks = text => {
     // Remove hashtags
     const withoutHashtags = text.replace(/#\w+/g, '');
 
@@ -239,7 +239,7 @@ function Posts(props) {
         setFillZap(true);
     }
 
-    let postUrl = `/post/${props.note.id}?title=${title}&imageLink=${imageLink}&voteCount=${votesCount}&OpPubKey=${props.note.pubkey}`;
+    let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
             <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
