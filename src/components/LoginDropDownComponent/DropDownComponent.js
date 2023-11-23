@@ -10,7 +10,7 @@ function DropdownComponent() {
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
     const [loginModal, setLoginModal] = useState(false);
     const [sk, setSk] = useState('');
-    const [userDetails, setUserDetails] = useState(null);
+    const [userDetails, setUserDetails] = useState(getUserDetailsFromLocal());
     const [pk, setPk] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -20,6 +20,11 @@ function DropdownComponent() {
         setSk(x['epk']);
         setPk(x['epubKey']);
     };
+
+    function getUserDetailsFromLocal() {
+        const storedData = localStorage.getItem('memestr');
+        return storedData ? storedData : null;
+    }
     const openUserDetailsModal = () => {
         setNewUserDetailsModal(true);
     };
@@ -31,6 +36,10 @@ function DropdownComponent() {
 
     const closeUserDetailModal = () => {
         setNewUserDetailsModal(false);
+
+        if (getUserDetailsFromLocal) {
+            setIsLoggedIn(true);
+        }
     };
 
     const openLoginModal = () => {
@@ -55,7 +64,7 @@ function DropdownComponent() {
             setUserDetails(JSON.parse(storedData));
             setIsLoggedIn(true);
         }
-    }, []);
+    }, [isLoggedIn]);
 
     function logout() {
         localStorage.removeItem('memestr');

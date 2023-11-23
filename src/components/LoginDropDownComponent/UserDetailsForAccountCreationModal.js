@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import UploadAndDisplayImage from './UploadUserPicture';
+import { getProfileFromPublicKey } from '../Profile';
 
 function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     const [username, setUsername] = useState('');
@@ -17,28 +18,29 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
         setUsername(event.target.value);
     }
 
-    function registerAccount(sk, pk) {
-        let relays = [
+    async function registerAccount(sk, pk) {
+        const relays = [
             'wss://relay.damus.io',
             'wss://relay.primal.net',
-            'wss://nos.lol',
-            'wss://nostr.bitcoiner.social',
+            'wss://relay.snort.social',
+            'wss://relay.hllo.live',
         ];
-        const pool = new SimplePool();
 
+        const pool = new SimplePool();
+        const encodedSk = sk;
         sk = nip19.decode(sk);
         pk = nip19.decode(pk);
-        console.log('sk pk is', sk, pk);
-        let content = {
+
+        const content = {
             name: username,
             about: aboutMe,
         };
 
         if (fileString.length > 0) {
-            content['picture'] = fileString;
+            content.picture = fileString;
         }
-        content = JSON.stringify(content);
-        let userRegisterEvent = {
+
+        const userRegisterEvent = {
             kind: 0,
             pubkey: pk.data,
             created_at: Math.floor(Date.now() / 1000),
@@ -46,18 +48,76 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                 ['p', pk.data],
                 ['w', 'memestrAccount'],
             ],
-            content: content,
+            content: JSON.stringify(content),
         };
 
         userRegisterEvent.id = getEventHash(userRegisterEvent);
-
         userRegisterEvent.sig = getSignature(userRegisterEvent, sk.data);
-        let x = pool.publish(relays, userRegisterEvent);
-        console.log('userRegistration Event', userRegisterEvent);
-        console.log('o=o=o', x);
 
-        pool.close(relays);
+        try {
+            await pool.publish(relays, userRegisterEvent);
+
+            pool.close(relays);
+
+            const profile = await getProfileFromPublicKey(pk.data);
+            let details = JSON.parse(profile.content);
+            details.pubKey = pk.data;
+            details.privateKey = encodedSk; // Encrypt it.
+            localStorage.setItem('memestr', JSON.stringify(details));
+            console.log('Set the default login in local cache.', details);
+        } catch (error) {
+            console.error('Error during registration:', error);
+        }
     }
+
+    // async function registerAccount(sk, pk) {
+    //     let relays = [
+    //         'wss://relay.damus.io',
+    //         'wss://relay.primal.net',
+    //         'wss://nos.lol',
+    //         'wss://nostr.bitcoiner.social',
+    //     ];
+    //     const pool = new SimplePool();
+    //     let encodedPubKey = pk
+    //     sk = nip19.decode(sk);
+    //     pk = nip19.decode(pk);
+    //     console.log('sk pk is', sk, pk);
+    //     let content = {
+    //         name: username,
+    //         about: aboutMe,
+    //     };
+    //
+    //     if (fileString.length > 0) {
+    //         content['picture'] = fileString;
+    //     }
+    //     content = JSON.stringify(content);
+    //     let userRegisterEvent = {
+    //         kind: 0,
+    //         pubkey: pk.data,
+    //         created_at: Math.floor(Date.now() / 1000),
+    //         tags: [
+    //             ['p', pk.data],
+    //             ['w', 'memestrAccount'],
+    //         ],
+    //         content: content,
+    //     };
+    //
+    //     userRegisterEvent.id = getEventHash(userRegisterEvent);
+    //
+    //     userRegisterEvent.sig = getSignature(userRegisterEvent, sk.data);
+    //     let x = await pool.publish(relays, userRegisterEvent);
+    //     console.log('userRegistration Event', userRegisterEvent);
+    //     console.log('o=o=o', x);
+    //
+    //     pool.close(relays);
+    //     let userDetails = getUserDetailsFromPrivateKey(privateKey, false);
+    //     userDetails.then(value => {
+    //         value['pubKey'] = encodedPubKey;
+    //         value['privateKey'] = sk; //Encrypt it.
+    //         localStorage.setItem('memestr', JSON.stringify(value));
+    //         console.log('Set the default login in local cache.', loggedInUserDetails);
+    //     }
+    // }
 
     function handleAboutMeChange(event) {
         setAboutMe(event.target.value);
@@ -151,11 +211,11 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                                     <button
                                         type="button"
                                         className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                        onClick={() => {
-                                            registerAccount(sk, pk);
+                                        onClick={async () => {
+                                            await registerAccount(sk, pk);
                                             onClose();
                                         }}>
-                                        Create account now.
+                                        Create Account and Login
                                     </button>
                                 </div>
                             </Dialog.Panel>
