@@ -39,7 +39,8 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
 
-    const [searchedUser, setSearchedUser] = useState(null);
+    const [searchedUser, setSearchedUser] = useState([]);
+    // const [cachedUsers, setCachedUser] = useState(JSON.parse(localStorage.getItem("frequent_shares")) || []);
 
     let shareUrl = 'https://memestr.app/#' + postUrl;
 
@@ -89,7 +90,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                     name = content.name;
                 }
                 usersWithDistinctKeys.push({
-                    id: user.pubkey,
+                    pubKey: user.pubkey,
                     picture: content.picture,
                     name: name,
                 });
@@ -107,6 +108,54 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
 
     function removeSelectedUsers() {
         setSelectedUsers([]);
+    }
+    function removeSearchedUsers() {
+        setSearchedUser([]);
+    }
+
+    function addUserToCache(user) {
+        // Retrieve existing object from localStorage
+        const existingObject =
+            JSON.parse(localStorage.getItem('frequent_shares')) || {};
+
+        const keys = Object.keys(existingObject);
+        const numberOfKeys = keys.length;
+        const firstKey = keys[0];
+        if (numberOfKeys > 6) {
+            delete existingObject[firstKey];
+        }
+
+        // Check if the user already exists in the object
+        if (existingObject[user.pubKey]) {
+            // User already exists, update the value if needed
+            // You can customize this part based on your requirements
+            existingObject[user.pubKey] = {
+                name: user.name,
+                pubKey: user.pubKey,
+                picture: user.picture,
+            };
+        } else {
+            // User doesn't exist, add it to the object
+            existingObject[user.pubKey] = {
+                name: user.name,
+                pubKey: user.pubKey,
+                picture: user.picture,
+            };
+        }
+
+        // Store the updated object back in localStorage
+        localStorage.setItem('frequent_shares', JSON.stringify(existingObject));
+    }
+
+    function getUserList() {
+        if (searchedUser && searchedUser.length > 0) {
+            return searchedUser;
+        }
+        const x = JSON.parse(localStorage.getItem('frequent_shares'));
+        if (x) {
+            return Object.values(x);
+        }
+        return null;
     }
 
     return (
@@ -159,15 +208,15 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                     </form>
 
                                     <div className="mt-4">
-                                        {searchedUser && (
+                                        {getUserList() && (
                                             <div className="flex flex-wrap pl-4 ">
-                                                {searchedUser.map(user => (
+                                                {getUserList().map(user => (
                                                     <div
-                                                        key={user.id}
+                                                        key={user.pubKey}
                                                         className={
                                                             'flex flex-col items-center m-2 ' +
                                                             (isUserSelected(
-                                                                user.id,
+                                                                user.pubKey,
                                                             )
                                                                 ? 'selected-user'
                                                                 : '')
@@ -175,11 +224,14 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                                         style={{
                                                             width: '80px', // Add margin to create a gap
                                                         }}
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             toggleUserSelection(
-                                                                user.id,
-                                                            )
-                                                        }>
+                                                                user.pubKey,
+                                                            );
+                                                            addUserToCache(
+                                                                user,
+                                                            );
+                                                        }}>
                                                         <div className="w-full h-12 flex items-center justify-center overflow-hidden ">
                                                             <img
                                                                 src={
@@ -199,7 +251,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                                                 }}
                                                             />
                                                             {isUserSelected(
-                                                                user.id,
+                                                                user.pubKey,
                                                             ) && (
                                                                 <div className="selected-overlay">
                                                                     {/* Add a tick mark or any other indicator */}
@@ -260,7 +312,11 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                         <button
                                             type="button"
                                             className="mx-2 inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                            onClick={onClose}>
+                                            onClick={() => {
+                                                onClose();
+                                                removeSearchedUsers();
+                                                removeSelectedUsers();
+                                            }}>
                                             I'm done, thanks!
                                         </button>
                                     </div>
