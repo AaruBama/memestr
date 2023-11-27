@@ -45,7 +45,6 @@ function Comments(props) {
     const [name, setName] = useState('Anonymous');
 
     let comment = props.reply;
-    console.log('Comment is ', comment);
     // let { unit, duration } = calculateTimeDifference(comment.created_at);
     const commentatorPubKey = comment.pubkey;
     useEffect(() => {

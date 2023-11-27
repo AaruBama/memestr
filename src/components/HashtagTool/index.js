@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { SimplePool } from 'nostr-tools';
+import { relayInit, SimplePool } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
@@ -7,6 +7,39 @@ import Spinner from '../Spinner';
 const HashTagContext = React.createContext();
 
 const relays = ['wss://relay.primal.net'];
+
+export async function getCommentCount(id) {
+    try {
+        if (sessionStorage.getItem('cc_' + id)) {
+            return parseInt(sessionStorage.getItem('cc_' + id), 10);
+        }
+
+        console.log('No records found in local storage. Fetching from relays.');
+
+        const relay = relayInit('wss://saltivka.org');
+        await relay.connect();
+
+        let event = await relay.count([
+            {
+                kinds: [1],
+                '#e': [id],
+            },
+        ]);
+
+        console.log('event is ', event);
+
+        if (event) {
+            const count = event['count'];
+            sessionStorage.setItem('cc_' + id, count);
+            return count;
+        }
+
+        return 0;
+    } catch (error) {
+        console.error('Error fetching comments count:', error);
+        return 0;
+    }
+}
 
 // Create a provider component to wrap your application
 export function HashTagToolProvider({ children, filterTags }) {
@@ -78,6 +111,11 @@ export function HashTagToolProvider({ children, filterTags }) {
             });
 
             let groupedByPostId = await getVotes(postIds);
+
+            // for (const id of postIds) {
+            //     getCommentCount(id);
+            // }
+
             for (const note of notes) {
                 note['voteCount'] = groupedByPostId[note.id] || 0;
             }

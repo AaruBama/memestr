@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
+import { getCommentCount } from '../HashtagTool';
 
 export function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -25,10 +26,10 @@ export function extractLinksFromText(text) {
 
 export const removeHashtagsAndLinks = text => {
     // Remove hashtags
-    const withoutHashtags = text.replace(/#\w+/g, '');
+    // const withoutHashtags = text.replace(/#\w+/g, '');
 
     // Remove links
-    return withoutHashtags.replace(/(https?:\/\/[^\s]+)/g, '');
+    return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
 export async function upvotePost(noteId) {
@@ -148,6 +149,9 @@ function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
     // const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0);
+    const [commentCount, setCommentCount] = useState(
+        sessionStorage.getItem('cc_' + props.note.id),
+    );
     const [fillLike, setFillLike] = useState(false);
     const [fillZap, setFillZap] = useState(false);
     const [timeDifference, setTimeDifference] = useState({
@@ -192,7 +196,17 @@ function Posts(props) {
 
     useEffect(() => {
         setVotesCount(props.note.voteCount);
-    }, [props.note.voteCount]);
+
+        (async () => {
+            try {
+                var cc = await getCommentCount(props.note.id);
+                setCommentCount(cc);
+            } catch (error) {
+                console.error('Error fetching comments count:', error);
+                // Handle the error as needed
+            }
+        })();
+    }, [props.note.voteCount, props.note.id]);
 
     let title = removeHashtagsAndLinks(props.note.content)
         .trimLeft()
@@ -261,8 +275,11 @@ function Posts(props) {
                     <div className="flex items-start gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
                         {/*Comments button*/}
 
-                        <Link to={postUrl}>
-                            <button variant="light" size={'lg'}>
+                        <Link to={postUrl} className="flex">
+                            <button
+                                variant="light"
+                                size={'lg'}
+                                className="flex">
                                 <svg
                                     className="h-8 w-8"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -276,6 +293,9 @@ function Posts(props) {
                                     viewBox="0 0 24 30">
                                     <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
                                 </svg>
+                                <span className="">
+                                    {commentCount > 0 ? commentCount : null}
+                                </span>
                             </button>
                         </Link>
 
