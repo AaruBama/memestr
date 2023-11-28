@@ -1,0 +1,16 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    x="0"
+    y="0"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+    className="feather feather-volume-x"
+    viewBox="0 0 24 30"
+>
+    <path d="M11 5L6 9 2 9 2 15 6 15 11 19 11 5z"></path>
+    <path d="M23 9L17 15"></path>
+    <path d="M17 9L23 15"></path>
+</svg>

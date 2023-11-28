@@ -6,7 +6,17 @@ import Spinner from '../Spinner';
 
 const HashTagContext = React.createContext();
 
-const relays = ['wss://relay.primal.net'];
+const relays = [
+    'wss://relay.primal.net',
+    'wss://relay.damus.io',
+    'wss://relay.nostr.band',
+    'wss://relay.nostr.bg',
+    'wss://relay.nostrati.com',
+    'wss://relay.noswhere.com',
+    'wss://notsr.wine',
+    'wss://nos.lol',
+    'wss://nostr.mom',
+];
 
 export async function getCommentCount(id) {
     try {
@@ -84,7 +94,7 @@ export function HashTagToolProvider({ children, filterTags }) {
             setIsLoading(true);
             const relayPool = new SimplePool();
             const filters = {
-                limit: 25,
+                limit: 30,
             };
 
             // For Memes
@@ -94,7 +104,10 @@ export function HashTagToolProvider({ children, filterTags }) {
                 filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
             }
 
-            let notes = await relayPool.list(relays, [filters]);
+            const relay = relayInit('wss://relay.nostr.band');
+            await relay.connect();
+            let notes = await relay.list([filters]);
+            // let notes = await relayPool.list(relays, [filters]);
             notes = notes.filter(note => {
                 return containsJpgOrMp4Link(note.content);
             });

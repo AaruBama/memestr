@@ -253,6 +253,23 @@ function Posts(props) {
         setFillZap(true);
     }
 
+    function renderContent(imageLink) {
+        const extension = imageLink.split('.').pop();
+        if (extension === 'undefined') {
+            return;
+        }
+        console.log('extension is ', extension);
+        if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
+            return <img alt={''} src={imageLink} />;
+        } else {
+            console.log('Rendering Video with link ', imageLink);
+            // return <VideoPlayer imageLink={imageLink}/>;
+            return (
+                <video autoPlay muted controls playsInline src={imageLink} />
+            );
+        }
+    }
+
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
@@ -267,9 +284,9 @@ function Posts(props) {
                         {/*{new Date(props.note.created_at).toString()}*/}
                     </span>
                     <div className="flex justify-center py-2 px-1">
-                        <Link to={postUrl}>
-                            <img alt={''} src={imageLink} />
-                        </Link>
+                        {/*<Link to={postUrl}>*/}
+                        {renderContent(imageLink)}
+                        {/*</Link>*/}
                     </div>
 
                     <div className="flex items-start gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">

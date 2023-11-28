@@ -1,0 +1,19 @@
+.videoContainer {
+  position: relative;
+}
+
+video {
+  width: 100%; /* Ensure the video takes the full width of its container */
+}
+
+.muteButton {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: transparent;
+  border: 2px;
+  z-index: 100; /* Set a higher z-index to appear on top of the video */
+}
