@@ -273,15 +273,16 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col bg-black divide-y mt-2 overflow-scroll">
+            <div className="flex flex-col bg-black divide-y mt-2 overflow-hidden">
                 <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
-                    <span className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                        <span className={'flex basis-[90%]'}>{title}</span>
-                        <span className="flex basis-[35%] justify-end text-gray-500 text-sm pr-1">
+                    <span className="flex p-2 text-black text-sm">
+                        <span className={'flex flex-grow font-medium'}>
+                            {title}
+                        </span>
+                        <span className="flex justify-end text-gray-500 text-sm pr-1">
                             {timeDifference.duration}
                             {timeDifference.unit}{' '}
                         </span>
-                        {/*{new Date(props.note.created_at).toString()}*/}
                     </span>
                     <div className="flex justify-center py-2 px-1">
                         {/*<Link to={postUrl}>*/}
