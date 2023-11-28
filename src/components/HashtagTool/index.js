@@ -104,7 +104,7 @@ export function HashTagToolProvider({ children, filterTags }) {
                 filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
             }
 
-            const relay = relayInit('wss://relay.nostr.band');
+            const relay = relayInit('wss://relay.damus.io');
             await relay.connect();
             let notes = await relay.list([filters]);
             // let notes = await relayPool.list(relays, [filters]);
