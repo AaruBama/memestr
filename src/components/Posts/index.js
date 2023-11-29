@@ -253,6 +253,14 @@ function Posts(props) {
         setFillZap(true);
     }
 
+    function truncateTitle(title, maxLength) {
+        if (title.length > maxLength) {
+            return title.substring(0, maxLength) + '...';
+        } else {
+            return title;
+        }
+    }
+
     function renderContent(imageLink) {
         const extension = imageLink.split('.').pop();
         if (extension === 'undefined') {
@@ -277,7 +285,7 @@ function Posts(props) {
                 <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
                     <span className="flex p-2 text-black text-sm">
                         <span className={'flex flex-grow font-medium'}>
-                            {title}
+                            {truncateTitle(title, 100)}
                         </span>
                         <span className="flex justify-end text-gray-500 text-sm pr-1">
                             {timeDifference.duration}
