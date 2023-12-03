@@ -215,10 +215,45 @@ export function useHashTagContext() {
     return context;
 }
 
-// The HashtagTool component
+// export function HashtagTool() {
+//     const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
+//     const [newPostModal, setNewPostModal] = useState(false);
+
+//     function showNewPostModal() {
+//         setNewPostModal(true);
+//     }
+
+//     function closePostModal() {
+//         setNewPostModal(false);
+//     }
+
+//     return (
+//         <>
+//             {/*<NewPostButton />*/}
+//             <Feed
+//                 notes={notes}
+//                 onLoadMore={LoadMoreMedia}
+//                 isLoading={isLoading}
+//             />
+//             <button
+//                 onClick={() => {
+//                     showNewPostModal();
+//                 }}
+//                 title="Upload"
+//                 className="fixed z-10 bottom-4 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">
+//                 ➕
+//             </button>
+//             {newPostModal && (
+//                 <PostUpload isOpen={newPostModal} onClose={closePostModal} />
+//             )}
+//         </>
+//     );
+// }
+
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
+    const [loadingMorePosts, setLoadingMorePosts] = useState(false);
 
     function showNewPostModal() {
         setNewPostModal(true);
@@ -228,22 +263,39 @@ export function HashtagTool() {
         setNewPostModal(false);
     }
 
+    function handleLoadMore() {
+        // Set the loading state before fetching more posts
+        setLoadingMorePosts(true);
+
+        // Call the LoadMoreMedia function to fetch more posts
+        LoadMoreMedia().then(() => {
+            // Reset the loading state after posts are fetched
+            setLoadingMorePosts(false);
+        });
+    }
+
     return (
         <>
-            {/*<NewPostButton />*/}
             <Feed
                 notes={notes}
-                onLoadMore={LoadMoreMedia}
-                isLoading={isLoading}
+                onLoadMore={handleLoadMore}
+                isLoading={isLoading || loadingMorePosts} // Consider both initial loading and loading more posts
             />
+
+            {loadingMorePosts && (
+                // Display a loading spinner at the bottom of the screen
+                <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-gray-700 bg-opacity-50 p-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
+                </div>
+            )}
+
             <button
-                onClick={() => {
-                    showNewPostModal();
-                }}
+                onClick={showNewPostModal}
                 title="Upload"
                 className="fixed z-10 bottom-4 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">
                 ➕
             </button>
+
             {newPostModal && (
                 <PostUpload isOpen={newPostModal} onClose={closePostModal} />
             )}

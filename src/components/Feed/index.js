@@ -2,8 +2,6 @@ import Posts from '../Posts';
 import './index.css';
 import React, { useEffect, useRef } from 'react';
 
-// import Spinner from "../Spinner";
-
 function useIntersectionObserver(loadMore) {
     const targetRef = useRef(null);
 
