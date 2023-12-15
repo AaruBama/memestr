@@ -10,7 +10,6 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     const [fileString, setFileString] = useState('');
 
     const choosePicture = url => {
-        console.log('url being sent is ', url, 'and length is  ', url.length);
         setFileString(url);
     };
 

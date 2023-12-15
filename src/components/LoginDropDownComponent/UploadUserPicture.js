@@ -34,7 +34,6 @@ const UploadAndDisplayImage = ({ setPicture }) => {
                 setPicture('');
                 alert("Picture couldn't be uploaded. Try later.");
             } else {
-                console.log('responseData', responseData);
                 // setResponseJson(responseData)
                 setPicture(responseData.file);
                 return responseData;
@@ -99,7 +98,6 @@ const UploadAndDisplayImage = ({ setPicture }) => {
                         type="file"
                         name="myImage"
                         onChange={event => {
-                            console.log(event.target.files[0]);
                             setSelectedImage(event.target.files[0]);
                             // setPicture(event.target.files[0])
                             choosePicture(event.target.files[0]).then(r => {

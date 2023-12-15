@@ -262,19 +262,29 @@ function Posts(props) {
     }
 
     function renderContent(imageLink) {
-        const extension = imageLink.split('.').pop();
-        if (extension === 'undefined') {
-            return;
-        }
-        console.log('extension is ', extension);
-        if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
-            return <img alt={''} src={imageLink} />;
-        } else {
-            console.log('Rendering Video with link ', imageLink);
-            // return <VideoPlayer imageLink={imageLink}/>;
-            return (
-                <video autoPlay muted controls playsInline src={imageLink} />
-            );
+        try {
+            const extension = imageLink.split('.').pop();
+            if (extension === 'undefined') {
+                return;
+            }
+            if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
+                return <img alt={''} src={imageLink} />;
+            } else {
+                console.log('Rendering Video with link ', imageLink);
+                // return <VideoPlayer imageLink={imageLink}/>;
+                return (
+                    <video
+                        autoPlay
+                        muted
+                        controls
+                        playsInline
+                        src={imageLink}
+                    />
+                );
+            }
+        } catch (e) {
+            console.log('Image link is ', imageLink);
+            console.log('Something happened here' + e);
         }
     }
 

@@ -36,8 +36,6 @@ export async function getCommentCount(id) {
             },
         ]);
 
-        console.log('event is ', event);
-
         if (event) {
             const count = event['count'];
             sessionStorage.setItem('cc_' + id, count);
@@ -145,7 +143,6 @@ export function HashTagToolProvider({ children, filterTags }) {
         // Fetch more notes with offset and update the context state
         // ...
         // setIsLoading(true);
-        console.log('Loading more media');
         const relayPool = new SimplePool();
         const filters = {
             limit: 25,

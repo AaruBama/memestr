@@ -53,11 +53,7 @@ function Comments(props) {
             setpicture(value.picture);
             setUsername(value.display_name);
             setName(value.name);
-        }).catch(
-            console.log(
-                'something went wrong fetching comment from the pubkey',
-            ),
-        );
+        }).catch();
     }, [commentatorPubKey]);
 
     return (

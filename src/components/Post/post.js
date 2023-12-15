@@ -46,7 +46,6 @@ function Post() {
         let post = await pool.get(relays, {
             ids: [postId],
         });
-        console.log('post is', post);
         if (pool) {
             pool.close(relays);
         }
@@ -78,7 +77,6 @@ function Post() {
                 '#e': [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
-            console.log('replies1 is', replies1);
             setReplies(replies1);
             setIsLoading(false);
             relayPool.close(relays);
@@ -116,13 +114,9 @@ function Post() {
 
         commentEvent.id = getEventHash(commentEvent);
         commentEvent.sig = getSignature(commentEvent, sk.data);
-        console.log('CommenteventId is ', commentEvent.id);
-        console.log('calling pool', commentEvent);
         try {
             let x = await pool.publish(relays, commentEvent);
-            console.log('called pool', x);
-            let c = Promise.resolve(x);
-            console.log('c is', c);
+            Promise.resolve(x);
         } catch (error) {
             console.error('Error while publishing comment:', error);
         }
