@@ -8,6 +8,7 @@ import noProfilePictureURL from '../../../Icons/noImageUser.svg';
 
 import { ReactComponent as CopyLinkSvg } from '../../../Icons/CopyLinkSvg.svg';
 import { getUserFromName, sendDM } from '../../../helpers/user';
+// Inside ShareModal component
 
 const Alert = ({ message, duration }) => {
     const [showAlert, setShowAlert] = useState(true);
@@ -38,6 +39,7 @@ const Alert = ({ message, duration }) => {
 export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const [searchedUser, setSearchedUser] = useState([]);
     // const [cachedUsers, setCachedUser] = useState(JSON.parse(localStorage.getItem("frequent_shares")) || []);
@@ -103,6 +105,13 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
         setShowAlert(true);
         setTimeout(() => {
             setShowAlert(false);
+        }, duration);
+    };
+
+    const showSuccessMessageWithTimeout = duration => {
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+            setShowSuccessMessage(false);
         }, duration);
     };
 
@@ -300,6 +309,9 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                             onClick={() => {
                                                 sendDM(selectedUsers, shareUrl);
                                                 removeSelectedUsers();
+                                                showSuccessMessageWithTimeout(
+                                                    3000,
+                                                );
                                             }}
                                             className={`mt-2 p-2 bg-green-500 text-white rounded ${
                                                 sendButtonDisabled
@@ -309,6 +321,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                             disabled={sendButtonDisabled}>
                                             Send
                                         </button>
+
                                         <button
                                             type="button"
                                             className="mx-2 inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -331,6 +344,18 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                     <div className="h-screen bg-gray-600 dark:bg-gray-900 opacity-30 absolute inset-0" />
 
                     <Alert message="Link Copied Successfully" duration={3000} />
+                </div>
+            )}
+
+            {showSuccessMessage && (
+                <div className="fixed inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gray-600 dark:bg-gray-900 opacity-30" />
+                    <div className="z-10 p-4 bg-white dark:bg-gray-800 shadow-lg rounded-md">
+                        <Alert
+                            message="Meme Sent Successfully"
+                            duration={1000}
+                        />
+                    </div>
                 </div>
             )}
         </>
