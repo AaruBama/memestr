@@ -3,6 +3,7 @@ import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
 import noProfilePictureURL from '../../../Icons/noImageUser.svg';
+import './style.css';
 
 // import ShareOnWhatsApp from '../shareOnWhatsApp';
 
@@ -348,13 +349,9 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
             )}
 
             {showSuccessMessage && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gray-600 dark:bg-gray-900 opacity-30" />
-                    <div className="z-10 p-4 bg-white dark:bg-gray-800 shadow-lg rounded-md">
-                        <Alert
-                            message="Meme Sent Successfully"
-                            duration={1000}
-                        />
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
+                        <p>Meme Sent Successfully</p>
                     </div>
                 </div>
             )}

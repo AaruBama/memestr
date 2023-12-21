@@ -1,0 +1,14 @@
+@keyframes slideInSlideOut {
+  0%,
+  100% {
+    transform: translateY(-100%);
+  }
+  10%,
+  90% {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideInSlideOut {
+  animation: slideInSlideOut 3s ease-in-out forwards;
+}
