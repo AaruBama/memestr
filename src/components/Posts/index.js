@@ -15,13 +15,35 @@ export function extractLinksFromText(text) {
 
     const links = text.match(linkRegex);
     if (!links) {
+        console.log('empty link list returns');
         return [];
     }
+    console.log('links is ', links);
 
-    return links.filter(
-        link =>
-            jpgRegex.test(link) || mp4Regex.test(link) || gifRegex.test(link),
-    );
+    return links
+        .map(link => {
+            try {
+                const url = new URL(link);
+                // Remove the fragment identifier
+                url.hash = '';
+                return url.toString();
+            } catch (error) {
+                // Handle invalid URLs
+                console.error(`Error parsing URL: ${link}`);
+                return null;
+            }
+        })
+        .filter(link => link !== null)
+        .filter(
+            link =>
+                jpgRegex.test(link) ||
+                mp4Regex.test(link) ||
+                gifRegex.test(link),
+        );
+    // return links.filter(
+    //     link =>
+    //         jpgRegex.test(link) || mp4Regex.test(link) || gifRegex.test(link) || link.includes("#"),
+    // );
 }
 
 export const removeHashtagsAndLinks = text => {
