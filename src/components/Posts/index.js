@@ -15,10 +15,8 @@ export function extractLinksFromText(text) {
 
     const links = text.match(linkRegex);
     if (!links) {
-        console.log('empty link list returns');
         return [];
     }
-    console.log('links is ', links);
 
     return links
         .map(link => {
