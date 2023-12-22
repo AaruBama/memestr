@@ -39,6 +39,7 @@ function App() {
                 </HashTagToolProvider>
                 <PetsFeedProvider filterTags={pageFilters['/pets']}>
                     <Routes>
+                        s
                         <Route exact path="/pets" element={<PetFeed />} />
                     </Routes>
                 </PetsFeedProvider>

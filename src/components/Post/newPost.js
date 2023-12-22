@@ -5,6 +5,8 @@ import { Dialog, Transition } from '@headlessui/react';
 const PostUpload = ({ isOpen, onClose }) => {
     const [link, setLink] = useState(null);
     const [title, setTitle] = useState('');
+    const [hashtags, setHashtags] = useState('');
+    const [preview, setPreview] = useState('');
     const [retryCount, setRetryCount] = useState(0);
     const [postStage, setPostStage] = useState(0);
 
@@ -113,6 +115,10 @@ const PostUpload = ({ isOpen, onClose }) => {
             console.error('An error occurred:', error);
             setLink(null);
         }
+
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+        }
     };
 
     // Helper function to convert media to base64
@@ -176,9 +182,22 @@ const PostUpload = ({ isOpen, onClose }) => {
         return parsedjson;
     };
 
+    // function handleTitleChange(event) {
+    //     setTitle(event.target.value);
+    // }
+
     function handleTitleChange(event) {
         setTitle(event.target.value);
     }
+
+    function handleHashtagsChange(event) {
+        setHashtags(event.target.value);
+    }
+    const previewStyle = {
+        maxHeight: '300px', // Limit the height of the image
+        maxWidth: '100%', // Ensure the image is not wider than its container
+        objectFit: 'contain', // Keeps the aspect ratio of the image
+    };
 
     return (
         <div>
@@ -210,55 +229,130 @@ const PostUpload = ({ isOpen, onClose }) => {
                                 leave="ease-in duration-200"
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                <Dialog.Panel className="max-height= relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                    <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                        <div className="sm:flex sm:items-start">
-                                            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                                <Dialog.Title
-                                                    as="h3"
-                                                    className="text-base font-semibold leading-6 text-gray-900 pb-6">
-                                                    Post something.
-                                                </Dialog.Title>
-
-                                                <Dialog.Description>
-                                                    <div className="mb-4 required">
-                                                        <label
-                                                            htmlFor="title"
-                                                            className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">
-                                                            Title
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            id="title"
-                                                            onChange={
-                                                                handleTitleChange
-                                                            }
-                                                            value={title}
-                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                            placeholder="Title..."
-                                                            required={true}
-                                                        />
-                                                    </div>
-
+                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                    <div
+                                        className="bg-white px-4 py-5 sm:p-6 overflow-auto"
+                                        style={{ maxHeight: '80vh' }}>
+                                        <div className="mb-4">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                                Post Something
+                                            </h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
+                                            <div className="sm:col-span-2">
+                                                <label
+                                                    htmlFor="title"
+                                                    className="block text-sm font-medium text-gray-700">
+                                                    Title
+                                                </label>
+                                                <div className="mt-1">
                                                     <input
-                                                        type="file"
+                                                        type="text"
+                                                        name="title"
+                                                        id="title"
                                                         onChange={
-                                                            handleFileChange
+                                                            handleTitleChange
                                                         }
+                                                        value={title}
+                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="Enter the title of your post"
                                                     />
-                                                </Dialog.Description>
+                                                </div>
+                                            </div>
+
+                                            <div className="sm:col-span-2">
+                                                <label
+                                                    htmlFor="hashtags"
+                                                    className="block text-sm font-medium text-gray-700">
+                                                    Hashtags
+                                                </label>
+                                                <div className="mt-1">
+                                                    <input
+                                                        type="text"
+                                                        name="hashtags"
+                                                        id="hashtags"
+                                                        onChange={
+                                                            handleHashtagsChange
+                                                        }
+                                                        value={hashtags}
+                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        placeholder="Add hashtags (e.g., #funny #meme)"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="sm:col-span-2">
+                                                <label
+                                                    htmlFor="file-upload"
+                                                    className="block text-sm font-medium text-gray-700">
+                                                    Upload Image
+                                                </label>
+                                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                                    <div className="space-y-1 text-center">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth={1.5}
+                                                            stroke="currentColor"
+                                                            className="mx-auto h-12 w-12 text-gray-400">
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                                                            />
+                                                        </svg>
+
+                                                        <div className="flex text-sm text-gray-600">
+                                                            <label
+                                                                htmlFor="file-upload"
+                                                                className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                                                                <span>
+                                                                    Upload a
+                                                                    file
+                                                                </span>
+                                                                <input
+                                                                    id="file-upload"
+                                                                    name="file-upload"
+                                                                    type="file"
+                                                                    onChange={
+                                                                        handleFileChange
+                                                                    }
+                                                                    className="sr-only"
+                                                                />
+                                                            </label>
+                                                            <p className="pl-1">
+                                                                or drag and drop
+                                                            </p>
+                                                        </div>
+                                                        <p className="text-xs text-gray-500">
+                                                            PNG, JPG, GIF up to
+                                                            10MB
+                                                        </p>
+                                                        {preview && (
+                                                            <img
+                                                                src={preview}
+                                                                alt="Preview"
+                                                                className="mt-4 w-full rounded"
+                                                                style={
+                                                                    previewStyle
+                                                                } // Apply the style for the preview
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                                         <button
-                                            type="submit"
-                                            className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                            type="button"
+                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                                             onClick={() => {
                                                 sendNewPostEvent();
                                                 onClose();
                                             }}>
-                                            Post.
+                                            Post
                                         </button>
                                     </div>
                                 </Dialog.Panel>
