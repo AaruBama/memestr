@@ -193,7 +193,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     };
 
     const handleKeyDown = event => {
-        if (event.key === 'Enter' && event.target.value.trim() !== '') {
+        if (event.key === ' ' && event.target.value.trim() !== '') {
             if (hashtags.length < MAX_TAGS) {
                 setHashtags([...hashtags, inputValue.trim()]);
                 setInputValue(''); // Clear the input after adding the tag
