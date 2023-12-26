@@ -237,12 +237,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     return (
         <div>
             <Transition.Root show={isOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-10"
-                    onClose={() => {
-                        onClose();
-                    }}>
+                <Dialog as="div" className="relative z-10" onClose={onClose}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -254,7 +249,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
                     </Transition.Child>
 
-                    <div className="fixed inset-0 z-10 overflow-hidden">
+                    <div className="fixed inset-0 z-10 overflow-y-auto">
                         <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
                             <Transition.Child
                                 as={Fragment}
@@ -290,8 +285,8 @@ const PostUpload = ({ isOpen, onClose }) => {
                                         </button>
                                     </div>
                                     <div
-                                        className="bg-white px-4 py-5 sm:p-6 overflow-auto"
-                                        style={{ maxHeight: '80vh' }}>
+                                        className="bg-white px-4 pt-5 pb-3 overflow-auto"
+                                        style={{ maxHeight: '90vh' }}>
                                         <div className="mb-4">
                                             <h3 className="text-lg leading-6 font-medium text-gray-900">
                                                 Post Something
@@ -513,7 +508,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                     <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                                             onClick={() => {
                                                 sendNewPostEvent();
                                                 onClose();
