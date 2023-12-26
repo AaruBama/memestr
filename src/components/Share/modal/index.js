@@ -10,7 +10,6 @@ import './style.css';
 import { ReactComponent as CopyLinkSvg } from '../../../Icons/CopyLinkSvg.svg';
 import { getUserFromName, sendDM } from '../../../helpers/user';
 // Inside ShareModal component
-
 const Alert = ({ message, duration }) => {
     const [showAlert, setShowAlert] = useState(true);
 
@@ -168,6 +167,15 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
         return null;
     }
 
+    function isUserLoggedIn() {
+        const storedData = localStorage.getItem('memestr');
+        return storedData !== null;
+    }
+
+    function showSignInAlert() {
+        alert('Please sign in to send messages.');
+    }
+
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>
@@ -308,11 +316,20 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                sendDM(selectedUsers, shareUrl);
-                                                removeSelectedUsers();
-                                                showSuccessMessageWithTimeout(
-                                                    3000,
-                                                );
+                                                if (isUserLoggedIn()) {
+                                                    // User is logged in, proceed to send DM
+                                                    sendDM(
+                                                        selectedUsers,
+                                                        shareUrl,
+                                                    );
+                                                    removeSelectedUsers();
+                                                    showSuccessMessageWithTimeout(
+                                                        3000,
+                                                    );
+                                                } else {
+                                                    // User is not logged in, show sign-in alert
+                                                    showSignInAlert(); // This will now use the correct function
+                                                }
                                             }}
                                             className={`mt-2 p-2 bg-green-500 text-white rounded ${
                                                 sendButtonDisabled
