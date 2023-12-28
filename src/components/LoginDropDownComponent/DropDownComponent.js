@@ -74,30 +74,29 @@ function DropdownComponent() {
     }
 
     return (
-        <div>
-            <Menu as="div" className="relative inline-block text-left">
+        <div className="inline-block text-left">
+            <Menu as="div" className="relative">
                 <div>
-                    <Menu.Button className="inline-flex justify-center rounded-full w-full text-sm font-medium border-solid-2 border-bg-black text-white bg-gray-400 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
-                        {(userDetails && userDetails.picture === undefined) ||
-                        !userDetails ? (
+                    <Menu.Button className="inline-flex items-center justify-center rounded-full bg-blue-600 p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        {!userDetails || userDetails.picture === undefined ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                fill="None"
+                                fill="none"
                                 viewBox="0 0 24 24"
-                                strokeWidth="1.5"
+                                strokeWidth={1.5}
                                 stroke="currentColor"
-                                className="w-9 h-9 ">
+                                className="w-6 h-6 text-white">
                                 <path
                                     strokeLinecap="round"
-                                    strokeLinejoin=""
-                                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                                    strokeLinejoin="round"
+                                    d="M17.25 18.75a6.5 6.5 0 00-10.5 0M12 14.25a4 4 0 100-8 4 4 0 000 8zM20.25 14.25a8.75 8.75 0 11-16.5 0"
                                 />
                             </svg>
                         ) : (
                             <img
                                 src={userDetails.picture}
-                                alt="..."
-                                className="shadow rounded-full w-9 h-9 align-middle border-none"
+                                alt="Profile"
+                                className="w-8 h-8 rounded-full"
                             />
                         )}
                     </Menu.Button>
@@ -111,57 +110,69 @@ function DropdownComponent() {
                     leave="transition ease-in duration-75"
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95">
-                    <Menu.Items className="absolute p-4 right-0 w-40 mt-2 origin-top-right bg-black/[0.9] text-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {!isLoggedIn && (
-                            <Menu.Item
-                                as="div"
-                                onClick={() => {
-                                    openNewKeysModal();
-                                }}
-                                disabled={isLoggedIn}
-                                className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black">
-                                Create Account
-                            </Menu.Item>
-                        )}
-                        {!isLoggedIn && (
-                            <Menu.Item
-                                as="div"
-                                disabled={isLoggedIn}
-                                onClick={() => {
-                                    openLoginModal();
-                                }}
-                                className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black">
-                                Login
-                            </Menu.Item>
-                        )}
-
-                        {isLoggedIn && (
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <div
-                                        className={`${
-                                            active && 'bg-yellow-500'
-                                        } ui-active:bg-white ui-active:text-black ui-not-active:bg-white ui-not-active:text-black`}>
-                                        {userDetails.name}
-                                    </div>
-                                )}
-                            </Menu.Item>
-                        )}
-                        {isLoggedIn && (
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <div
-                                        onClick={() => {
-                                            logout();
-                                        }}
-                                        className={`${
-                                            active && 'bg-yellow-500'
-                                        } ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black`}>
-                                        Logout
-                                    </div>
-                                )}
-                            </Menu.Item>
-                        )}
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1">
+                            {!isLoggedIn && (
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <button
+                                            onClick={openNewKeysModal}
+                                            className={`${
+                                                active
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'text-gray-700'
+                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                            disabled={isLoggedIn}>
+                                            Create Account
+                                        </button>
+                                    )}
+                                </Menu.Item>
+                            )}
+                            {!isLoggedIn && (
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <button
+                                            onClick={openLoginModal}
+                                            className={`${
+                                                active
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'text-gray-700'
+                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                            Login
+                                        </button>
+                                    )}
+                                </Menu.Item>
+                            )}
+                            {isLoggedIn && (
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <span
+                                            className={`${
+                                                active
+                                                    ? 'bg-yellow-500'
+                                                    : 'text-gray-700'
+                                            } flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                            {userDetails.name}
+                                        </span>
+                                    )}
+                                </Menu.Item>
+                            )}
+                            {isLoggedIn && (
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <button
+                                            onClick={logout}
+                                            className={`${
+                                                active
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'text-gray-700'
+                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                            Logout
+                                        </button>
+                                    )}
+                                </Menu.Item>
+                            )}
+                        </div>
                     </Menu.Items>
                 </Transition>
             </Menu>
