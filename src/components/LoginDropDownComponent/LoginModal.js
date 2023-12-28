@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import getUserDetailsFromPrivateKey from '../Profile';
 import { getPublicKey, nip19 } from 'nostr-tools';
@@ -10,45 +10,31 @@ function LoginModal({ isOpen, onClose }) {
     function handlePrivateKeyChange(event) {
         setPrivateKey(event.target.value);
     }
-
     function logUserIn() {
-        let userDetails = null;
         const storedData = localStorage.getItem('memestr');
         if (storedData) {
-            userDetails = JSON.parse(storedData);
-            const display_name = userDetails.display_name;
-            const name = userDetails.name;
-            const profile_picture = userDetails.picture;
+            const userDetails = JSON.parse(storedData);
             setLoggedInUserDetails({
-                display_name: display_name,
-                picture: profile_picture,
-                name: name,
+                display_name: userDetails.display_name,
+                picture: userDetails.picture,
+                name: userDetails.name,
             });
+            onClose(userDetails); // Close the modal if user data is in localStorage
         } else {
-            userDetails = getUserDetailsFromPrivateKey(privateKey);
-            userDetails.then(value => {
-                const display_name = value.display_name;
-                const profile_picture = value.picture;
-                const name = value.name;
-                setLoggedInUserDetails({
-                    display_name: display_name,
-                    picture: profile_picture,
-                    name: name,
-                });
-                let decodedpk = nip19.decode(privateKey);
-                let publicKey = getPublicKey(decodedpk.data);
-                value['pubKey'] = publicKey;
-                value['privateKey'] = privateKey; //Encrypt it.
-                localStorage.setItem('memestr', JSON.stringify(value));
+            getUserDetailsFromPrivateKey(privateKey).then(value => {
+                const newUserDetails = {
+                    display_name: value.display_name,
+                    picture: value.picture,
+                    name: value.name,
+                    pubKey: getPublicKey(nip19.decode(privateKey).data),
+                    privateKey, // Consider encrypting this
+                };
+                setLoggedInUserDetails(newUserDetails);
+                localStorage.setItem('memestr', JSON.stringify(newUserDetails));
+                onClose(newUserDetails); // Close the modal after setting new user details
             });
         }
     }
-
-    useEffect(() => {
-        if (Object.keys(loggedInUserDetails).length !== 0) {
-            onClose(loggedInUserDetails);
-        }
-    }, [onClose, loggedInUserDetails]);
 
     return (
         <Transition.Root show={isOpen} as={Fragment}>

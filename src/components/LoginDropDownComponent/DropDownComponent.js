@@ -23,8 +23,9 @@ function DropdownComponent() {
 
     function getUserDetailsFromLocal() {
         const storedData = localStorage.getItem('memestr');
-        return storedData ? storedData : null;
+        return storedData ? JSON.parse(storedData) : null;
     }
+
     const openUserDetailsModal = () => {
         setNewUserDetailsModal(true);
     };
@@ -37,24 +38,24 @@ function DropdownComponent() {
     const closeUserDetailModal = () => {
         setNewUserDetailsModal(false);
 
-        if (getUserDetailsFromLocal) {
+        if (getUserDetailsFromLocal()) {
             setIsLoggedIn(true);
         }
     };
 
     const openLoginModal = () => {
-        const storedData = localStorage.getItem('memestr');
-        if (!storedData) {
-            setLoginModal(true);
-        } else {
-            setUserDetails(JSON.parse(storedData));
-        }
+        // Reset userDetails when opening login modal
+        setUserDetails(null);
+        setLoginModal(true);
     };
+
     const closeLoginModal = userDetails => {
         setLoginModal(false);
-        setUserDetails(userDetails);
-        if (Object.keys(userDetails).length !== 0) {
+        if (userDetails && Object.keys(userDetails).length !== 0) {
+            setUserDetails(userDetails);
             setIsLoggedIn(true);
+        } else {
+            setUserDetails({});
         }
     };
 
@@ -63,14 +64,19 @@ function DropdownComponent() {
         if (storedData) {
             setUserDetails(JSON.parse(storedData));
             setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+            setUserDetails(null); // Reset userDetails
         }
-    }, [isLoggedIn]);
+    }, [isLoggedIn]); // Now useEffect depends on isLoggedIn
 
     function logout() {
+        console.log('Logging out...');
         localStorage.removeItem('memestr');
         setUserDetails(null);
         setIsLoggedIn(false);
-        alert('Logged out successfully!');
+        alert('Logged out successfully');
+        console.log('Logged out, state should be updated.');
     }
 
     return (
@@ -112,65 +118,65 @@ function DropdownComponent() {
                     leaveTo="transform opacity-0 scale-95">
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="py-1">
-                            {!isLoggedIn && (
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            onClick={openNewKeysModal}
-                                            className={`${
-                                                active
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'text-gray-700'
-                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                            disabled={isLoggedIn}>
-                                            Create Account
-                                        </button>
-                                    )}
-                                </Menu.Item>
-                            )}
-                            {!isLoggedIn && (
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            onClick={openLoginModal}
-                                            className={`${
-                                                active
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'text-gray-700'
-                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
-                                            Login
-                                        </button>
-                                    )}
-                                </Menu.Item>
-                            )}
-                            {isLoggedIn && (
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <span
-                                            className={`${
-                                                active
-                                                    ? 'bg-yellow-500'
-                                                    : 'text-gray-700'
-                                            } flex w-full items-center rounded-md px-2 py-2 text-sm`}>
-                                            {userDetails.name}
-                                        </span>
-                                    )}
-                                </Menu.Item>
-                            )}
-                            {isLoggedIn && (
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            onClick={logout}
-                                            className={`${
-                                                active
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'text-gray-700'
-                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
-                                            Logout
-                                        </button>
-                                    )}
-                                </Menu.Item>
+                            {!isLoggedIn ? (
+                                <>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                onClick={openNewKeysModal}
+                                                className={`${
+                                                    active
+                                                        ? 'font-semibold'
+                                                        : 'font-normal'
+                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}
+                                                disabled={isLoggedIn}>
+                                                Create Account
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                onClick={openLoginModal}
+                                                className={`${
+                                                    active
+                                                        ? 'font-semibold'
+                                                        : 'font-normal'
+                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}>
+                                                Login
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                </>
+                            ) : (
+                                <>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <span
+                                                className={`${
+                                                    active
+                                                        ? 'font-semibold text-gray-900'
+                                                        : 'font-normal text-gray-700'
+                                                } flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                                {userDetails.name}
+                                            </span>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                onClick={logout}
+                                                className={`${
+                                                    active
+                                                        ? 'font-semibold text-gray-900'
+                                                        : 'font-normal text-gray-700'
+                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm hover:text-gray-900`}>
+                                                Logout
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                </>
                             )}
                         </div>
                     </Menu.Items>
