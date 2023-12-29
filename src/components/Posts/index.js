@@ -311,114 +311,114 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col bg-black divide-y mt-2 overflow-hidden">
-                <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
-                    <span className="flex p-2 text-black text-sm">
-                        <span className={'flex flex-grow font-medium'}>
-                            {truncateTitle(title, 100)}
-                        </span>
-                        <span className="flex justify-end text-gray-500 text-sm pr-1">
-                            {timeDifference.duration}
-                            {timeDifference.unit}{' '}
-                        </span>
-                    </span>
-                    <div className="flex justify-center py-2 px-1">
-                        {/*<Link to={postUrl}>*/}
-                        {renderContent(imageLink)}
-                        {/*</Link>*/}
+            <div className="flex flex-col items-center">
+                <div className="bg-white mt-2 mb-2 overflow-hidden rounded-lg w-full max-w-md">
+                    {/* Post Header: Title and Time */}
+                    <div className="p-4 border-b">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-sm font-semibold truncate">
+                                {truncateTitle(title, 20)}
+                            </h3>
+                            <span className="text-xs text-gray-500">
+                                {timeDifference.duration}
+                                {timeDifference.unit}
+                            </span>
+                        </div>
                     </div>
+                    {/* Post Media Content
+                    <div className="flex justify-center items-center">
+                        <div className="bg-white mt-2 mb-6 overflow-hidden rounded-lg shadow-lg max-w-md w-full">
+                            {renderContent(imageLink)}
+                        </div>
+                    </div> */}
 
-                    <div className="flex items-start gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
-                        {/*Comments button*/}
+                    {/* Post Media Content */}
+                    <div className="w-full">{renderContent(imageLink)}</div>
 
-                        <Link to={postUrl} className="flex">
-                            <button
-                                variant="light"
-                                size={'lg'}
-                                className="flex">
+                    <div className="flex flex-col p-3">
+                        <div className="flex justify-between items-centre">
+                            <Link to={postUrl} className="flex items-center ">
                                 <svg
-                                    className="h-8 w-8"
+                                    className="h-4 w-4 text-black-600"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    x="0"
-                                    y="0"
+                                    height="16"
+                                    width="16"
+                                    viewBox="0 0 512 512">
+                                    <path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9c.1-.2 .2-.3 .3-.5z" />
+                                </svg>
+                                <span className="text-xs text-gray-600 ml-1">
+                                    {commentCount > 0 ? commentCount : ''}
+                                </span>
+                            </Link>
+
+                            <button
+                                onClick={handleZapButton}
+                                className={`flex items-center ${
+                                    fillZap
+                                        ? 'text-yellow-300'
+                                        : 'text-black-600'
+                                }`}>
+                                <svg
+                                    className="h-4 w-4 text-black-600"
+                                    xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     stroke="currentColor"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                     strokeWidth="2"
-                                    viewBox="0 0 24 30">
-                                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                                    viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
                                 </svg>
-                                <span className="">
-                                    {commentCount > 0 ? commentCount : null}
+                                {processedValue && (
+                                    <span className="text-xs ml-1">
+                                        {processedValue}
+                                    </span>
+                                )}
+                                <ZapModal
+                                    isOpenm={isModalOpen}
+                                    onConfirm={handleConfirm}
+                                />
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    upvotePost(
+                                        props.note.id,
+                                        props.note.pubkey,
+                                    );
+                                    voteIncrement();
+                                    fillColor();
+                                }}
+                                disabled={isTodisabled()}
+                                className={`flex items-center ${
+                                    fillLike ? 'text-red-600' : 'text-black-600'
+                                }`}>
+                                <svg
+                                    className="h-4 w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+                                </svg>
+                                <span className="text-xs ml-1 text-black-600">
+                                    {votesCount}
                                 </span>
                             </button>
-                        </Link>
 
-                        <button
-                            className="flex align-items-center"
-                            onClick={() => {
-                                handleZapButton();
-                            }}>
-                            <svg
-                                className={`${
-                                    fillZap &&
-                                    'fill-current text-yellow-300 stroke-black'
-                                } h-8 w-8`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                viewBox="0 0 24 30">
-                                <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
-                            </svg>
-                            {processedValue && <p>{processedValue}</p>}
-
-                            <ZapModal
-                                isOpenm={isModalOpen}
-                                onConfirm={handleConfirm}
-                            />
-                        </button>
-
-                        <button
-                            className="flex"
-                            onClick={() => {
-                                upvotePost(props.note.id, props.note.pubkey);
-                                voteIncrement();
-                                fillColor();
-                            }}
-                            disabled={isTodisabled()}>
-                            <svg
-                                className={`${
-                                    fillLike && 'fill-current text-red-600'
-                                } h-8 w-8`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                viewBox="0 0 24 30">
-                                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                            </svg>
-                            {votesCount}
-                        </button>
-
-                        {/*Share Button*/}
-                        <div className="ml-auto mr-2 items-start inline-block">
-                            <button onClick={() => openShareModal()}>
-                                <ShareButtonSvg />
+                            <button onClick={openShareModal} className="p-1">
+                                <ShareButtonSvg className="h-4 w-4 text-gray-600" />
                             </button>
                         </div>
                     </div>
+                    {/* Border line directly after the interaction buttons */}
+                    <div className="border-t border-grey-700"></div>
                 </div>
             </div>
+
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={closeShareModal}
