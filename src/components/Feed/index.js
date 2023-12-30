@@ -45,7 +45,7 @@ function Feed(props) {
 
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
     return (
-        <div className="feed-container mt-12 mx-auto max-w-xl">
+        <div className="feed-container mt-12 mx-auto max-w-xl lg:mr-60">
             {props.notes.map((note, index) => (
                 <div key={note.id} className="mb-8">
                     {' '}

@@ -18,7 +18,11 @@ module.exports = {
             '2xl': '1536px',
             // => @media (min-width: 1536px) { ... }
         },
-        extend: {},
+        extend: {
+            fontFamily: {
+                bungee: ["'Bungee Spice'", 'cursive'],
+            },
+        },
     },
     plugins: [],
 };

@@ -314,7 +314,7 @@ function Posts(props) {
             <div className="flex flex-col items-center">
                 <div className="bg-white mt-2 mb-2 overflow-hidden rounded-lg w-full max-w-md">
                     {/* Post Header: Title and Time */}
-                    <div className="p-4 border-b">
+                    <div className="p-3 border-b">
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="text-sm font-semibold truncate">
                                 {truncateTitle(title, 20)}
@@ -325,15 +325,12 @@ function Posts(props) {
                             </span>
                         </div>
                     </div>
-                    {/* Post Media Content
-                    <div className="flex justify-center items-center">
-                        <div className="bg-white mt-2 mb-6 overflow-hidden rounded-lg shadow-lg max-w-md w-full">
-                            {renderContent(imageLink)}
-                        </div>
-                    </div> */}
 
                     {/* Post Media Content */}
-                    <div className="w-full">{renderContent(imageLink)}</div>
+
+                    <div className="w-full border border-gray-300 rounded-sm">
+                        {renderContent(imageLink)}
+                    </div>
 
                     <div className="flex flex-col p-3">
                         <div className="flex justify-between items-centre">
@@ -414,8 +411,8 @@ function Posts(props) {
                             </button>
                         </div>
                     </div>
-                    {/* Border line directly after the interaction buttons */}
-                    <div className="border-t border-grey-700"></div>
+
+                    <div className="border-t border-grey-300 "></div>
                 </div>
             </div>
 

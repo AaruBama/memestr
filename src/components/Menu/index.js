@@ -25,7 +25,7 @@ export default function Header() {
     return (
         <div className="relative">
             <div
-                className="HAMBURGER-ICON space-y-2 p-4"
+                className="lg:hidden HAMBURGER-ICON space-y-2 p-4"
                 onClick={() => setIsNavOpen(prev => !prev)}>
                 <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                 <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
@@ -36,6 +36,7 @@ export default function Header() {
                 className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity ${
                     isNavOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 }`}
+                // style={{ zIndex: 1000 }}
                 onClick={closeSidebar}></div>
 
             <div
@@ -43,7 +44,7 @@ export default function Header() {
                     isNavOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
                 <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-bold">Memestr</h1>
+                    <h1 className="font-bungee px-4 py-2 text-xl">Category</h1>
                     <button
                         onClick={closeSidebar}
                         className="rounded-md text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500">
