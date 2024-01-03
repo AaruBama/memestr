@@ -4,6 +4,9 @@ import RegistrationModal from './NewKeysModal';
 import UserDetailsForAccountCreationModal from './UserDetailsForAccountCreationModal';
 import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
+import { ReactComponent as CreateAccountIcon } from '../../Icons/CreateAccountSvg.svg';
+import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
+import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
 
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
@@ -71,12 +74,10 @@ function DropdownComponent() {
     }, [isLoggedIn]); // Now useEffect depends on isLoggedIn
 
     function logout() {
-        console.log('Logging out...');
         localStorage.removeItem('memestr');
         setUserDetails(null);
         setIsLoggedIn(false);
         alert('Logged out successfully');
-        console.log('Logged out, state should be updated.');
     }
 
     return (
@@ -85,19 +86,7 @@ function DropdownComponent() {
                 <div>
                     <Menu.Button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         {!userDetails || userDetails.picture === undefined ? (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6 text-white">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M17.25 18.75a6.5 6.5 0 00-10.5 0M12 14.25a4 4 0 100-8 4 4 0 000 8zM20.25 14.25a8.75 8.75 0 11-16.5 0"
-                                />
-                            </svg>
+                            <Profile />
                         ) : (
                             <img
                                 src={userDetails.picture}
@@ -130,6 +119,7 @@ function DropdownComponent() {
                                                         : 'font-normal'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}
                                                 disabled={isLoggedIn}>
+                                                <CreateAccountIcon className="mr-2 h-5 w-5" />
                                                 Create Account
                                             </button>
                                         )}
@@ -144,6 +134,7 @@ function DropdownComponent() {
                                                         ? 'font-semibold'
                                                         : 'font-normal'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}>
+                                                <LoginIcon className="mr-2 h-5 w-5" />
                                                 Login
                                             </button>
                                         )}

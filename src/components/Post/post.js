@@ -1,6 +1,8 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import './post.css';
+import { ReactComponent as SubmitIcon } from '../../Icons/SubmitIcon.svg';
+
 import {
     extractLinksFromText,
     removeHashtagsAndLinks,
@@ -11,6 +13,8 @@ import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
+import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
+import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ShareModal } from '../Share/modal';
 import CommentSpinner from '../Spinner/CommentSpinner';
 
@@ -187,140 +191,115 @@ function Post() {
     }
 
     return (
-        <div className="mt-16">
-            <div className="bg-gray-100 rounded-lg my-1 mt-4 shadow-sm shadow-gray-400">
-                <div className="flex p-2 text-black font-medium font-sans  text-nowrap items-center">
-                    <h1>{postData['title']}</h1>
-                </div>
-                <div className={'px-2 pb-2'}>
-                    <img alt={''} src={postData['imageLink']} />
-                </div>
-                <div className="flex align-items-center gap-x-3 rounded-lg bg-gray-100 border-b-4 border-white pl-2 pt-2">
-                    <button
-                        className="flex align-items-center"
-                        onClick={() => {
-                            handleZapButton();
-                        }}>
-                        <svg
-                            className={`${
-                                fillZap &&
-                                'fill-current text-yellow-300 stroke-black'
-                            } h-8 w-8`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0"
-                            y="0"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 30">
-                            <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
-                        </svg>
-                        {processedValue && <p>{processedValue}</p>}
-                        <ZapModal
-                            isOpenm={isModalOpen}
-                            onConfirm={handleConfirm}
+        <>
+            <div className="mt-16 flex flex-col items-center">
+                <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-4 border border-gray-400">
+                    <div className="p-4 ">
+                        <h3 className="text-sm font-semibold text-gray-900 break-words whitespace-normal">
+                            {postData['title']}
+                        </h3>
+                    </div>
+
+                    <div className="w-full">
+                        <img
+                            alt={''}
+                            src={postData['imageLink']}
+                            className="w-full"
                         />
-                    </button>
+                    </div>
+                    <div className="flex justify-between items-center p-4 bg-gray-50">
+                        {/* Zap Button */}
+                        <button
+                            onClick={handleZapButton}
+                            className="flex items-center">
+                            <ZapSvg
+                                className={`${
+                                    fillZap ? 'text-yellow-300' : 'text-black'
+                                } h-4 w-4`}
+                            />
+                            {processedValue && (
+                                <span className="ml-1">{processedValue}</span>
+                            )}
+                            <ZapModal
+                                isOpenm={isModalOpen}
+                                onConfirm={handleConfirm}
+                            />
+                        </button>
 
-                    <button
-                        className="flex"
-                        onClick={async event => {
-                            event.preventDefault();
-                            await upvotePost(postId);
-                            voteIncrement();
-                            fillColor();
-                        }}
-                        disabled={isTodisabled()}>
-                        <svg
-                            className={`${
-                                fillLike && 'fill-current text-red-600'
-                            } h-8 w-8`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0"
-                            y="0"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 30">
-                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                        </svg>
-                        {votesCount}
-                    </button>
+                        {/* Like Button */}
+                        <button
+                            onClick={async () => {
+                                await upvotePost(postId);
+                                voteIncrement();
+                                fillColor();
+                            }}
+                            disabled={isTodisabled()}
+                            className="flex items-center">
+                            <LikeSvg
+                                className={`${
+                                    fillLike ? 'text-red-600' : 'text-black'
+                                } h-4 w-4`}
+                            />
+                            <span className="ml-1">{votesCount}</span>
+                        </button>
 
-                    <div className="ml-auto mr-2 items-start inline-block">
-                        <button onClick={() => openShareModal()}>
-                            <ShareButtonSvg />
+                        {/* Share Button */}
+                        <button
+                            onClick={openShareModal}
+                            className="flex items-center">
+                            <ShareButtonSvg className="h-4 w-4 text-black" />
                         </button>
                     </div>
                 </div>
             </div>
-            <div className={'bg-gray-100 rounded-lg mt-4 mx-1'}>
-                <div className="mb-1 ml-1 ">
+            <div className="flex justify-center">
+                <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-300">
                     <form
-                        className={'commentBox'}
+                        className="flex items-center justify-between"
                         onSubmit={async event => {
-                            event.preventDefault(); // Prevent the default form submission behavior
-                            await captureNewComment(comment); // Wait for comment to be captured and saved
+                            event.preventDefault();
+                            await captureNewComment(comment);
                             // Additional actions after comment is saved can be added here
                         }}>
                         <input
                             type="text"
-                            placeholder=" Add a reply..."
-                            className="comment-form"
+                            placeholder="Add a reply..."
+                            className="flex-grow p-2 text-sm border border-gray-300 rounded-l-md"
                             value={comment}
                             onChange={captureComment}
                             required
                         />
-                        <button type="submit" className=" mx-1 rounded">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="40"
-                                height="41"
-                                fill="none"
-                                viewBox="0 0 40 41">
-                                <rect
-                                    width="40"
-                                    height="40"
-                                    y="0.375"
-                                    fill="#000"
-                                    rx="8"></rect>
-                                <path
-                                    stroke="#fff"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M12 20.375h16m0 0l-6-6m6 6l-6 6"></path>
-                            </svg>
+                        <button
+                            type="submit"
+                            className="ml-2 bg-black text-white p-2 rounded-r-md">
+                            <SubmitIcon />
                         </button>
                     </form>
                 </div>
             </div>
+
             <div>
                 {isLoading ? (
                     <CommentSpinner />
                 ) : replies.length === 0 ? (
-                    <div className="flex text-gray-500 justify-center mt-4">
-                        {' '}
-                        No comments yet.{' '}
+                    <div className="text-gray-500 text-center my-4">
+                        No comments yet.
                     </div>
                 ) : (
-                    <div className="bg-gray-100 rounded-lg mt-2 mx-1">
-                        {replies.map(function (object) {
-                            return <Comments reply={object} />;
-                        })}
+                    <div className=" bg-white rounded-b-lg shadow overflow-hidden ">
+                        {replies.map((object, index) => (
+                            <Comments key={index} reply={object} />
+                        ))}
                     </div>
                 )}
             </div>
+
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={closeShareModal}
                 postUrl={postUrl}
             />
-        </div>
+        </>
     );
 }
 

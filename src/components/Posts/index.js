@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
+import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
+import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
+import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { getCommentCount } from '../HashtagTool';
 
 export function extractLinksFromText(text) {
@@ -12,7 +15,6 @@ export function extractLinksFromText(text) {
     const jpgRegex = /\.(jpg|jpeg)$/i;
     const mp4Regex = /\.mp4$/i;
     const gifRegex = /\.gif$/i;
-
     const links = text.match(linkRegex);
     if (!links) {
         return [];
@@ -47,7 +49,6 @@ export function extractLinksFromText(text) {
 export const removeHashtagsAndLinks = text => {
     // Remove hashtags
     // const withoutHashtags = text.replace(/#\w+/g, '');
-
     // Remove links
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
@@ -312,9 +313,9 @@ function Posts(props) {
     return (
         <>
             <div className="flex flex-col items-center">
-                <div className="bg-white mt-2 mb-2 overflow-hidden rounded-lg w-full max-w-md">
+                <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Header: Title and Time */}
-                    <div className="p-3 border-b">
+                    <div className="p-3 border border-gray-300">
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="text-sm font-semibold truncate">
                                 {truncateTitle(title, 20)}
@@ -335,14 +336,7 @@ function Posts(props) {
                     <div className="flex flex-col p-3">
                         <div className="flex justify-between items-centre">
                             <Link to={postUrl} className="flex items-center ">
-                                <svg
-                                    className="h-4 w-4 text-black-600"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="16"
-                                    width="16"
-                                    viewBox="0 0 512 512">
-                                    <path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9c.1-.2 .2-.3 .3-.5z" />
-                                </svg>
+                                <CommentSvg className="h-4 w-4 text-black-600" />
                                 <span className="text-xs text-gray-600 ml-1">
                                     {commentCount > 0 ? commentCount : ''}
                                 </span>
@@ -355,17 +349,7 @@ function Posts(props) {
                                         ? 'text-yellow-300'
                                         : 'text-black-600'
                                 }`}>
-                                <svg
-                                    className="h-4 w-4 text-black-600"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24">
-                                    <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
-                                </svg>
+                                <ZapSvg className="h-4 w-4 text-black-600" />
                                 {processedValue && (
                                     <span className="text-xs ml-1">
                                         {processedValue}
@@ -376,7 +360,6 @@ function Posts(props) {
                                     onConfirm={handleConfirm}
                                 />
                             </button>
-
                             <button
                                 onClick={() => {
                                     upvotePost(
@@ -390,22 +373,11 @@ function Posts(props) {
                                 className={`flex items-center ${
                                     fillLike ? 'text-red-600' : 'text-black-600'
                                 }`}>
-                                <svg
-                                    className="h-4 w-4"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24">
-                                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                                </svg>
+                                <LikeSvg className="h-4 w-4" />
                                 <span className="text-xs ml-1 text-black-600">
                                     {votesCount}
                                 </span>
                             </button>
-
                             <button onClick={openShareModal} className="p-1">
                                 <ShareButtonSvg className="h-4 w-4 text-gray-600" />
                             </button>
