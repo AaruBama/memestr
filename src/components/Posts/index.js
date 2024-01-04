@@ -289,7 +289,18 @@ function Posts(props) {
                 return;
             }
             if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
-                return <img alt={''} src={imageLink} />;
+                return (
+                    <img
+                        alt={''}
+                        src={imageLink}
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            display: 'block',
+                            objectFit: 'cover',
+                        }}
+                    />
+                );
             } else {
                 console.log('Rendering Video with link ', imageLink);
                 // return <VideoPlayer imageLink={imageLink}/>;
@@ -299,6 +310,12 @@ function Posts(props) {
                         muted
                         controls
                         playsInline
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            display: 'block',
+                            objectFit: 'cover',
+                        }}
                         src={imageLink}
                     />
                 );
@@ -318,7 +335,7 @@ function Posts(props) {
                     <div className="p-3 border border-gray-300">
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="text-sm font-semibold truncate">
-                                {truncateTitle(title, 20)}
+                                {truncateTitle(title, 100)}
                             </h3>
                             <span className="text-xs text-gray-500">
                                 {timeDifference.duration}

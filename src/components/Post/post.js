@@ -17,6 +17,7 @@ import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
 import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ShareModal } from '../Share/modal';
 import CommentSpinner from '../Spinner/CommentSpinner';
+import Sidebar from '../HashtagTool/SideBar';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -192,113 +193,125 @@ function Post() {
 
     return (
         <>
-            <div className="mt-16 flex flex-col items-center">
-                <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-4 border border-gray-400">
-                    <div className="p-4 ">
-                        <h3 className="text-sm font-semibold text-gray-900 break-words whitespace-normal">
-                            {postData['title']}
-                        </h3>
+            <div className="flex flex-col md:flex-row min-h-screen">
+                <Sidebar />
+                <main className="flex-1 overflow-y-auto">
+                    <div className="mt-16 flex flex-col items-center lg:mr-60">
+                        <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-4 border border-gray-400 ">
+                            <div className="p-4 ">
+                                <h3 className="text-sm font-semibold text-gray-900 break-words whitespace-normal">
+                                    {postData['title']}
+                                </h3>
+                            </div>
+
+                            <div className="w-full">
+                                <img
+                                    alt={''}
+                                    src={postData['imageLink']}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex justify-between items-center p-4 bg-gray-50">
+                                {/* Zap Button */}
+                                <button
+                                    onClick={handleZapButton}
+                                    className="flex items-center">
+                                    <ZapSvg
+                                        className={`${
+                                            fillZap
+                                                ? 'text-yellow-300'
+                                                : 'text-black'
+                                        } h-4 w-4`}
+                                    />
+                                    {processedValue && (
+                                        <span className="ml-1">
+                                            {processedValue}
+                                        </span>
+                                    )}
+                                    <ZapModal
+                                        isOpenm={isModalOpen}
+                                        onConfirm={handleConfirm}
+                                    />
+                                </button>
+
+                                {/* Like Button */}
+                                <button
+                                    onClick={async () => {
+                                        await upvotePost(postId);
+                                        voteIncrement();
+                                        fillColor();
+                                    }}
+                                    disabled={isTodisabled()}
+                                    className="flex items-center">
+                                    <LikeSvg
+                                        className={`${
+                                            fillLike
+                                                ? 'text-red-600'
+                                                : 'text-black'
+                                        } h-4 w-4`}
+                                    />
+                                    <span className="ml-1">{votesCount}</span>
+                                </button>
+
+                                {/* Share Button */}
+                                <button
+                                    onClick={openShareModal}
+                                    className="flex items-center">
+                                    <ShareButtonSvg className="h-4 w-4 text-black" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="w-full">
-                        <img
-                            alt={''}
-                            src={postData['imageLink']}
-                            className="w-full"
-                        />
+                    <div className="flex justify-center lg:mr-60">
+                        <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-300">
+                            <form
+                                className="flex items-center justify-between"
+                                onSubmit={async event => {
+                                    event.preventDefault();
+                                    await captureNewComment(comment);
+                                    // Additional actions after comment is saved can be added here
+                                }}>
+                                <input
+                                    type="text"
+                                    placeholder="Add a reply..."
+                                    className="flex-grow p-2 text-sm border border-gray-300 rounded-l-md"
+                                    value={comment}
+                                    onChange={captureComment}
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    className="ml-2 bg-black text-white p-2 rounded-r-md">
+                                    <SubmitIcon />
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-gray-50">
-                        {/* Zap Button */}
-                        <button
-                            onClick={handleZapButton}
-                            className="flex items-center">
-                            <ZapSvg
-                                className={`${
-                                    fillZap ? 'text-yellow-300' : 'text-black'
-                                } h-4 w-4`}
-                            />
-                            {processedValue && (
-                                <span className="ml-1">{processedValue}</span>
-                            )}
-                            <ZapModal
-                                isOpenm={isModalOpen}
-                                onConfirm={handleConfirm}
-                            />
-                        </button>
 
-                        {/* Like Button */}
-                        <button
-                            onClick={async () => {
-                                await upvotePost(postId);
-                                voteIncrement();
-                                fillColor();
-                            }}
-                            disabled={isTodisabled()}
-                            className="flex items-center">
-                            <LikeSvg
-                                className={`${
-                                    fillLike ? 'text-red-600' : 'text-black'
-                                } h-4 w-4`}
-                            />
-                            <span className="ml-1">{votesCount}</span>
-                        </button>
-
-                        {/* Share Button */}
-                        <button
-                            onClick={openShareModal}
-                            className="flex items-center">
-                            <ShareButtonSvg className="h-4 w-4 text-black" />
-                        </button>
+                    <div>
+                        {isLoading ? (
+                            <CommentSpinner />
+                        ) : replies.length === 0 ? (
+                            <div className="text-gray-500 text-center my-4 lg:mr-60">
+                                No comments yet.
+                            </div>
+                        ) : (
+                            <div className=" bg-white rounded-b-lg shadow overflow-hidden ">
+                                {replies.map((object, index) => (
+                                    <Comments key={index} reply={object} />
+                                ))}
+                            </div>
+                        )}
                     </div>
-                </div>
+
+                    <ShareModal
+                        isOpen={isShareModalOpen}
+                        onClose={closeShareModal}
+                        postUrl={postUrl}
+                    />
+                </main>
             </div>
-            <div className="flex justify-center">
-                <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-300">
-                    <form
-                        className="flex items-center justify-between"
-                        onSubmit={async event => {
-                            event.preventDefault();
-                            await captureNewComment(comment);
-                            // Additional actions after comment is saved can be added here
-                        }}>
-                        <input
-                            type="text"
-                            placeholder="Add a reply..."
-                            className="flex-grow p-2 text-sm border border-gray-300 rounded-l-md"
-                            value={comment}
-                            onChange={captureComment}
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="ml-2 bg-black text-white p-2 rounded-r-md">
-                            <SubmitIcon />
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div>
-                {isLoading ? (
-                    <CommentSpinner />
-                ) : replies.length === 0 ? (
-                    <div className="text-gray-500 text-center my-4">
-                        No comments yet.
-                    </div>
-                ) : (
-                    <div className=" bg-white rounded-b-lg shadow overflow-hidden ">
-                        {replies.map((object, index) => (
-                            <Comments key={index} reply={object} />
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            <ShareModal
-                isOpen={isShareModalOpen}
-                onClose={closeShareModal}
-                postUrl={postUrl}
-            />
         </>
     );
 }

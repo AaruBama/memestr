@@ -10,6 +10,7 @@ function Spinner() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100vh',
+                backgroundColor: 'white', // This sets the background color to black
             }}>
             <div className="lds-ellipsis">
                 <div></div>
