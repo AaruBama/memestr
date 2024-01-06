@@ -302,8 +302,6 @@ function Posts(props) {
                     />
                 );
             } else {
-                console.log('Rendering Video with link ', imageLink);
-                // return <VideoPlayer imageLink={imageLink}/>;
                 return (
                     <video
                         autoPlay
@@ -332,10 +330,10 @@ function Posts(props) {
             <div className="flex flex-col items-center">
                 <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Header: Title and Time */}
-                    <div className="p-3 border border-gray-300">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-sm font-semibold truncate">
-                                {truncateTitle(title, 100)}
+                    <div className="py-2 px-1 mb-1 border-t border-l border-r border-gray-300 rounded-">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-sm font-semibold">
+                                {truncateTitle(title, 70)}
                             </h3>
                             <span className="text-xs text-gray-500">
                                 {timeDifference.duration}
@@ -346,7 +344,7 @@ function Posts(props) {
 
                     {/* Post Media Content */}
 
-                    <div className="w-full border border-gray-300 rounded-sm">
+                    <div className="h-svh px-4 bg-gray-200 border border-gray-300 rounded-sm">
                         {renderContent(imageLink)}
                     </div>
 
@@ -401,7 +399,7 @@ function Posts(props) {
                         </div>
                     </div>
 
-                    <div className="border-t border-grey-300 "></div>
+                    <div className="border-t border-grey-100 "></div>
                 </div>
             </div>
 

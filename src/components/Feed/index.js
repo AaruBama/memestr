@@ -45,15 +45,10 @@ function Feed(props) {
 
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
     return (
-        <div className="feed-container mt-12 mx-auto max-w-xl lg:mr-60">
+        <div className="feed-container bg-white mt-12 mx-auto max-w-xl lg:mr-60">
             {props.notes.map((note, index) => (
-                <div key={note.id} className="mb-8">
-                    {' '}
-                    {/* Adjusted margin-bottom for spacing */}
-                    {/* Post component with border */}
-                    <div className="bg-white">
-                        <Posts note={note} />
-                    </div>
+                <div key={note.id}>
+                    <Posts note={note} />
                     {/* Load more reference */}
                     {index === props.notes.length - 10 && (
                         <div ref={loadMoreRef} />
