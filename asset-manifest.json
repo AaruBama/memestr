@@ -1,14 +1,29 @@
 {
   "files": {
-    "main.css": "/static/css/main.e823603a.css",
-    "main.js": "/static/js/main.fd347102.js",
-    "static/media/ShareButtonSvg.svg": "/static/media/ShareButtonSvg.593df089fa750eb11550730d12bc42b4.svg",
+    "main.css": "/static/css/main.ec6fee1e.css",
+    "main.js": "/static/js/main.542b1cc3.js",
+    "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
     "index.html": "/index.html",
+    "static/media/CommentSvg.svg": "/static/media/CommentSvg.62525e8e512723ebaa4dcedc5734340e.svg",
+    "static/media/PetSvg.svg": "/static/media/PetSvg.a2354648bc526ca2bb0332f8368924f1.svg",
     "static/media/CopyLinkSvg.svg": "/static/media/CopyLinkSvg.c9520dbc999cf6eea4f4e7601776d515.svg",
+    "static/media/ProfileLogo.svg": "/static/media/ProfileLogo.2a75c1cbb26462a5712f70cf9909118c.svg",
+    "static/media/FoodSvg.svg": "/static/media/FoodSvg.567a5f86eb498682ace69afae6affb79.svg",
+    "static/media/HomeSvg.svg": "/static/media/HomeSvg.41fbff1b27ad2ab96e92cadbebee5875.svg",
+    "static/media/NatureSvg.svg": "/static/media/NatureSvg.66473c93a4fbb1499ffbd856f7ab49d2.svg",
+    "static/media/PhotographySvg.svg": "/static/media/PhotographySvg.357b408a26cfbcf3f8ae7c931ca8dd01.svg",
+    "static/media/ShareButtonSvg.svg": "/static/media/ShareButtonSvg.b71984ebcf9fcb7386b4f4339d9c1fd7.svg",
+    "static/media/LikeSvg.svg": "/static/media/LikeSvg.4d91d5f77a49bc9cc37232b9da4c5e1a.svg",
+    "static/media/UploadSvg.svg": "/static/media/UploadSvg.cf19c8def5b75fc166ecf2b7183b54f1.svg",
+    "static/media/LoginSvg.svg": "/static/media/LoginSvg.ab4000fbb9a94196ba5a7b851cca1790.svg",
+    "static/media/SubmitIcon.svg": "/static/media/SubmitIcon.7a0d0bd067419a1715ddaac5c21f0fbe.svg",
+    "static/media/HamburgerIcon.svg": "/static/media/HamburgerIcon.338ff96bafad203260f669f93b95d5f7.svg",
+    "static/media/Zap.svg": "/static/media/Zap.2dbf6a9790b21e6397b72097cd31556e.svg",
+    "static/media/CreateAccountSvg.svg": "/static/media/CreateAccountSvg.c72c2e65d6be215082d138298c54a671.svg",
     "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg"
   },
   "entrypoints": [
-    "static/css/main.e823603a.css",
-    "static/js/main.fd347102.js"
+    "static/css/main.ec6fee1e.css",
+    "static/js/main.542b1cc3.js"
   ]
 }
