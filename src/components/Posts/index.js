@@ -330,7 +330,7 @@ function Posts(props) {
             <div className="flex flex-col items-center">
                 <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Header: Title and Time */}
-                    <div className="py-2 px-1 mb-1 border-t border-l border-r border-gray-300 rounded-">
+                    <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
                         <div className="flex justify-between items-center">
                             <h3 className="text-sm font-semibold">
                                 {truncateTitle(title, 70)}
@@ -344,11 +344,11 @@ function Posts(props) {
 
                     {/* Post Media Content */}
 
-                    <div className="h-svh px-4 bg-gray-200 border border-gray-300 rounded-sm">
+                    <div className="h-svh lg:px-1 px-4 bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
 
-                    <div className="flex flex-col p-3">
+                    <div className="border-x border-grey-100 flex flex-col p-3">
                         <div className="flex justify-between items-centre">
                             <Link to={postUrl} className="flex items-center ">
                                 <CommentSvg className="h-4 w-4 text-black-600" />
@@ -399,7 +399,7 @@ function Posts(props) {
                         </div>
                     </div>
 
-                    <div className="border-t border-grey-100 "></div>
+                    <div className="border-t border-grey-100 rounded-b-md "></div>
                 </div>
             </div>
 
