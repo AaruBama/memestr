@@ -10,7 +10,7 @@ import PetFeed, { PetsFeedProvider } from './components/CategoryView/PetFeed';
 import NatureFeed, {
     NatureProvider,
 } from './components/CategoryView/NatureProvider';
-import BestForMobile from './components/Menu/BestForMobile';
+// import BestForMobile from './components/Menu/BestForMobile';
 
 function App() {
     const pageFilters = {
@@ -25,7 +25,7 @@ function App() {
 
     return (
         <div>
-            <BestForMobile />
+            {/*<BestForMobile />*/}
             <Router>
                 <HeaderBar />
                 <HashTagToolProvider>

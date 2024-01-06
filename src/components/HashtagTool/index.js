@@ -3,6 +3,8 @@ import { relayInit, SimplePool } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
+import Sidebar from './SideBar';
+import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 
 const HashTagContext = React.createContext();
 
@@ -263,7 +265,6 @@ export function HashtagTool() {
     function handleLoadMore() {
         // Set the loading state before fetching more posts
         setLoadingMorePosts(true);
-
         // Call the LoadMoreMedia function to fetch more posts
         LoadMoreMedia().then(() => {
             // Reset the loading state after posts are fetched
@@ -273,43 +274,36 @@ export function HashtagTool() {
 
     return (
         <>
-            <Feed
-                notes={notes}
-                onLoadMore={handleLoadMore}
-                isLoading={isLoading || loadingMorePosts} // Consider both initial loading and loading more posts
-            />
-
-            {loadingMorePosts && (
-                // Display a loading spinner at the bottom of the screen
-                <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-gray-700 bg-opacity-50 p-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
-                </div>
-            )}
-
-            <button
-                onClick={() => {
-                    showNewPostModal();
-                }}
-                title="Upload"
-                className="fixed z-10 bottom-4 right-3 md:right-8 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white hover:drop-shadow-2xl hover:animate-bounce duration-300">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            <div className="flex flex-col md:flex-row min-h-screen">
+                <Sidebar />
+                <main className="flex-1 overflow-y-auto">
+                    <Feed
+                        notes={notes}
+                        onLoadMore={handleLoadMore}
+                        isLoading={isLoading || loadingMorePosts}
                     />
-                </svg>
-            </button>
 
-            {newPostModal && (
-                <PostUpload isOpen={newPostModal} onClose={closePostModal} />
-            )}
+                    {loadingMorePosts && (
+                        <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-opacity-50 p-4">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
+                        </div>
+                    )}
+
+                    <button
+                        onClick={showNewPostModal}
+                        title="Upload"
+                        className="fixed z-10 bottom-4 right-3 md:right-8 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl hover:animate-bounce duration-300">
+                        <UploadSvg />
+                    </button>
+
+                    {newPostModal && (
+                        <PostUpload
+                            isOpen={newPostModal}
+                            onClose={closePostModal}
+                        />
+                    )}
+                </main>
+            </div>
         </>
     );
 }

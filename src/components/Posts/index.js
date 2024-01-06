@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
+import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
+import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
+import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { getCommentCount } from '../HashtagTool';
 
 export function extractLinksFromText(text) {
@@ -12,7 +15,6 @@ export function extractLinksFromText(text) {
     const jpgRegex = /\.(jpg|jpeg)$/i;
     const mp4Regex = /\.mp4$/i;
     const gifRegex = /\.gif$/i;
-
     const links = text.match(linkRegex);
     if (!links) {
         return [];
@@ -47,7 +49,6 @@ export function extractLinksFromText(text) {
 export const removeHashtagsAndLinks = text => {
     // Remove hashtags
     // const withoutHashtags = text.replace(/#\w+/g, '');
-
     // Remove links
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
@@ -288,16 +289,31 @@ function Posts(props) {
                 return;
             }
             if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
-                return <img alt={''} src={imageLink} />;
+                return (
+                    <img
+                        alt={''}
+                        src={imageLink}
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            display: 'block',
+                            objectFit: 'cover',
+                        }}
+                    />
+                );
             } else {
-                console.log('Rendering Video with link ', imageLink);
-                // return <VideoPlayer imageLink={imageLink}/>;
                 return (
                     <video
                         autoPlay
                         muted
                         controls
                         playsInline
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            display: 'block',
+                            objectFit: 'cover',
+                        }}
                         src={imageLink}
                     />
                 );
@@ -311,114 +327,82 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col bg-black divide-y mt-2 overflow-hidden">
-                <div className="bg-gray-100 rounded-lg my-1 shadow-sm shadow-gray-400">
-                    <span className="flex p-2 text-black text-sm">
-                        <span className={'flex flex-grow font-medium'}>
-                            {truncateTitle(title, 100)}
-                        </span>
-                        <span className="flex justify-end text-gray-500 text-sm pr-1">
-                            {timeDifference.duration}
-                            {timeDifference.unit}{' '}
-                        </span>
-                    </span>
-                    <div className="flex justify-center py-2 px-1">
-                        {/*<Link to={postUrl}>*/}
-                        {renderContent(imageLink)}
-                        {/*</Link>*/}
+            <div className="flex flex-col items-center">
+                <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
+                    {/* Post Header: Title and Time */}
+                    <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-sm font-semibold">
+                                {truncateTitle(title, 70)}
+                            </h3>
+                            <span className="text-xs text-gray-500">
+                                {timeDifference.duration}
+                                {timeDifference.unit}
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="flex items-start gap-x-3 bg-gray-100 border-b-4 border-white pl-2 mt-2">
-                        {/*Comments button*/}
+                    {/* Post Media Content */}
 
-                        <Link to={postUrl} className="flex">
+                    <div className="h-svh lg:px-1 px-4 bg-gray-200 border border-gray-300">
+                        {renderContent(imageLink)}
+                    </div>
+
+                    <div className="border-x border-grey-100 flex flex-col p-3">
+                        <div className="flex justify-between items-centre">
+                            <Link to={postUrl} className="flex items-center ">
+                                <CommentSvg className="h-4 w-4 text-black-600" />
+                                <span className="text-xs text-gray-600 ml-1">
+                                    {commentCount > 0 ? commentCount : ''}
+                                </span>
+                            </Link>
+
                             <button
-                                variant="light"
-                                size={'lg'}
-                                className="flex">
-                                <svg
-                                    className="h-8 w-8"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    x="0"
-                                    y="0"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 30">
-                                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-                                </svg>
-                                <span className="">
-                                    {commentCount > 0 ? commentCount : null}
+                                onClick={handleZapButton}
+                                className={`flex items-center ${
+                                    fillZap
+                                        ? 'text-yellow-300'
+                                        : 'text-black-600'
+                                }`}>
+                                <ZapSvg className="h-4 w-4 text-black-600" />
+                                {processedValue && (
+                                    <span className="text-xs ml-1">
+                                        {processedValue}
+                                    </span>
+                                )}
+                                <ZapModal
+                                    isOpenm={isModalOpen}
+                                    onConfirm={handleConfirm}
+                                />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    upvotePost(
+                                        props.note.id,
+                                        props.note.pubkey,
+                                    );
+                                    voteIncrement();
+                                    fillColor();
+                                }}
+                                disabled={isTodisabled()}
+                                className={`flex items-center ${
+                                    fillLike ? 'text-red-600' : 'text-black-600'
+                                }`}>
+                                <LikeSvg className="h-4 w-4" />
+                                <span className="text-xs ml-1 text-black-600">
+                                    {votesCount}
                                 </span>
                             </button>
-                        </Link>
-
-                        <button
-                            className="flex align-items-center"
-                            onClick={() => {
-                                handleZapButton();
-                            }}>
-                            <svg
-                                className={`${
-                                    fillZap &&
-                                    'fill-current text-yellow-300 stroke-black'
-                                } h-8 w-8`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                viewBox="0 0 24 30">
-                                <path d="M13 2L3 14 12 14 11 22 21 10 12 10 13 2z"></path>
-                            </svg>
-                            {processedValue && <p>{processedValue}</p>}
-
-                            <ZapModal
-                                isOpenm={isModalOpen}
-                                onConfirm={handleConfirm}
-                            />
-                        </button>
-
-                        <button
-                            className="flex"
-                            onClick={() => {
-                                upvotePost(props.note.id, props.note.pubkey);
-                                voteIncrement();
-                                fillColor();
-                            }}
-                            disabled={isTodisabled()}>
-                            <svg
-                                className={`${
-                                    fillLike && 'fill-current text-red-600'
-                                } h-8 w-8`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0"
-                                y="0"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                viewBox="0 0 24 30">
-                                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                            </svg>
-                            {votesCount}
-                        </button>
-
-                        {/*Share Button*/}
-                        <div className="ml-auto mr-2 items-start inline-block">
-                            <button onClick={() => openShareModal()}>
-                                <ShareButtonSvg />
+                            <button onClick={openShareModal} className="p-1">
+                                <ShareButtonSvg className="h-4 w-4 text-gray-600" />
                             </button>
                         </div>
                     </div>
+
+                    <div className="border-t border-grey-100 rounded-b-md "></div>
                 </div>
             </div>
+
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={closeShareModal}

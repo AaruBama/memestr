@@ -45,20 +45,16 @@ function Feed(props) {
 
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
     return (
-        <div className={'feed-container mt-16'}>
-            {props.notes.map((note, index) => {
-                return (
-                    <div key={note.id}>
-                        <Posts note={note} />
-                        {index === props.notes.length - 10 && (
-                            <div ref={loadMoreRef} />
-                        )}
-                    </div>
-                );
-            })}
-            {/*{*/}
-            {/*    isLoading && <Spinner />*/}
-            {/*}*/}
+        <div className="feed-container bg-white mt-12 mx-auto max-w-xl lg:mr-60">
+            {props.notes.map((note, index) => (
+                <div key={note.id}>
+                    <Posts note={note} />
+                    {/* Load more reference */}
+                    {index === props.notes.length - 10 && (
+                        <div ref={loadMoreRef} />
+                    )}
+                </div>
+            ))}
         </div>
     );
 }
