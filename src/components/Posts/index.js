@@ -9,6 +9,23 @@ import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
 import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { getCommentCount } from '../HashtagTool';
+import { useAuth } from '../../AuthContext';
+const MAX_POSTS = 200;
+const manageLikedPosts = (postId, userPublicKey, isLiked) => {
+    let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+
+    if (!likedPosts[postId]) {
+        likedPosts[postId] = {};
+    }
+    likedPosts[postId][userPublicKey] = isLiked;
+
+    let postIds = Object.keys(likedPosts);
+    if (postIds.length > MAX_POSTS) {
+        delete likedPosts[postIds[0]];
+    }
+
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+};
 
 export function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
@@ -53,38 +70,53 @@ export const removeHashtagsAndLinks = text => {
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
-export async function upvotePost(noteId) {
+export async function upvotePost(noteId, userPublicKey) {
     const storedData = localStorage.getItem('memestr');
+
     if (!storedData) {
         alert('Login required to upvote.');
-        return;
+        return false;
     }
-    let uesrPublicKey = JSON.parse(storedData).pubKey;
-    let userPrivateKey = JSON.parse(storedData).privateKey;
-    let sk = nip19.decode(userPrivateKey);
 
-    const pool = new SimplePool();
-    let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
+    const userData = JSON.parse(storedData);
+    userPublicKey = userData.pubKey;
 
-    let upvoteEvent = {
-        kind: 7,
-        pubkey: uesrPublicKey,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [
-            ['e', noteId],
-            ['p', uesrPublicKey],
-        ],
-        content: '+',
-    };
-    upvoteEvent.id = getEventHash(upvoteEvent);
-    upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
-    let c = pool.publish(relays, upvoteEvent);
-    console.log('c is ', c);
-    if (pool) {
+    if (!userPublicKey) {
+        alert('Invalid user data.');
+        return false;
+    }
+    let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+    if (likedPosts[noteId] && likedPosts[noteId][userPublicKey]) {
+        alert('Already liked this post');
+        return false;
+    }
+    try {
+        let sk = nip19.decode(userData.privateKey);
+
+        const pool = new SimplePool();
+        let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
+
+        let upvoteEvent = {
+            kind: 7,
+            pubkey: userPublicKey,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [
+                ['e', noteId],
+                ['p', userPublicKey],
+            ],
+            content: '+',
+        };
+        upvoteEvent.id = getEventHash(upvoteEvent);
+        upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
+        await pool.publish(relays, upvoteEvent);
+        manageLikedPosts(noteId, userPublicKey, true);
+
         pool.close(relays);
         return true;
+    } catch (error) {
+        console.error('Error publishing upvote event:', error);
+        return false;
     }
-    return false;
 }
 
 export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
@@ -168,7 +200,6 @@ export function calculateTimeDifference(postCreatedAt) {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
-    // const [votes, setVotes] = useState([])
     const [votesCount, setVotesCount] = useState(0);
     const [commentCount, setCommentCount] = useState(
         sessionStorage.getItem('cc_' + props.note.id),
@@ -183,6 +214,32 @@ function Posts(props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [processedValue, setProcessedValue] = useState(null);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const { isLoggedIn } = useAuth();
+    const [userPublicKey, setUserPublicKey] = useState(null);
+
+    useEffect(() => {
+        // This effect runs when the isLoggedIn state changes
+        const storedData = localStorage.getItem('memestr');
+        const userData = storedData ? JSON.parse(storedData) : null;
+        setUserPublicKey(userData?.pubKey);
+
+        if (!isLoggedIn) {
+            // Reset the like state if the user logs out
+            setFillLike(false);
+            // Other states that depend on the user's login status could also be reset here
+        } else {
+            // If the user is logged in, check if the post is liked by the user
+            let likedPosts =
+                JSON.parse(localStorage.getItem('likedPosts')) || {};
+            setFillLike(
+                !!(
+                    likedPosts[props.note.id] &&
+                    likedPosts[props.note.id][userPublicKey]
+                ),
+            );
+            // You could also refresh votesCount and commentCount here, if necessary
+        }
+    }, [isLoggedIn, props.note.id, userPublicKey]);
 
     let postCreatedAt = props.note.created_at;
 
@@ -199,7 +256,6 @@ function Posts(props) {
     };
 
     const handleConfirm = value => {
-        // Process the value internally here or update state as needed
         const postId = props.note.id;
         let opPubKey = props.note.pubkey;
         console.log(`Processing value: ${value}`);
@@ -224,10 +280,34 @@ function Posts(props) {
                 setCommentCount(cc);
             } catch (error) {
                 console.error('Error fetching comments count:', error);
-                // Handle the error as needed
             }
         })();
     }, [props.note.voteCount, props.note.id]);
+
+    useEffect(() => {
+        const userPublicKey = JSON.parse(
+            localStorage.getItem('memestr'),
+        )?.pubKey;
+        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+        setFillLike(
+            !!(
+                likedPosts[props.note.id] &&
+                likedPosts[props.note.id][userPublicKey]
+            ),
+        );
+    }, [props.note.id]);
+
+    useEffect(() => {
+        const updateVotesCount = () => {
+            let likedPosts =
+                JSON.parse(localStorage.getItem('likedPosts')) || {};
+            if (likedPosts[props.note.id]) {
+                const count = Object.keys(likedPosts[props.note.id]).length;
+                setVotesCount(count);
+            }
+        };
+        updateVotesCount();
+    }, [props.note.id]);
 
     let title = removeHashtagsAndLinks(props.note.content)
         .trimLeft()
@@ -237,31 +317,30 @@ function Posts(props) {
     }
     const imageLink = mediaLinks[0];
 
-    function voteIncrement() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
-            setVotesCount(votesCount + 1);
-        }
+    function voteIncrement(postId) {
+        setVotesCount(prevCount => prevCount + 1);
+        fillColor(postId);
+        manageLikedPosts(postId, true);
     }
 
-    function fillColor() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
+    function fillColor(postId) {
+        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+        if (likedPosts[postId]) {
             setFillLike(true);
+        } else {
+            setFillLike(false);
         }
     }
 
     function isTodisabled() {
-        // let pubKeySet = new Set(votes.map(function (vote) { return vote.pubkey; }));
-        // const storedData = localStorage.getItem('memestr')
-        // if (!storedData) {
-        //     return false;
-        // }
-        // let userPublicKey = JSON.parse(storedData).pubKey
-        // if (pubKeySet.has(userPublicKey)) {
-        //     return true
-        // }
-        // return false
+        const userPublicKey = JSON.parse(
+            localStorage.getItem('memestr'),
+        )?.pubKey;
+        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+        return !!(
+            likedPosts[props.note.id] &&
+            likedPosts[props.note.id][userPublicKey]
+        );
     }
 
     function handleZapButton() {
@@ -324,6 +403,18 @@ function Posts(props) {
         }
     }
 
+    const handleLikeButtonClick = () => {
+        if (!isLoggedIn) {
+            alert('Login required to upvote.');
+            return;
+        }
+        upvotePost(props.note.id, userPublicKey).then(wasLiked => {
+            if (wasLiked) {
+                voteIncrement(props.note.id);
+            }
+        });
+    };
+
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
@@ -375,24 +466,22 @@ function Posts(props) {
                                     onConfirm={handleConfirm}
                                 />
                             </button>
+
                             <button
-                                onClick={() => {
-                                    upvotePost(
-                                        props.note.id,
-                                        props.note.pubkey,
-                                    );
-                                    voteIncrement();
-                                    fillColor();
-                                }}
+                                onClick={handleLikeButtonClick}
                                 disabled={isTodisabled()}
                                 className={`flex items-center ${
                                     fillLike ? 'text-red-600' : 'text-black-600'
                                 }`}>
-                                <LikeSvg className="h-4 w-4" />
+                                <LikeSvg
+                                    fill={fillLike ? 'red' : 'none'}
+                                    className="h-4 w-4"
+                                />
                                 <span className="text-xs ml-1 text-black-600">
                                     {votesCount}
                                 </span>
                             </button>
+
                             <button onClick={openShareModal} className="p-1">
                                 <ShareButtonSvg className="h-4 w-4 text-gray-600" />
                             </button>
