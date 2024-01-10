@@ -218,17 +218,13 @@ function Posts(props) {
     const [userPublicKey, setUserPublicKey] = useState(null);
 
     useEffect(() => {
-        // This effect runs when the isLoggedIn state changes
         const storedData = localStorage.getItem('memestr');
         const userData = storedData ? JSON.parse(storedData) : null;
         setUserPublicKey(userData?.pubKey);
 
         if (!isLoggedIn) {
-            // Reset the like state if the user logs out
             setFillLike(false);
-            // Other states that depend on the user's login status could also be reset here
         } else {
-            // If the user is logged in, check if the post is liked by the user
             let likedPosts =
                 JSON.parse(localStorage.getItem('likedPosts')) || {};
             setFillLike(
@@ -237,7 +233,6 @@ function Posts(props) {
                     likedPosts[props.note.id][userPublicKey]
                 ),
             );
-            // You could also refresh votesCount and commentCount here, if necessary
         }
     }, [isLoggedIn, props.note.id, userPublicKey]);
 
