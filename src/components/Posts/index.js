@@ -10,6 +10,7 @@ import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
+import { VideoPlayer } from '../../helpers/videoPlayer';
 const MAX_POSTS = 200;
 const manageLikedPosts = (postId, userPublicKey, isLiked) => {
     let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
@@ -376,21 +377,7 @@ function Posts(props) {
                     />
                 );
             } else {
-                return (
-                    <video
-                        autoPlay
-                        muted
-                        controls
-                        playsInline
-                        style={{
-                            width: '100%',
-                            height: 'auto',
-                            display: 'block',
-                            objectFit: 'cover',
-                        }}
-                        src={imageLink}
-                    />
-                );
+                return <VideoPlayer imageLink={imageLink} />;
             }
         } catch (e) {
             console.log('Image link is ', imageLink);
