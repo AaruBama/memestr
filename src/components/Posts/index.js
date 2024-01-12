@@ -405,7 +405,7 @@ function Posts(props) {
                     {/* Post Header: Title and Time */}
                     <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-sm font-semibold">
+                            <h3 className="text-md font-nunito">
                                 {truncateTitle(title, 70)}
                             </h3>
                             <span className="text-xs text-gray-500">
