@@ -1,6 +1,9 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import { Dialog, Transition } from '@headlessui/react';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
+import { ReactComponent as UpwardArrow } from '../../Icons/upwardArrow.svg';
+import { ReactComponent as UploadNew } from '../../Icons/uploadNewPost.svg';
 
 const PostUpload = ({ isOpen, onClose }) => {
     const [link, setLink] = useState(null);
@@ -216,15 +219,11 @@ const PostUpload = ({ isOpen, onClose }) => {
         setHashtags(hashtags.filter((_, index) => index !== indexToRemove));
     };
 
-    // const removeTag = (index) => {
-    //     setHashtags(hashtags.filter((_, tagIndex) => index !== tagIndex));
+    // const previewStyle = {
+    //     maxHeight: '300px',
+    //     maxWidth: '100%',
+    //     objectFit: 'contain',
     // };
-
-    const previewStyle = {
-        maxHeight: '300px',
-        maxWidth: '100%',
-        objectFit: 'contain',
-    };
 
     useEffect(() => {
         return () => {
@@ -237,12 +236,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     return (
         <div>
             <Transition.Root show={isOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-10"
-                    onClose={() => {
-                        onClose();
-                    }}>
+                <Dialog as="div" className="relative z-10" onClose={onClose}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -254,7 +248,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
                     </Transition.Child>
 
-                    <div className="fixed inset-0 z-10 overflow-hidden">
+                    <div className="fixed inset-0 z-10 p-4 overflow-y-auto">
                         <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
                             <Transition.Child
                                 as={Fragment}
@@ -264,8 +258,8 @@ const PostUpload = ({ isOpen, onClose }) => {
                                 leave="ease-in duration-200"
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                    <div className="flex justify-end p-2">
+                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-[95%]  sm:max-w-lg mx-auto">
+                                    <div className="flex justify-end p-2 sm:p-4">
                                         <button
                                             type="button"
                                             className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -273,262 +267,206 @@ const PostUpload = ({ isOpen, onClose }) => {
                                             <span className="sr-only">
                                                 Close
                                             </span>
-                                            <svg
-                                                className="h-6 w-6"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                aria-hidden="true">
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
-                                            </svg>
+
+                                            <CloseIcon />
                                         </button>
                                     </div>
+
                                     <div
-                                        className="bg-white px-4 py-5 sm:p-6 overflow-auto"
-                                        style={{ maxHeight: '80vh' }}>
-                                        <div className="mb-4">
-                                            <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                                Post Something
-                                            </h3>
-                                        </div>
-                                        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
-                                            <div className="sm:col-span-2">
-                                                <label
-                                                    htmlFor="title"
-                                                    className="block text-sm font-medium text-gray-700">
-                                                    Title
-                                                </label>
-                                                <div className="mt-1">
-                                                    <input
-                                                        type="text"
-                                                        name="title"
-                                                        id="title"
-                                                        onChange={
-                                                            handleTitleChange
-                                                        }
-                                                        value={title}
-                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                                                        placeholder="Enter the title of your post"
-                                                    />
-                                                </div>
+                                        className="flex-1 overflow-auto"
+                                        style={{ paddingBottom: '80px' }}>
+                                        <div className="bg-white px-4 pt-2 pb-4">
+                                            <div className="mb-4">
+                                                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                                    Post Something
+                                                </h3>
                                             </div>
-
-                                            <div className="mt-1 flex flex-wrap gap-2">
-                                                <input
-                                                    type="text"
-                                                    name="hashtags"
-                                                    id="hashtags"
-                                                    value={inputValue}
-                                                    onChange={
-                                                        handleHashtagsChange
-                                                    }
-                                                    onKeyDown={handleKeyDown}
-                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                    placeholder="Add tags (e.g., #meme)"
-                                                />
-                                                {hashtags.map(
-                                                    (
-                                                        tag,
-                                                        index, // Use 'hashtags' instead of 'tags'
-                                                    ) => (
-                                                        <div
-                                                            key={tag}
-                                                            className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                                            {tag}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    removeTag(
-                                                                        index,
-                                                                    )
-                                                                }
-                                                                className="text-blue-500 hover:text-blue-700">
-                                                                &times;
-                                                            </button>
-                                                        </div>
-                                                    ),
-                                                )}
-
-                                                {showMaxTagsAlert && (
-                                                    <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
-                                                        <div className="mt-2 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
-                                                            <p>
-                                                                Max allowed
-                                                                tags: 3
-                                                            </p>
-                                                        </div>
+                                            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
+                                                <div className="sm:col-span-2">
+                                                    <label
+                                                        htmlFor="title"
+                                                        className="block text-sm font-medium text-gray-700">
+                                                        Title
+                                                    </label>
+                                                    <div className="mt-1">
+                                                        <input
+                                                            type="text"
+                                                            name="title"
+                                                            id="title"
+                                                            onChange={
+                                                                handleTitleChange
+                                                            }
+                                                            value={title}
+                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                                                            placeholder="Enter the title of your post"
+                                                        />
                                                     </div>
-                                                )}
-                                            </div>
-                                            <div className="sm:col-span-2">
-                                                <label
-                                                    htmlFor="file-upload"
-                                                    className="block text-sm font-medium text-gray-700">
-                                                    Upload Image
-                                                </label>
-                                                <div className="mt-1 flex flex-col justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                                    <div className="space-y-1 text-center">
-                                                        {!preview &&
-                                                            !isUploading && (
-                                                                <>
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        strokeWidth={
-                                                                            1.5
-                                                                        }
-                                                                        stroke="currentColor"
-                                                                        className="mx-auto h-12 w-12 text-gray-400">
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                                                        />
-                                                                    </svg>
-                                                                    <label
-                                                                        htmlFor="file-upload"
-                                                                        className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
-                                                                        <span>
-                                                                            Upload
-                                                                            a
-                                                                            file
-                                                                            or
-                                                                            drag
-                                                                            and
-                                                                            drop
-                                                                        </span>
-                                                                        <input
-                                                                            id="file-upload"
-                                                                            name="file-upload"
-                                                                            type="file"
-                                                                            onChange={
-                                                                                handleFileChange
-                                                                            }
-                                                                            className="sr-only"
-                                                                        />
-                                                                    </label>
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        strokeWidth={
-                                                                            1.5
-                                                                        }
-                                                                        stroke="currentColor"
-                                                                        className="mx-auto h-12 w-12 text-gray-400">
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                                                                        />
-                                                                    </svg>
-                                                                    <p className="text-xs text-gray-500">
-                                                                        PNG,
-                                                                        JPG, GIF
-                                                                        up to
-                                                                        10MB
-                                                                    </p>
-                                                                </>
-                                                            )}
-                                                        {isUploading && (
-                                                            <div className="flex justify-center items-center">
-                                                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                                                            </div>
-                                                        )}
-                                                        {preview && (
-                                                            <div className="relative">
-                                                                <img
-                                                                    src={
-                                                                        preview
-                                                                    }
-                                                                    alt="Preview"
-                                                                    className="mt-4 w-full rounded"
-                                                                    style={
-                                                                        previewStyle
-                                                                    }
-                                                                />
-                                                                <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-2 bg-white bg-opacity-75">
-                                                                    <label
-                                                                        htmlFor="file-upload"
-                                                                        className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer">
-                                                                        <svg
-                                                                            className="h-6 w-6"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="currentColor"
-                                                                            aria-hidden="true">
-                                                                            <path
-                                                                                strokeLinecap="round"
-                                                                                strokeLinejoin="round"
-                                                                                strokeWidth="2"
-                                                                                d="M5 15l7-7 7 7"
-                                                                            />
-                                                                        </svg>
-                                                                        <input
-                                                                            id="file-upload"
-                                                                            name="file-upload"
-                                                                            type="file"
-                                                                            onChange={
-                                                                                handleFileChange
-                                                                            }
-                                                                            className="sr-only"
-                                                                        />
-                                                                        <span className="sr-only">
-                                                                            Change
-                                                                            image
-                                                                        </span>
-                                                                    </label>
+                                                </div>
+                                                <div className="sm:col-span-2">
+                                                    <label
+                                                        htmlFor="hashtags"
+                                                        className="block text-sm font-medium text-gray-700">
+                                                        Tags
+                                                    </label>
+
+                                                    <div className="mt-1 flex flex-wrap gap-2 ">
+                                                        <input
+                                                            type="text"
+                                                            name="hashtags"
+                                                            id="hashtags"
+                                                            value={inputValue}
+                                                            onChange={
+                                                                handleHashtagsChange
+                                                            }
+                                                            onKeyDown={
+                                                                handleKeyDown
+                                                            }
+                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                            placeholder="Add a tag and press 'space' (e.g., #meme)"
+                                                        />
+                                                        {hashtags.map(
+                                                            (tag, index) => (
+                                                                <div
+                                                                    key={tag}
+                                                                    className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                                                    {tag}
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => {
-                                                                            setPreview(
-                                                                                null,
-                                                                            ); // Remove preview
-                                                                            setLink(
-                                                                                null,
-                                                                            ); // Remove link
-                                                                            // Additional logic to handle the removal on the backend might be required
-                                                                        }}
-                                                                        className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                                                                        <svg
-                                                                            className="h-6 w-6"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="currentColor"
-                                                                            aria-hidden="true">
-                                                                            <path
-                                                                                strokeLinecap="round"
-                                                                                strokeLinejoin="round"
-                                                                                strokeWidth="2"
-                                                                                d="M6 18L18 6M6 6l12 12"
-                                                                            />
-                                                                        </svg>
-                                                                        <span className="sr-only">
-                                                                            Remove
-                                                                            image
-                                                                        </span>
+                                                                        onClick={() =>
+                                                                            removeTag(
+                                                                                index,
+                                                                            )
+                                                                        }
+                                                                        className="text-blue-500 hover:text-blue-700">
+                                                                        &times;
                                                                     </button>
+                                                                </div>
+                                                            ),
+                                                        )}
+
+                                                        {showMaxTagsAlert && (
+                                                            <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                                                                <div className="mt-2 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
+                                                                    <p>
+                                                                        Max
+                                                                        allowed
+                                                                        tags: 3
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         )}
                                                     </div>
                                                 </div>
+
+                                                <div className="sm:col-span-2">
+                                                    <label
+                                                        htmlFor="file-upload"
+                                                        className="block text-sm font-medium text-gray-700">
+                                                        Upload Image
+                                                    </label>
+                                                    <div className="mt-1 flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                                        <div className="space-y-1 text-center">
+                                                            {!preview &&
+                                                                !isUploading && (
+                                                                    <>
+                                                                        <UploadNew />
+                                                                        <label
+                                                                            htmlFor="file-upload"
+                                                                            className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                                                                            <span>
+                                                                                Upload
+                                                                                a
+                                                                                file
+                                                                                or
+                                                                                drag
+                                                                                and
+                                                                                drop
+                                                                            </span>
+                                                                            <input
+                                                                                id="file-upload"
+                                                                                name="file-upload"
+                                                                                type="file"
+                                                                                onChange={
+                                                                                    handleFileChange
+                                                                                }
+                                                                                className="sr-only"
+                                                                            />
+                                                                        </label>
+                                                                        <p className="text-xs text-gray-500">
+                                                                            PNG,
+                                                                            JPG,
+                                                                            GIF
+                                                                            up
+                                                                            to
+                                                                            10MB
+                                                                        </p>
+                                                                    </>
+                                                                )}
+                                                            {isUploading && (
+                                                                <div className="flex justify-center items-center">
+                                                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                                                                </div>
+                                                            )}
+                                                            {preview && (
+                                                                <div className="relative">
+                                                                    <img
+                                                                        src={
+                                                                            preview
+                                                                        }
+                                                                        alt="Preview"
+                                                                        className="mt-4 w-full h-auto max-h-[300px] object-contain rounded"
+                                                                    />
+                                                                    <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-2 bg-white bg-opacity-75">
+                                                                        <label
+                                                                            htmlFor="file-upload"
+                                                                            className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer">
+                                                                            <UpwardArrow />
+                                                                            <input
+                                                                                id="file-upload"
+                                                                                name="file-upload"
+                                                                                type="file"
+                                                                                onChange={
+                                                                                    handleFileChange
+                                                                                }
+                                                                                className="sr-only"
+                                                                            />
+                                                                            <span className="sr-only">
+                                                                                Change
+                                                                                image
+                                                                            </span>
+                                                                        </label>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setPreview(
+                                                                                    null,
+                                                                                ); // Remove preview
+                                                                                setLink(
+                                                                                    null,
+                                                                                ); // Remove link
+                                                                                // Additional logic to handle the removal on the backend might be required
+                                                                            }}
+                                                                            className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+                                                                            <CloseIcon />
+                                                                            <span className="sr-only">
+                                                                                Remove
+                                                                                image
+                                                                            </span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+
+                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-2 sm:p-4 text-right shadow-top">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                                             onClick={() => {
                                                 sendNewPostEvent();
                                                 onClose();
