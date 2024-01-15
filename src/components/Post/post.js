@@ -47,11 +47,9 @@ function Post() {
         if (!isLoggedIn) {
             setFillLike(false);
         } else {
-            let likedPosts =
-                JSON.parse(localStorage.getItem('likedPosts')) || {};
-            setFillLike(
-                !!(likedPosts[postId] && likedPosts[postId][userPublicKey]),
-            );
+            let usersLikes =
+                JSON.parse(localStorage.getItem('usersLikes')) || {};
+            setFillLike(!!usersLikes[userPublicKey]?.[postId]);
         }
     }, [isLoggedIn, postId, userPublicKey]);
 
@@ -192,44 +190,13 @@ function Post() {
         setProcessedValue(value);
     };
 
-    function voteIncrement(postId) {
+    function voteIncrement() {
         setVotesCount(prevCount => prevCount + 1);
-        fillColor(postId);
-        manageLikedPosts(postId, true);
     }
-
-    function fillColor(postId) {
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-        if (likedPosts[postId]) {
-            setFillLike(true);
-        } else {
-            setFillLike(false);
-        }
-    }
-
-    const MAX_POSTS = 200;
-    const manageLikedPosts = (postId, userPublicKey, isLiked) => {
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-
-        if (!likedPosts[postId]) {
-            likedPosts[postId] = {};
-        }
-        likedPosts[postId][userPublicKey] = isLiked;
-
-        let postIds = Object.keys(likedPosts);
-        if (postIds.length > MAX_POSTS) {
-            delete likedPosts[postIds[0]];
-        }
-
-        localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-    };
 
     function isTodisabled() {
-        const userPublicKey = JSON.parse(
-            localStorage.getItem('memestr'),
-        )?.pubKey;
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-        return !!(likedPosts[postId] && likedPosts[postId][userPublicKey]);
+        let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+        return !!usersLikes[userPublicKey]?.[postId];
     }
 
     const handleLikeButtonClick = () => {
@@ -240,6 +207,7 @@ function Post() {
         upvotePost(postId, userPublicKey).then(wasLiked => {
             if (wasLiked) {
                 voteIncrement(postId);
+                setFillLike(true);
             }
         });
     };

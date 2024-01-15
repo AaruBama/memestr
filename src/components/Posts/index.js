@@ -12,20 +12,18 @@ import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 const MAX_POSTS = 200;
+
 const manageLikedPosts = (postId, userPublicKey, isLiked) => {
-    let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-
-    if (!likedPosts[postId]) {
-        likedPosts[postId] = {};
+    let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+    if (!usersLikes[userPublicKey]) {
+        usersLikes[userPublicKey] = {};
     }
-    likedPosts[postId][userPublicKey] = isLiked;
-
-    let postIds = Object.keys(likedPosts);
+    usersLikes[userPublicKey][postId] = isLiked;
+    const postIds = Object.keys(usersLikes[userPublicKey]);
     if (postIds.length > MAX_POSTS) {
-        delete likedPosts[postIds[0]];
+        delete usersLikes[userPublicKey][postIds[0]];
     }
-
-    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    localStorage.setItem('usersLikes', JSON.stringify(usersLikes));
 };
 
 export function extractLinksFromText(text) {
@@ -86,8 +84,9 @@ export async function upvotePost(noteId, userPublicKey) {
         alert('Invalid user data.');
         return false;
     }
-    let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-    if (likedPosts[noteId] && likedPosts[noteId][userPublicKey]) {
+
+    let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+    if (usersLikes[userPublicKey] && usersLikes[userPublicKey][noteId]) {
         alert('Already liked this post');
         return false;
     }
@@ -226,14 +225,9 @@ function Posts(props) {
         if (!isLoggedIn) {
             setFillLike(false);
         } else {
-            let likedPosts =
-                JSON.parse(localStorage.getItem('likedPosts')) || {};
-            setFillLike(
-                !!(
-                    likedPosts[props.note.id] &&
-                    likedPosts[props.note.id][userPublicKey]
-                ),
-            );
+            let usersLikes =
+                JSON.parse(localStorage.getItem('usersLikes')) || {};
+            setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
         }
     }, [isLoggedIn, props.note.id, userPublicKey]);
 
@@ -269,7 +263,6 @@ function Posts(props) {
 
     useEffect(() => {
         setVotesCount(props.note.voteCount);
-
         (async () => {
             try {
                 var cc = await getCommentCount(props.note.id);
@@ -281,28 +274,16 @@ function Posts(props) {
     }, [props.note.voteCount, props.note.id]);
 
     useEffect(() => {
-        const userPublicKey = JSON.parse(
-            localStorage.getItem('memestr'),
-        )?.pubKey;
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-        setFillLike(
-            !!(
-                likedPosts[props.note.id] &&
-                likedPosts[props.note.id][userPublicKey]
-            ),
-        );
-    }, [props.note.id]);
+        const storedData = localStorage.getItem('memestr');
+        const userPublicKey = storedData ? JSON.parse(storedData).pubKey : null;
 
-    useEffect(() => {
-        const updateVotesCount = () => {
-            let likedPosts =
-                JSON.parse(localStorage.getItem('likedPosts')) || {};
-            if (likedPosts[props.note.id]) {
-                const count = Object.keys(likedPosts[props.note.id]).length;
-                setVotesCount(count);
-            }
-        };
-        updateVotesCount();
+        if (userPublicKey) {
+            const usersLikes =
+                JSON.parse(localStorage.getItem('usersLikes')) || {};
+            setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
+        } else {
+            setFillLike(false);
+        }
     }, [props.note.id]);
 
     let title = removeHashtagsAndLinks(props.note.content)
@@ -313,30 +294,13 @@ function Posts(props) {
     }
     const imageLink = mediaLinks[0];
 
-    function voteIncrement(postId) {
+    function voteIncrement() {
         setVotesCount(prevCount => prevCount + 1);
-        fillColor(postId);
-        manageLikedPosts(postId, true);
-    }
-
-    function fillColor(postId) {
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-        if (likedPosts[postId]) {
-            setFillLike(true);
-        } else {
-            setFillLike(false);
-        }
     }
 
     function isTodisabled() {
-        const userPublicKey = JSON.parse(
-            localStorage.getItem('memestr'),
-        )?.pubKey;
-        let likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-        return !!(
-            likedPosts[props.note.id] &&
-            likedPosts[props.note.id][userPublicKey]
-        );
+        let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+        return !!usersLikes[userPublicKey]?.[props.note.id];
     }
 
     function handleZapButton() {
@@ -393,6 +357,7 @@ function Posts(props) {
         upvotePost(props.note.id, userPublicKey).then(wasLiked => {
             if (wasLiked) {
                 voteIncrement(props.note.id);
+                setFillLike(true);
             }
         });
     };
