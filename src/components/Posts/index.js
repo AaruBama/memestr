@@ -13,7 +13,7 @@ import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 const MAX_POSTS = 200;
 
-const manageLikedPosts = (postId, userPublicKey, isLiked) => {
+export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
     let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
     if (!usersLikes[userPublicKey]) {
         usersLikes[userPublicKey] = {};
@@ -110,7 +110,6 @@ export async function upvotePost(noteId, userPublicKey) {
         upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
         await pool.publish(relays, upvoteEvent);
         manageLikedPosts(noteId, userPublicKey, true);
-
         pool.close(relays);
         return true;
     } catch (error) {
@@ -198,6 +197,19 @@ export function calculateTimeDifference(postCreatedAt) {
     return { unit, duration };
 }
 
+export function getLocalLikeCountForPost(postId) {
+    let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+    let likeCount = 0;
+    for (let user in usersLikes) {
+        if (Object.prototype.hasOwnProperty.call(usersLikes, user)) {
+            if (usersLikes[user][postId]) {
+                likeCount++;
+            }
+        }
+    }
+    return likeCount;
+}
+
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votesCount, setVotesCount] = useState(0);
@@ -262,7 +274,8 @@ function Posts(props) {
     }, [postCreatedAt]);
 
     useEffect(() => {
-        setVotesCount(props.note.voteCount);
+        const localLikeCount = getLocalLikeCountForPost(props.note.id);
+        setVotesCount(props.note.voteCount + localLikeCount);
         (async () => {
             try {
                 var cc = await getCommentCount(props.note.id);
@@ -293,10 +306,6 @@ function Posts(props) {
         title = ' ';
     }
     const imageLink = mediaLinks[0];
-
-    function voteIncrement() {
-        setVotesCount(prevCount => prevCount + 1);
-    }
 
     function isTodisabled() {
         let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
@@ -349,18 +358,20 @@ function Posts(props) {
         }
     }
 
-    const handleLikeButtonClick = () => {
+    function handleLikeButtonClick() {
         if (!isLoggedIn) {
             alert('Login required to upvote.');
             return;
         }
         upvotePost(props.note.id, userPublicKey).then(wasLiked => {
             if (wasLiked) {
-                voteIncrement(props.note.id);
+                manageLikedPosts(props.note.id, userPublicKey, true);
+                const localLikeCount = getLocalLikeCountForPost(props.note.id);
+                setVotesCount(localLikeCount + props.note.voteCount);
                 setFillLike(true);
             }
         });
-    };
+    }
 
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (

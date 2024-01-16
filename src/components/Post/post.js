@@ -8,6 +8,8 @@ import {
     removeHashtagsAndLinks,
     sendNewZaps,
     upvotePost,
+    getLocalLikeCountForPost,
+    manageLikedPosts,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
@@ -190,27 +192,25 @@ function Post() {
         setProcessedValue(value);
     };
 
-    function voteIncrement() {
-        setVotesCount(prevCount => prevCount + 1);
-    }
-
     function isTodisabled() {
         let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
         return !!usersLikes[userPublicKey]?.[postId];
     }
 
-    const handleLikeButtonClick = () => {
+    function handleLikeButtonClick() {
         if (!isLoggedIn) {
             alert('Login required to upvote.');
             return;
         }
         upvotePost(postId, userPublicKey).then(wasLiked => {
             if (wasLiked) {
-                voteIncrement(postId);
+                manageLikedPosts(postId, userPublicKey, true);
+                const localLikeCount = getLocalLikeCountForPost(postId);
+                setVotesCount(localLikeCount + parseInt(voteCount, 10));
                 setFillLike(true);
             }
         });
-    };
+    }
 
     return (
         <>
