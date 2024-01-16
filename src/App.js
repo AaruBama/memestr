@@ -15,27 +15,55 @@ function App() {
         '/photography': ['photography'],
     };
 
-    const renderHashtagToolRoutes = () => {
-        return Object.entries(pageFilters).map(([path, filterTags]) => (
-            <Route
-                key={path}
-                path={path}
-                element={
-                    <HashTagToolProvider filterTags={filterTags}>
-                        <HashtagTool />
-                    </HashTagToolProvider>
-                }
-            />
-        ));
-    };
+    // const renderHashtagToolRoutes = () => {
+    //     return Object.entries(pageFilters).map(([path, filterTags]) => (
+    //         <Route
+    //             key={path}
+    //             path={path}
+    //             element={
+    //                 <HashTagToolProvider filterTags={filterTags}>
+    //                     <HashtagTool />
+    //                 </HashTagToolProvider>
+    //             }
+    //         />
+    //     ));
+    // };
 
     return (
         <Router>
             <HeaderBar />
-            <Routes>
-                {renderHashtagToolRoutes()}
-                <Route path="/post/:postId" element={<PostViewTool />} />
-            </Routes>
+
+            <HashTagToolProvider filterTags={pageFilters['/']}>
+                <Routes>
+                    <Route exact path="/" element={<HashtagTool />} />
+                    <Route path="/post/:postId" element={<PostViewTool />} />
+                </Routes>
+            </HashTagToolProvider>
+
+            <HashTagToolProvider filterTags={pageFilters['/pets']}>
+                <Routes>
+                    <Route exact path="/pets" element={<HashtagTool />} />
+                </Routes>
+            </HashTagToolProvider>
+            <HashTagToolProvider filterTags={pageFilters['/nature']}>
+                <Routes>
+                    <Route exact path="/nature" element={<HashtagTool />} />
+                </Routes>
+            </HashTagToolProvider>
+            <HashTagToolProvider filterTags={pageFilters['/food']}>
+                <Routes>
+                    <Route exact path="/food" element={<HashtagTool />} />
+                </Routes>
+            </HashTagToolProvider>
+            <HashTagToolProvider filterTags={pageFilters['/photography']}>
+                <Routes>
+                    <Route
+                        exact
+                        path="/photography"
+                        element={<HashtagTool />}
+                    />
+                </Routes>
+            </HashTagToolProvider>
         </Router>
     );
 }
