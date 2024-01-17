@@ -8,6 +8,8 @@ import {
     removeHashtagsAndLinks,
     sendNewZaps,
     upvotePost,
+    getLocalLikeCountForPost,
+    manageLikedPosts,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
@@ -18,6 +20,7 @@ import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ShareModal } from '../Share/modal';
 import CommentSpinner from '../Spinner/CommentSpinner';
 import Sidebar from '../HashtagTool/SideBar';
+import { useAuth } from '../../AuthContext';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -35,6 +38,22 @@ function Post() {
     const [comment, setComment] = useState('');
     const [postData, setPostData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const { isLoggedIn } = useAuth();
+    const [userPublicKey, setUserPublicKey] = useState(null);
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('memestr');
+        const userData = storedData ? JSON.parse(storedData) : null;
+        setUserPublicKey(userData?.pubKey);
+
+        if (!isLoggedIn) {
+            setFillLike(false);
+        } else {
+            let usersLikes =
+                JSON.parse(localStorage.getItem('usersLikes')) || {};
+            setFillLike(!!usersLikes[userPublicKey]?.[postId]);
+        }
+    }, [isLoggedIn, postId, userPublicKey]);
 
     let postUrl = `/post/${postId}?voteCount=${voteCount}`;
 
@@ -173,22 +192,24 @@ function Post() {
         setProcessedValue(value);
     };
 
-    function voteIncrement() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
-            setVotesCount(votesCount + 1);
-        }
-    }
-
-    function fillColor() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
-            setFillLike(true);
-        }
-    }
-
     function isTodisabled() {
-        return false;
+        let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+        return !!usersLikes[userPublicKey]?.[postId];
+    }
+
+    function handleLikeButtonClick() {
+        if (!isLoggedIn) {
+            alert('Login required to upvote.');
+            return;
+        }
+        upvotePost(postId, userPublicKey).then(wasLiked => {
+            if (wasLiked) {
+                manageLikedPosts(postId, userPublicKey, true);
+                const localLikeCount = getLocalLikeCountForPost(postId);
+                setVotesCount(localLikeCount + parseInt(voteCount, 10));
+                setFillLike(true);
+            }
+        });
     }
 
     return (
@@ -236,21 +257,20 @@ function Post() {
 
                                 {/* Like Button */}
                                 <button
-                                    onClick={async () => {
-                                        await upvotePost(postId);
-                                        voteIncrement();
-                                        fillColor();
-                                    }}
+                                    onClick={handleLikeButtonClick}
                                     disabled={isTodisabled()}
-                                    className="flex items-center">
+                                    className={`flex items-center ${
+                                        fillLike
+                                            ? 'text-red-600'
+                                            : 'text-black-600'
+                                    }`}>
                                     <LikeSvg
-                                        className={`${
-                                            fillLike
-                                                ? 'text-red-600'
-                                                : 'text-black'
-                                        } h-4 w-4`}
+                                        fill={fillLike ? 'red' : 'none'}
+                                        className="h-4 w-4"
                                     />
-                                    <span className="ml-1">{votesCount}</span>
+                                    <span className="text-xs ml-1 text-black-600">
+                                        {votesCount}
+                                    </span>
                                 </button>
 
                                 {/* Share Button */}

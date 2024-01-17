@@ -6,6 +6,7 @@ import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
 import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
 import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
+import { useAuth } from '../../AuthContext'; // Ensure this is the correct path
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 
@@ -16,7 +17,7 @@ function DropdownComponent() {
     const [sk, setSk] = useState('');
     const [userDetails, setUserDetails] = useState(getUserDetailsFromLocal());
     const [pk, setPk] = useState('');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
 
     const openNewKeysModal = () => {
         setNewKeysModal(true);
@@ -70,9 +71,9 @@ function DropdownComponent() {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);
-            setUserDetails(null); // Reset userDetails
+            setUserDetails(null);
         }
-    }, [isLoggedIn]); // Now useEffect depends on isLoggedIn
+    }, [isLoggedIn, setIsLoggedIn]);
 
     function logout() {
         localStorage.removeItem('memestr');

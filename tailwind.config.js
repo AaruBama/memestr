@@ -21,6 +21,7 @@ module.exports = {
         extend: {
             fontFamily: {
                 bungee: ["'Bungee Spice'", 'cursive'],
+                nunito: ['Nunito', 'sans-serif'],
             },
         },
     },
