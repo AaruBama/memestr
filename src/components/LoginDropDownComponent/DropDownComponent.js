@@ -4,9 +4,11 @@ import RegistrationModal from './NewKeysModal';
 import UserDetailsForAccountCreationModal from './UserDetailsForAccountCreationModal';
 import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
-import { ReactComponent as CreateAccountIcon } from '../../Icons/CreateAccountSvg.svg';
 import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
 import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
+import { useAuth } from '../../AuthContext'; // Ensure this is the correct path
+import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
+import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
@@ -15,7 +17,7 @@ function DropdownComponent() {
     const [sk, setSk] = useState('');
     const [userDetails, setUserDetails] = useState(getUserDetailsFromLocal());
     const [pk, setPk] = useState('');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
 
     const openNewKeysModal = () => {
         setNewKeysModal(true);
@@ -69,9 +71,9 @@ function DropdownComponent() {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);
-            setUserDetails(null); // Reset userDetails
+            setUserDetails(null);
         }
-    }, [isLoggedIn]); // Now useEffect depends on isLoggedIn
+    }, [isLoggedIn, setIsLoggedIn]);
 
     function logout() {
         localStorage.removeItem('memestr');
@@ -119,7 +121,7 @@ function DropdownComponent() {
                                                         : 'font-normal'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}
                                                 disabled={isLoggedIn}>
-                                                <CreateAccountIcon className="mr-2 h-5 w-5" />
+                                                <ProfileCircle className="mr-2 h-6 w-6" />
                                                 Create Account
                                             </button>
                                         )}
@@ -134,7 +136,7 @@ function DropdownComponent() {
                                                         ? 'font-semibold'
                                                         : 'font-normal'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}>
-                                                <LoginIcon className="mr-2 h-5 w-5" />
+                                                <LoginIcon className="mr-2 h-6 w-6" />
                                                 Login
                                             </button>
                                         )}
@@ -150,6 +152,7 @@ function DropdownComponent() {
                                                         ? 'font-semibold text-gray-900'
                                                         : 'font-normal text-gray-700'
                                                 } flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                                <ProfileCircle className="mr-2 h-6 w-6" />
                                                 {userDetails.name}
                                             </span>
                                         )}
@@ -163,6 +166,7 @@ function DropdownComponent() {
                                                         ? 'font-semibold text-gray-900'
                                                         : 'font-normal text-gray-700'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm hover:text-gray-900`}>
+                                                <Logout className="mr-2 h-6 w-6" />
                                                 Logout
                                             </button>
                                         )}

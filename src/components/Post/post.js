@@ -8,6 +8,8 @@ import {
     removeHashtagsAndLinks,
     sendNewZaps,
     upvotePost,
+    getLocalLikeCountForPost,
+    manageLikedPosts,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
@@ -18,6 +20,7 @@ import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ShareModal } from '../Share/modal';
 import CommentSpinner from '../Spinner/CommentSpinner';
 import Sidebar from '../HashtagTool/SideBar';
+import { useAuth } from '../../AuthContext';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -35,6 +38,22 @@ function Post() {
     const [comment, setComment] = useState('');
     const [postData, setPostData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const { isLoggedIn } = useAuth();
+    const [userPublicKey, setUserPublicKey] = useState(null);
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('memestr');
+        const userData = storedData ? JSON.parse(storedData) : null;
+        setUserPublicKey(userData?.pubKey);
+
+        if (!isLoggedIn) {
+            setFillLike(false);
+        } else {
+            let usersLikes =
+                JSON.parse(localStorage.getItem('usersLikes')) || {};
+            setFillLike(!!usersLikes[userPublicKey]?.[postId]);
+        }
+    }, [isLoggedIn, postId, userPublicKey]);
 
     let postUrl = `/post/${postId}?voteCount=${voteCount}`;
 
@@ -173,22 +192,24 @@ function Post() {
         setProcessedValue(value);
     };
 
-    function voteIncrement() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
-            setVotesCount(votesCount + 1);
-        }
-    }
-
-    function fillColor() {
-        const storedData = localStorage.getItem('memestr');
-        if (storedData) {
-            setFillLike(true);
-        }
-    }
-
     function isTodisabled() {
-        return false;
+        let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
+        return !!usersLikes[userPublicKey]?.[postId];
+    }
+
+    function handleLikeButtonClick() {
+        if (!isLoggedIn) {
+            alert('Login required to upvote.');
+            return;
+        }
+        upvotePost(postId, userPublicKey).then(wasLiked => {
+            if (wasLiked) {
+                manageLikedPosts(postId, userPublicKey, true);
+                const localLikeCount = getLocalLikeCountForPost(postId);
+                setVotesCount(localLikeCount + parseInt(voteCount, 10));
+                setFillLike(true);
+            }
+        });
     }
 
     return (
@@ -197,9 +218,9 @@ function Post() {
                 <Sidebar />
                 <main className="flex-1 overflow-y-auto">
                     <div className="mt-16 flex flex-col items-center lg:mr-60">
-                        <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-4 border border-gray-400 ">
+                        <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
                             <div className="p-4 ">
-                                <h3 className="text-sm font-semibold text-gray-900 break-words whitespace-normal">
+                                <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
                                     {postData['title']}
                                 </h3>
                             </div>
@@ -236,21 +257,20 @@ function Post() {
 
                                 {/* Like Button */}
                                 <button
-                                    onClick={async () => {
-                                        await upvotePost(postId);
-                                        voteIncrement();
-                                        fillColor();
-                                    }}
+                                    onClick={handleLikeButtonClick}
                                     disabled={isTodisabled()}
-                                    className="flex items-center">
+                                    className={`flex items-center ${
+                                        fillLike
+                                            ? 'text-red-600'
+                                            : 'text-black-600'
+                                    }`}>
                                     <LikeSvg
-                                        className={`${
-                                            fillLike
-                                                ? 'text-red-600'
-                                                : 'text-black'
-                                        } h-4 w-4`}
+                                        fill={fillLike ? 'red' : 'none'}
+                                        className="h-4 w-4"
                                     />
-                                    <span className="ml-1">{votesCount}</span>
+                                    <span className="text-xs ml-1 text-black-600">
+                                        {votesCount}
+                                    </span>
                                 </button>
 
                                 {/* Share Button */}
@@ -264,7 +284,7 @@ function Post() {
                     </div>
 
                     <div className="flex justify-center lg:mr-60">
-                        <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-300">
+                        <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-400">
                             <form
                                 className="flex items-center justify-between"
                                 onSubmit={async event => {
@@ -275,7 +295,7 @@ function Post() {
                                 <input
                                     type="text"
                                     placeholder="Add a reply..."
-                                    className="flex-grow p-2 text-sm border border-gray-300 rounded-l-md"
+                                    className="flex-grow p-2 text-sm border border-gray-400 rounded-l-md"
                                     value={comment}
                                     onChange={captureComment}
                                     required
@@ -297,10 +317,12 @@ function Post() {
                                 No comments yet.
                             </div>
                         ) : (
-                            <div className=" bg-white rounded-b-lg shadow overflow-hidden ">
-                                {replies.map((object, index) => (
-                                    <Comments key={index} reply={object} />
-                                ))}
+                            <div className="flex justify-center lg:mr-60">
+                                <div className="bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
+                                    {replies.map((object, index) => (
+                                        <Comments key={index} reply={object} />
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
