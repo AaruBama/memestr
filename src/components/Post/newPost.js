@@ -197,17 +197,19 @@ const PostUpload = ({ isOpen, onClose }) => {
 
     const handleKeyDown = event => {
         if (event.key === ' ' && event.target.value.trim() !== '') {
+            let tag = event.target.value.trim();
+            if (!tag.startsWith('#')) {
+                tag = `#${tag}`;
+            }
             if (hashtags.length < MAX_TAGS) {
-                setHashtags([...hashtags, inputValue.trim()]);
-                setInputValue(''); // Clear the input after adding the tag
+                setHashtags([...hashtags, tag]);
+                setInputValue('');
                 setShowMaxTagsAlert(false);
             } else {
-                // alert('Max allowed tags: 3');
-
                 setShowMaxTagsAlert(true);
-                clearTimeout(alertTimeout); // Clear any existing timeout
+                clearTimeout(alertTimeout);
                 alertTimeout = setTimeout(() => {
-                    setShowMaxTagsAlert(false); // Hide the alert after 3 seconds
+                    setShowMaxTagsAlert(false);
                 }, 3000);
             }
             event.preventDefault();
@@ -234,7 +236,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     }, []);
 
     return (
-        <div>
+        <div className="z-50">
             <Transition.Root show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={onClose}>
                     <Transition.Child
@@ -259,7 +261,12 @@ const PostUpload = ({ isOpen, onClose }) => {
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-[95%]  sm:max-w-lg mx-auto">
-                                    <div className="flex justify-end p-2 sm:p-4">
+                                    <div className="flex items-center justify-between p-2 sm:p-4">
+                                        <div className="mb-1">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                                Post Something
+                                            </h3>
+                                        </div>
                                         <button
                                             type="button"
                                             className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -274,13 +281,8 @@ const PostUpload = ({ isOpen, onClose }) => {
 
                                     <div
                                         className="flex-1 overflow-auto"
-                                        style={{ paddingBottom: '80px' }}>
+                                        style={{ paddingBottom: '60px' }}>
                                         <div className="bg-white px-4 pt-2 pb-4">
-                                            <div className="mb-4">
-                                                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                                    Post Something
-                                                </h3>
-                                            </div>
                                             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
                                                 <div className="sm:col-span-2">
                                                     <label
@@ -377,10 +379,6 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                                                 Upload
                                                                                 a
                                                                                 file
-                                                                                or
-                                                                                drag
-                                                                                and
-                                                                                drop
                                                                             </span>
                                                                             <input
                                                                                 id="file-upload"
@@ -395,7 +393,8 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                                         <p className="text-xs text-gray-500">
                                                                             PNG,
                                                                             JPG,
-                                                                            GIF
+                                                                            GIF,
+                                                                            MP4
                                                                             up
                                                                             to
                                                                             10MB
@@ -463,7 +462,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                         </div>
                                     </div>
 
-                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-2 sm:p-4 text-right shadow-top">
+                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-3 sm:p-4 text-right shadow-top">
                                         <button
                                             type="button"
                                             className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
