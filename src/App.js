@@ -5,13 +5,7 @@ import HeaderBar from './components/Login';
 import { AuthProvider } from './AuthContext'; // Import AuthProvider
 import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-
 import HashtagTool from './components/HashtagTool';
-import PetFeed, { PetsFeedProvider } from './components/CategoryView/PetFeed';
-import NatureFeed, {
-    NatureProvider,
-} from './components/CategoryView/NatureProvider';
-
 function App() {
     const pageFilters = {
         '/': null,
@@ -23,11 +17,9 @@ function App() {
 
     return (
         <AuthProvider>
-            {' '}
-            {/* Wrap everything inside AuthProvider */}
             <Router>
                 <HeaderBar />
-                <HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/']}>
                     <Routes>
                         <Route exact path="/" element={<HashtagTool />} />
                         <Route
@@ -36,31 +28,31 @@ function App() {
                         />
                     </Routes>
                 </HashTagToolProvider>
-                <PetsFeedProvider filterTags={pageFilters['/pets']}>
+
+                <HashTagToolProvider filterTags={pageFilters['/pets']}>
                     <Routes>
-                        <Route exact path="/pets" element={<PetFeed />} />
+                        <Route exact path="/pets" element={<HashtagTool />} />
                     </Routes>
-                </PetsFeedProvider>
-                <NatureProvider filterTags={pageFilters['/nature']}>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/nature']}>
                     <Routes>
-                        <Route exact path="/nature" element={<NatureFeed />} />
+                        <Route exact path="/nature" element={<HashtagTool />} />
                     </Routes>
-                </NatureProvider>
-                {/* It seems NatureProvider is used for multiple routes, consider using a more generic name if it's not specific to nature */}
-                <NatureProvider filterTags={pageFilters['/food']}>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/food']}>
                     <Routes>
-                        <Route exact path="/food" element={<NatureFeed />} />
+                        <Route exact path="/food" element={<HashtagTool />} />
                     </Routes>
-                </NatureProvider>
-                <NatureProvider filterTags={pageFilters['/photography']}>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/photography']}>
                     <Routes>
                         <Route
                             exact
                             path="/photography"
-                            element={<NatureFeed />}
+                            element={<HashtagTool />}
                         />
                     </Routes>
-                </NatureProvider>
+                </HashTagToolProvider>
             </Router>
         </AuthProvider>
     );
