@@ -292,7 +292,7 @@ export function HashtagTool() {
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        className="fixed z-10 bottom-4 right-3 md:right-8 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl hover:animate-bounce duration-300">
+                        className="fixed z-50 bottom-4 right-3 md:right-8 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
                         <UploadSvg />
                     </button>
 

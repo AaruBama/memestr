@@ -197,17 +197,19 @@ const PostUpload = ({ isOpen, onClose }) => {
 
     const handleKeyDown = event => {
         if (event.key === ' ' && event.target.value.trim() !== '') {
+            let tag = event.target.value.trim();
+            if (!tag.startsWith('#')) {
+                tag = `#${tag}`;
+            }
             if (hashtags.length < MAX_TAGS) {
-                setHashtags([...hashtags, inputValue.trim()]);
-                setInputValue(''); // Clear the input after adding the tag
+                setHashtags([...hashtags, tag]);
+                setInputValue('');
                 setShowMaxTagsAlert(false);
             } else {
-                // alert('Max allowed tags: 3');
-
                 setShowMaxTagsAlert(true);
-                clearTimeout(alertTimeout); // Clear any existing timeout
+                clearTimeout(alertTimeout);
                 alertTimeout = setTimeout(() => {
-                    setShowMaxTagsAlert(false); // Hide the alert after 3 seconds
+                    setShowMaxTagsAlert(false);
                 }, 3000);
             }
             event.preventDefault();
@@ -234,7 +236,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     }, []);
 
     return (
-        <div>
+        <div className="z-50">
             <Transition.Root show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={onClose}>
                     <Transition.Child
@@ -259,7 +261,12 @@ const PostUpload = ({ isOpen, onClose }) => {
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-[95%]  sm:max-w-lg mx-auto">
-                                    <div className="flex justify-end p-2 sm:p-4">
+                                    <div className="flex items-center justify-between px-2 pt-2 sm:p-4">
+                                        <div className="mb-1">
+                                            <h3 className="text-lg pt-2 px-2 font-medium text-gray-900">
+                                                Upload
+                                            </h3>
+                                        </div>
                                         <button
                                             type="button"
                                             className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -274,20 +281,13 @@ const PostUpload = ({ isOpen, onClose }) => {
 
                                     <div
                                         className="flex-1 overflow-auto"
-                                        style={{ paddingBottom: '80px' }}>
+                                        style={{ paddingBottom: '70px' }}>
                                         <div className="bg-white px-4 pt-2 pb-4">
-                                            <div className="mb-4">
-                                                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                                    Post Something
-                                                </h3>
-                                            </div>
                                             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
                                                 <div className="sm:col-span-2">
                                                     <label
                                                         htmlFor="title"
-                                                        className="block text-sm font-medium text-gray-700">
-                                                        Title
-                                                    </label>
+                                                        className="block text-sm font-medium text-gray-700"></label>
                                                     <div className="mt-1">
                                                         <input
                                                             type="text"
@@ -297,38 +297,54 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                                 handleTitleChange
                                                             }
                                                             value={title}
-                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                                                            placeholder="Enter the title of your post"
+                                                            className="bg-gray-50 border text-wrap border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                                                            placeholder="Add a Title...(140 Characters Max)"
                                                         />
                                                     </div>
                                                 </div>
                                                 <div className="sm:col-span-2">
                                                     <label
                                                         htmlFor="hashtags"
-                                                        className="block text-sm font-medium text-gray-700">
-                                                        Tags
-                                                    </label>
+                                                        className="block text-sm font-medium text-gray-700"></label>
 
                                                     <div className="mt-1 flex flex-wrap gap-2 ">
-                                                        <input
-                                                            type="text"
-                                                            name="hashtags"
-                                                            id="hashtags"
-                                                            value={inputValue}
-                                                            onChange={
-                                                                handleHashtagsChange
-                                                            }
-                                                            onKeyDown={
-                                                                handleKeyDown
-                                                            }
-                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                            placeholder="Add a tag and press 'space' (e.g., #meme)"
-                                                        />
+                                                        <div className="flex w-full">
+                                                            <div className="bg-white border border-gray-300 rounded-l-md p-2.5 flex items-center">
+                                                                <span className="text-indigo-600">
+                                                                    #
+                                                                </span>
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                name="hashtags"
+                                                                id="hashtags"
+                                                                value={
+                                                                    inputValue
+                                                                }
+                                                                onChange={
+                                                                    handleHashtagsChange
+                                                                }
+                                                                onKeyDown={
+                                                                    handleKeyDown
+                                                                }
+                                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500
+        focus:border-blue-500 block w-full p-2.5"
+                                                                placeholder="Add Tags"
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className={
+                                                                'pl-2 text-gray-400 text-sm'
+                                                            }>
+                                                            Upto 3 tags,
+                                                            seperated with
+                                                            space.
+                                                        </div>
                                                         {hashtags.map(
                                                             (tag, index) => (
                                                                 <div
                                                                     key={tag}
-                                                                    className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                                                    className="flex items-center text-wrap gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                                                                     {tag}
                                                                     <button
                                                                         type="button"
@@ -361,9 +377,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                 <div className="sm:col-span-2">
                                                     <label
                                                         htmlFor="file-upload"
-                                                        className="block text-sm font-medium text-gray-700">
-                                                        Upload Image
-                                                    </label>
+                                                        className="block text-sm font-medium text-gray-700"></label>
                                                     <div className="mt-1 flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                                                         <div className="space-y-1 text-center">
                                                             {!preview &&
@@ -377,10 +391,6 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                                                 Upload
                                                                                 a
                                                                                 file
-                                                                                or
-                                                                                drag
-                                                                                and
-                                                                                drop
                                                                             </span>
                                                                             <input
                                                                                 id="file-upload"
@@ -395,7 +405,8 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                                         <p className="text-xs text-gray-500">
                                                                             PNG,
                                                                             JPG,
-                                                                            GIF
+                                                                            GIF,
+                                                                            MP4
                                                                             up
                                                                             to
                                                                             10MB
@@ -463,7 +474,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                         </div>
                                     </div>
 
-                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-2 sm:p-4 text-right shadow-top">
+                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-3 sm:p-4 text-right shadow-top">
                                         <button
                                             type="button"
                                             className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
