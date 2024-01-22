@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.2fde3c38.css",
-    "main.js": "/static/js/main.bd7d8bf6.js",
+    "main.js": "/static/js/main.cc2aa937.js",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
     "static/media/ProfileCircle.svg": "/static/media/ProfileCircle.82f5aa4a9cb4fa47216679a931544378.svg",
     "static/media/VolumeDown.svg": "/static/media/VolumeDown.a48258a7204b48573798f3a750f93f1d.svg",
@@ -31,6 +31,6 @@
   },
   "entrypoints": [
     "static/css/main.2fde3c38.css",
-    "static/js/main.bd7d8bf6.js"
+    "static/js/main.cc2aa937.js"
   ]
 }
