@@ -14,7 +14,6 @@ const relays = [
     'wss://relay.nostr.band',
     'wss://relay.nostr.bg',
     'wss://relay.nostrati.com',
-    'wss://relay.noswhere.com',
     'wss://nos.lol',
     'wss://nostr.mom',
 ];
