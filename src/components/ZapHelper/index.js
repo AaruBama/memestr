@@ -1,4 +1,4 @@
-import { nip19, nip57, finishEvent, SimplePool } from "nostr-tools";
+import { nip19, nip57, finishEvent, SimplePool } from 'nostr-tools';
 
 export const decodeNpub = npub => nip19.decode(npub).data;
 
@@ -13,10 +13,9 @@ export const getProfileMetadata = async authorId => {
 
     const pool = new SimplePool();
     const relays = [
-        "wss://relay.nostr.band",
-        "wss://purplepag.es",
-        "wss://relay.damus.io",
-        "wss://nostr.wine",
+        'wss://relay.nostr.band',
+        'wss://purplepag.es',
+        'wss://relay.damus.io',
     ];
 
     try {
@@ -25,7 +24,7 @@ export const getProfileMetadata = async authorId => {
             kinds: [0],
         });
     } catch (error) {
-        throw new Error("failed to fetch user profile :(");
+        throw new Error('failed to fetch user profile :(');
     } finally {
         pool.close(relays);
     }
@@ -38,7 +37,7 @@ export const getZapEndpoint = async profileMetadata => {
     const zapEndpoint = await nip57.getZapEndpoint(profileMetadata);
 
     if (!zapEndpoint) {
-        throw new Error("failed to retrieve zap endpoint :(");
+        throw new Error('failed to retrieve zap endpoint :(');
     }
 
     return zapEndpoint;
@@ -52,9 +51,9 @@ const signEvent = async zapEvent => {
             // fail silently and sign event as an anonymous user
         }
     }
-    const storedData = localStorage.getItem("memestr");
+    const storedData = localStorage.getItem('memestr');
     if (!storedData) {
-        alert("Login required to upvote.");
+        alert('Login required to upvote.');
         return;
     }
     let userPrivateKey = JSON.parse(storedData).privateKey;
@@ -110,7 +109,7 @@ export const isNipO7ExtAvailable = () => {
 export const listenForZapReceipt = ({ relays, invoice }) => {
     const pool = new SimplePool();
     const normalizedRelays = Array.from(
-        new Set([...relays, "wss://relay.nostr.band"]),
+        new Set([...relays, 'wss://relay.nostr.band']),
     );
     const closePool = () => {
         if (pool) {
@@ -128,8 +127,8 @@ export const listenForZapReceipt = ({ relays, invoice }) => {
             },
         ]);
 
-        sub.on("event", event => {
-            if (event.tags.find(t => t[0] === "bolt11" && t[1] === invoice)) {
+        sub.on('event', event => {
+            if (event.tags.find(t => t[0] === 'bolt11' && t[1] === invoice)) {
                 closePool();
                 clearInterval(intervalId);
             }

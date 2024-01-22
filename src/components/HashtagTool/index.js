@@ -14,8 +14,6 @@ const relays = [
     'wss://relay.nostr.band',
     'wss://relay.nostr.bg',
     'wss://relay.nostrati.com',
-    'wss://relay.noswhere.com',
-    'wss://notsr.wine',
     'wss://nos.lol',
     'wss://nostr.mom',
 ];
@@ -155,7 +153,6 @@ export function HashTagToolProvider({ children, filterTags }) {
             'wss://offchain.pub/',
             'wss://nos.lol/',
             'wss://relay.nostr.wirednet.jp/',
-            'wss://nostr.wine/',
         ];
 
         // For Memes

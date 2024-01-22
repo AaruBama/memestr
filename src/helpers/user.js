@@ -5,11 +5,7 @@ export async function getUserFromName(term) {
     const pool = new SimplePool();
 
     // const relay = relayInit('wss://relay.nostr.band/');
-    let relays = [
-        'wss://relay.nostr.band/',
-        'wss://relay.noswhere.com/',
-        'wss://saltivka.org',
-    ];
+    let relays = ['wss://relay.nostr.band/', 'wss://saltivka.org'];
 
     // await relay.connect();
     const filters = {
