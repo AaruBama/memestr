@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './profile.css';
-import { getPublicKey, nip19, generatePrivateKey } from 'nostr-tools';
+import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools';
 import Menu from '../Menu';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
 import { ReactComponent as Memestr } from '../../Icons/MemestrLogo.svg';
