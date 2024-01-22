@@ -37,7 +37,6 @@ export const getUserDetailsFromPublicKey = async pubKey => {
         'wss://relay.nostr.band',
         'wss://purplepag.es',
         'wss://relay.damus.io',
-        'wss://nostr.wine',
     ];
     const relayPool = new SimplePool();
     const filters = {
