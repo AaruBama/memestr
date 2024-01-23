@@ -41,7 +41,7 @@ function HeaderBar() {
         };
     }, [prevScrollY]);
 
-    const headerClasses = `fixed w-full top-0 h-14 bg-white z-40 text-gray-700 border-b border-gray-200 ${
+    const headerClasses = `fixed w-full top-0 h-14 bg-white z-50 text-gray-700 border-b border-gray-200 ${
         !isScrolled
             ? 'transition-transform transform -translate-y-full ease-in-out duration-300'
             : ''

@@ -29,7 +29,7 @@ export default function Header() {
     }, [isNavOpen]); // isNavOpen is the only dependency now
 
     return (
-        <div className="relative">
+        <div className="relative z-50">
             <div
                 className="lg:hidden HAMBURGER-ICON space-y-2"
                 onClick={() => setIsNavOpen(prev => !prev)}>
@@ -46,10 +46,10 @@ export default function Header() {
                 onClick={closeSidebar}></div>
 
             <div
-                className={`fixed inset-y-0 left-0 transform w-full max-w-xs bg-white p-6 overflow-y-auto transition-transform duration-300 z-40 ${
+                className={`fixed  inset-y-0 left-0 transform w-full max-w-xs bg-white p-6 overflow-y-auto transition-transform duration-300  ${
                     isNavOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center z-49">
                     <h1 className="font-bungee px-4 py-2 text-xl">Category</h1>
                     <button
                         onClick={closeSidebar}

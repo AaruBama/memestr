@@ -55,3 +55,7 @@
 /*    float: right;*/
 /*    right: 5px;*/
 /*}*/
+
+.headerClasses {
+  z-index: 100;
+}

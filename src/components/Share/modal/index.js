@@ -178,7 +178,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
 
     return (
         <>
-            <Transition appear show={isOpen} as={Fragment}>
+            <Transition appear show={isOpen} as={Fragment} className="z-50">
                 <Dialog as="div" className="relative z-10" onClose={onClose}>
                     {/*Backgroun black color*/}
                     <Transition.Child

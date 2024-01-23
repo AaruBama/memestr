@@ -1,11 +1,6 @@
-.videoContainer {
-  position: relative;
-}
-
 video {
   width: 100%; /* Ensure the video takes the full width of its container */
 }
-
 .muteButton {
   position: absolute;
   bottom: 8px;
