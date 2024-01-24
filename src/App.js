@@ -2,10 +2,26 @@ import './App.css';
 import { HashTagToolProvider } from './components/HashtagTool';
 import PostViewTool from './components/Post/post.js';
 import HeaderBar from './components/Login';
+import FootorBar from './components/Login/FootorBar.js';
 import { AuthProvider } from './AuthContext'; // Import AuthProvider
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+    HashRouter as Router,
+    Routes,
+    Route,
+    useParams,
+} from 'react-router-dom';
 import HashtagTool from './components/HashtagTool';
+
+function SearchRouteWrapper() {
+    let { searchQuery } = useParams();
+    return (
+        <HashTagToolProvider filterTags={[searchQuery]}>
+            <HashtagTool />
+        </HashTagToolProvider>
+    );
+}
+
 function App() {
     const pageFilters = {
         '/': null,
@@ -25,6 +41,10 @@ function App() {
                         <Route
                             path="/post/:postId"
                             element={<PostViewTool />}
+                        />
+                        <Route
+                            path="/search/:searchQuery"
+                            element={<SearchRouteWrapper />}
                         />
                     </Routes>
                 </HashTagToolProvider>
@@ -53,6 +73,7 @@ function App() {
                         />
                     </Routes>
                 </HashTagToolProvider>
+                <FootorBar />
             </Router>
         </AuthProvider>
     );

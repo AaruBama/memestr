@@ -31,18 +31,6 @@ function useIntersectionObserver(loadMore) {
 }
 
 function Feed(props) {
-    // const [isLoading, setIsLoading] = useState(false);
-
-    // useEffect(() => {
-    //     // Set isLoading to true when onLoadMore is called
-    //     if (props.isLoading) {
-    //         setIsLoading(true);
-    //     } else {
-    //         // If isLoading is false, hide the spinner
-    //         setIsLoading(false);
-    //     }
-    // }, [props.isLoading]);
-
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
     return (
         <div className="feed-container bg-white mt-12 mx-auto max-w-xl lg:mr-60">
