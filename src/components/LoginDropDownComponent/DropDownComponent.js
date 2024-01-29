@@ -6,7 +6,7 @@ import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
 import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
 import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
-import { useAuth } from '../../AuthContext'; // Ensure this is the correct path
+import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 
@@ -49,7 +49,6 @@ function DropdownComponent() {
     };
 
     const openLoginModal = () => {
-        // Reset userDetails when opening login modal
         setUserDetails(null);
         setLoginModal(true);
     };
@@ -84,11 +83,25 @@ function DropdownComponent() {
 
     return (
         <div className="inline-block text-left">
-            <Menu as="div" className="relative">
+            <Menu as="div" className="relative ">
                 <div>
-                    <Menu.Button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <Menu.Button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hidden md:inline-flex">
                         {!userDetails || userDetails.picture === undefined ? (
                             <Profile />
+                        ) : (
+                            <img
+                                src={userDetails.picture}
+                                alt="Profile"
+                                className="w-8 h-8 rounded-full"
+                            />
+                        )}
+                    </Menu.Button>
+                </div>
+
+                <div className="md:hidden">
+                    <Menu.Button>
+                        {!userDetails || userDetails.picture === undefined ? (
+                            <ProfileCircle />
                         ) : (
                             <img
                                 src={userDetails.picture}
@@ -107,7 +120,7 @@ function DropdownComponent() {
                     leave="transition ease-in duration-75"
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95">
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute z-50 md:z-10 mb-12 md:mt-12 w-48 h-24 p-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none right-0 md:right-0 bottom-0 md:top-0">
                         <div className="py-1">
                             {!isLoggedIn ? (
                                 <>
