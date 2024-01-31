@@ -330,6 +330,34 @@ function Posts(props) {
         }
     }
 
+    function convertHashtagsToLinks(text) {
+        const hashtagRegex = /#(\w+)/g;
+        const tokens = [];
+        let match;
+        let lastIndex = 0;
+        while ((match = hashtagRegex.exec(text)) !== null) {
+            if (match.index > lastIndex) {
+                tokens.push(text.slice(lastIndex, match.index));
+            }
+            tokens.push(
+                <Link
+                    to={`/search/${match[1]}`}
+                    key={match[1]}
+                    className="text-customBlue hover:text-customBlue-700 hover:decoration-customBlue-700 transition duration-300 ease-in-out hover:scale-112">
+                    {match[0]}
+                </Link>,
+            );
+            lastIndex = match.index + match[0].length;
+        }
+        if (lastIndex < text.length) {
+            tokens.push(text.slice(lastIndex));
+        }
+        return tokens;
+    }
+
+    let truncatedTitle = truncateTitle(title, 70);
+    let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
+
     function renderContent(imageLink) {
         try {
             const extension = imageLink.split('.').pop();
@@ -382,7 +410,7 @@ function Posts(props) {
                     <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
                         <div className="flex justify-between items-center">
                             <h3 className="font-bold font-nunito">
-                                {truncateTitle(title, 70)}
+                                {titleWithLinks}
                             </h3>
                             <span className="text-xs text-gray-500">
                                 {timeDifference.duration}

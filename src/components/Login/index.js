@@ -30,8 +30,10 @@ function HeaderBar({ isSearchVisible }) {
 
     const handleSearchSubmit = event => {
         event.preventDefault();
-        navigate(`/search/${searchQuery.trim()}`);
-        setSearchQuery('');
+        if (searchQuery.trim().length > 0) {
+            navigate(`/search/${searchQuery.trim()}`);
+            setSearchQuery('');
+        }
     };
 
     useEffect(() => {

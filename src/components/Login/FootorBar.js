@@ -4,14 +4,18 @@ import { ReactComponent as HomeSvg } from '../../Icons/HomeMobile.svg';
 import { ReactComponent as SearchSvg } from '../../Icons/SearchIconBlack.svg';
 import { ReactComponent as MessageSvg } from '../../Icons/Notification.svg';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
-import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
+import { ReactComponent as PlusSvg } from '../../Icons/PlusArrow.svg';
 import PostUpload from '../Post/newPost';
 
 const FooterBar = () => {
     const [newPostModal, setNewPostModal] = useState(false);
     const location = useLocation();
-    const isHome = location.pathname === '/';
-    const isSearch = location.pathname.startsWith('/search');
+    const isActive = path => location.pathname === path;
+
+    const navigate = useNavigate();
+
+    const activeStyle = 'font-bold underline  border-t-2 border-black';
+
     function showNewPostModal() {
         setNewPostModal(true);
     }
@@ -20,54 +24,48 @@ const FooterBar = () => {
         setNewPostModal(false);
     }
 
-    const navigate = useNavigate();
-    const navigateHome = () => {
-        navigate('/');
-    };
-
-    const handleSearchClick = () => {
-        navigate('/search');
-    };
-
     return (
-        <div className="fixed inset-x-0 bottom-0 bg-white border-t border-gray-400 shadow-md flex flex-col justify-around items-center py-2 md:hidden z-49">
+        <div className="fixed inset-x-0 bottom-0 bg-white border-t border-gray-400 shadow-md flex flex-col justify-around items-center pb-2 md:hidden z-49">
             <div className="flex w-full justify-around items-center">
                 <button
-                    onClick={navigateHome}
-                    className="flex flex-col items-center text-center p-1">
+                    onClick={() => navigate('/')}
+                    className={`flex flex-col items-center text-center py-3  px-6 ${
+                        isActive('/') ? activeStyle : ''
+                    }`}>
                     <HomeSvg
                         className={
-                            isHome ? 'fill-current text-black' : 'text-gray-300'
+                            isActive('/') ? 'text-black' : 'text-gray-200'
                         }
                     />
                 </button>
                 <button
-                    onClick={handleSearchClick}
-                    className="flex flex-col items-center text-center p-1">
+                    onClick={() => navigate('/search')}
+                    className={`flex flex-col items-center text-center py-3 px-6 ${
+                        isActive('/search') ? activeStyle : ''
+                    }`}>
                     <SearchSvg
                         className={
-                            isSearch
-                                ? 'fill-current text-black'
-                                : 'text-gray-200'
+                            isActive('/search') ? 'text-black' : 'text-gray-200'
                         }
                     />
                 </button>
                 <button
+                    className="flex flex-col items-center text-center p-1 px-6"
                     onClick={showNewPostModal}
-                    title="Upload"
-                    className="relative p-2 rounded-full bg-cyan-300 shadow-lg hover:shadow-xl transition duration-300">
-                    <UploadSvg className="w-6 h-6 text-white" />
+                    title="Upload">
+                    <PlusSvg className="w-10 h-10" />
                 </button>
+
                 {newPostModal && (
                     <PostUpload
                         isOpen={newPostModal}
                         onClose={closePostModal}
                     />
                 )}
-                <button className="flex flex-col items-center text-center p-1">
+                <button className="flex flex-col items-center text-center p-1 px-6">
                     <MessageSvg />
                 </button>
-                <button className="flex flex-col items-center text-center p-1">
+                <button className="flex flex-col items-center text-center p-1 px-6">
                     <DropdownComponent />
                 </button>
             </div>
