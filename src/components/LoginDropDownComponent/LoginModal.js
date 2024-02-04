@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import getUserDetailsFromPrivateKey from '../Profile';
 import { getPublicKey, nip19 } from 'nostr-tools';
-
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 function LoginModal({ isOpen, onClose }) {
     const [loggedInUserDetails, setLoggedInUserDetails] = useState({});
     const [privateKey, setPrivateKey] = useState('');
@@ -11,6 +11,9 @@ function LoginModal({ isOpen, onClose }) {
         setPrivateKey(event.target.value);
     }
     function logUserIn() {
+        if (privateKey.trim() === '') {
+            return;
+        }
         const storedData = localStorage.getItem('memestr');
         if (storedData) {
             const userDetails = JSON.parse(storedData);
@@ -71,42 +74,63 @@ function LoginModal({ isOpen, onClose }) {
                                         <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                             <Dialog.Title
                                                 as="h3"
-                                                className="text-base font-semibold leading-6 text-gray-900 pb-6">
-                                                Login
-                                            </Dialog.Title>
-
-                                            <Dialog.Description>
-                                                <div className="mb-4">
-                                                    <label
-                                                        htmlFor="loginKey"
-                                                        className="flex justify-start block mb-1 text-sm font-medium font-sans text-gray-500 dark:text-black">
-                                                        Insert your Nsec
-                                                        Key(starts with nsec):
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="loginKey"
-                                                        onChange={
-                                                            handlePrivateKeyChange
-                                                        }
-                                                        value={privateKey}
-                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                        placeholder="Guy_who_farted"
-                                                        required
+                                                className="text-lg font-semibold leading-6 text-gray-900 p-3 sm:p-0">
+                                                Login to Memestr
+                                                <button
+                                                    type="button"
+                                                    className="absolute top-3 right-3 p-3 sm:p-0"
+                                                    onClick={() => {
+                                                        onClose(
+                                                            loggedInUserDetails,
+                                                        );
+                                                    }}>
+                                                    <CloseIcon
+                                                        className="h-6 w-6 text-gray-700"
+                                                        aria-hidden="true"
                                                     />
-                                                    <div className="flex align-middle justify-center mt text-sm text-gray-300">
-                                                        We don't store your
-                                                        keys.
+                                                </button>
+                                            </Dialog.Title>
+                                            <div className="mt-5">
+                                                <Dialog.Description>
+                                                    <div className="mb-3">
+                                                        <label
+                                                            htmlFor="loginKey"
+                                                            className="flex justify-start block mb-2 text-sm font-medium font-sans text-gray-500 dark:text-black">
+                                                            Enter your Nostr
+                                                            private key
+                                                            (starting with
+                                                            “nsec”):
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            id="loginKey"
+                                                            onChange={
+                                                                handlePrivateKeyChange
+                                                            }
+                                                            value={privateKey}
+                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                            placeholder="Guy_who_farted"
+                                                            required
+                                                        />
+                                                        <div className="flex align-middle justify mt text-sm text-gray-300 p-1">
+                                                            We don't store your
+                                                            keys.
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </Dialog.Description>
+                                                </Dialog.Description>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-gray-50 px-4 py-2 sm:flex sm:flex-row-reverse sm:px-6">
+                                <div className="px-6 py-3 bg-white text-right">
                                     <button
                                         type="button"
-                                        className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                        className={`inline-flex justify-end rounded-md border border-transparent shadow-sm px-4 py-2 text-white font-medium sm:text-sm ${
+                                            privateKey.trim()
+                                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700'
+                                                : 'bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700'
+                                        }`}
+                                        disabled={!privateKey.trim()}
                                         onClick={() => {
                                             logUserIn();
                                         }}>

@@ -124,25 +124,11 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
 
     return (
         <Transition.Root show={isOpen} as={Fragment}>
-            <Dialog
-                as="div"
-                className="relative z-40"
-                onClose={() => {
-                    onClose();
-                }}>
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-10">
-                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                </Transition.Child>
+            <Dialog as="div" className="relative z-50" onClose={onClose}>
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 
-                <div className="fixed inset-0 z-40 overflow-hidden">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-full p-4 text-center">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -151,65 +137,64 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                            <Dialog.Panel className="max-height= relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                            <Dialog.Title
-                                                as="h3"
-                                                className="text-base font-semibold leading-6 text-gray-900 pb-6">
-                                                Go have fun!
-                                            </Dialog.Title>
-
-                                            <Dialog.Description>
-                                                <div className="mb-4">
-                                                    <label
-                                                        htmlFor="username"
-                                                        className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-black">
-                                                        Username
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="username"
-                                                        onChange={
-                                                            handleUsernameChange
-                                                        }
-                                                        value={username}
-                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                        placeholder="Guy_who_farted"
-                                                        required
-                                                    />
-                                                </div>
-
-                                                <div>
-                                                    <label
-                                                        htmlFor="about"
-                                                        className="flex justify-start block mb-1 text-sm font-medium text-gray-900 dark:text-gray-800">
-                                                        About
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        id="username"
-                                                        onChange={
-                                                            handleAboutMeChange
-                                                        }
-                                                        value={aboutMe}
-                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                        placeholder="Guy_who_farted"
-                                                        required
-                                                    />
-                                                </div>
-                                                <UploadAndDisplayImage
-                                                    setPicture={choosePicture}
-                                                />
-                                            </Dialog.Description>
-                                        </div>
-                                    </div>
+                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                <div className="text-center">
+                                    <Dialog.Title
+                                        as="h3"
+                                        className="text-lg font-medium leading-6 text-gray-900">
+                                        Create Your Account
+                                    </Dialog.Title>
+                                    <p className="text-sm text-gray-500">
+                                        Join the world of memes!
+                                    </p>
                                 </div>
-                                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+
+                                <div className="mt-4">
+                                    <label
+                                        htmlFor="username"
+                                        className="block text-sm font-medium text-gray-700 py-2">
+                                        Username:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-50  text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={handleUsernameChange}
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    <label
+                                        htmlFor="aboutMe"
+                                        className="block text-sm font-medium text-gray-700 py-2">
+                                        About Me:
+                                    </label>
+                                    <textarea
+                                        className="w-full px-4 py-2 border rounded-lg  bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                                        rows="3"
+                                        placeholder="Tell us about yourself"
+                                        value={aboutMe}
+                                        onChange={
+                                            handleAboutMeChange
+                                        }></textarea>
+                                </div>
+
+                                <div className="mt-4 ">
+                                    <label
+                                        htmlFor="imageUpload"
+                                        className="block text-sm font-medium text-gray-700">
+                                        Profile Picture:
+                                    </label>
+                                    <UploadAndDisplayImage
+                                        setPicture={choosePicture}
+                                    />
+                                </div>
+
+                                <div className="mt-4 flex justify-end">
                                     <button
                                         type="button"
-                                        className="mt-2 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                        className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
                                         onClick={async () => {
                                             await registerAccount(sk, pk);
                                             onClose();
@@ -225,7 +210,4 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
         </Transition.Root>
     );
 }
-
-// NewKeysNavBar.propTypes = {isOpen: PropTypes.bool};
-
 export default UserDetailsForAccountCreation;

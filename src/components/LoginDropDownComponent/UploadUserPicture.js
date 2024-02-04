@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ReactComponent as CloudUpload } from '../../Icons/CloudUpload.svg';
 
 const UploadAndDisplayImage = ({ setPicture }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -69,43 +70,48 @@ const UploadAndDisplayImage = ({ setPicture }) => {
     };
 
     return (
-        <div
-            className={
-                'border-separate border-spacing-2 border border-solid border-2 border-b rounded-[10px] mt-4'
-            }>
-            <div className={'flex-nowrap bg-gray-500/[.06] px-2'}>
-                <h3 className={'flex justify-start p-2'}>Add Picture</h3>
+        <div className="mt-4 border-2 border-gray-300 border-dashed rounded-lg p-4">
+            <div className="space-y-2 text-center">
+                <h3 className="text-lg font-medium text-gray-700">
+                    Add Picture
+                </h3>
 
-                <div className={'pb-2'}>
-                    {selectedImage && (
-                        <div>
-                            <img
-                                alt="userProfile"
-                                width={'250px'}
-                                src={URL.createObjectURL(selectedImage)}
-                            />
-                            <button
-                                onClick={() => {
-                                    setSelectedImage(null);
-                                    // setPicture(selectedImage)
-                                }}>
-                                Remove
-                            </button>
-                        </div>
-                    )}
+                {selectedImage && (
+                    <div className="flex flex-col items-center justify-center">
+                        <img
+                            alt="Uploaded"
+                            className="w-48 h-48 object-cover rounded-md mb-2"
+                            src={URL.createObjectURL(selectedImage)}
+                        />
+                        <button
+                            onClick={() => {
+                                setSelectedImage(null);
+                                setPicture('');
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            Remove
+                        </button>
+                    </div>
+                )}
 
-                    <input
-                        type="file"
-                        name="myImage"
-                        onChange={event => {
-                            setSelectedImage(event.target.files[0]);
-                            // setPicture(event.target.files[0])
-                            choosePicture(event.target.files[0]).then(r => {
-                                console.log(r);
-                            });
-                        }}
-                    />
-                </div>
+                {!selectedImage && (
+                    <label className="flex flex-col items-center justify-center w-full h-32 bg-white text-blue-600 rounded-lg tracking-wide uppercase border border-blue-500 cursor-pointer hover:bg-blue-50 hover:text-blue-700">
+                        <CloudUpload className="text-blue-700" />
+                        <span className="mt-2 text-base leading-normal">
+                            Select a file
+                        </span>
+                        <input
+                            type="file"
+                            className="hidden"
+                            onChange={event => {
+                                setSelectedImage(event.target.files[0]);
+                                choosePicture(event.target.files[0]).then(
+                                    console.log,
+                                );
+                            }}
+                        />
+                    </label>
+                )}
             </div>
         </div>
     );
