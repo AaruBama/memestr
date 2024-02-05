@@ -54,8 +54,8 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
         if (copied) {
             const tooltip = document.createElement('div');
             tooltip.innerHTML = `
-                <div class="fixed top-8 right-6 flex items-center px-3 py-2 bg-black text-white rounded-md z-50">
-                <svg class="mr-2" fill="#fff" width="40" height="40" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"/></svg>
+                <div class="fixed top-8 right-6 flex items-center px-3 py-2 bg-white text-black rounded-md z-50">
+                <svg class="mr-2" fill="#000" width="40" height="40" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"/></svg>
                     Copied to clipboard
                 </div>
             `;

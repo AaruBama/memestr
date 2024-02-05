@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ReactComponent as CloudUpload } from '../../Icons/CloudUpload.svg';
+import { ReactComponent as ProfileIcon } from '../../Icons/Profile.svg';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
 const UploadAndDisplayImage = ({ setPicture }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -70,48 +71,51 @@ const UploadAndDisplayImage = ({ setPicture }) => {
     };
 
     return (
-        <div className="mt-4 border-2 border-gray-300 border-dashed rounded-lg p-4">
-            <div className="space-y-2 text-center">
-                <h3 className="text-lg font-medium text-gray-700">
-                    Add Picture
-                </h3>
-
-                {selectedImage && (
-                    <div className="flex flex-col items-center justify-center">
-                        <img
-                            alt="Uploaded"
-                            className="w-48 h-48 object-cover rounded-md mb-2"
-                            src={URL.createObjectURL(selectedImage)}
-                        />
+        <div className="mt-4 border-2 border-gray-300 shadow-sm rounded-lg p-4 bg-gray-50">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                    <div
+                        className={`flex items-center justify-center w-24 h-24 border-2 border-gray-300 rounded-full ${
+                            selectedImage ? 'mr-4' : ''
+                        }`}>
+                        {selectedImage ? (
+                            <img
+                                src={URL.createObjectURL(selectedImage)}
+                                alt="Uploaded"
+                                className="w-full h-full rounded-full object-cover"
+                            />
+                        ) : (
+                            <ProfileIcon className="w-16 h-16 text-white" />
+                        )}
+                    </div>
+                    {selectedImage && (
                         <button
                             onClick={() => {
                                 setSelectedImage(null);
                                 setPicture('');
                             }}
-                            className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                            Remove
+                            className="flex items-center justify-center ml-4 w-10 h-10 bg-red-500 rounded-full hover:bg-red-600 transition duration-300">
+                            <CloseIcon className="w-6 h-6 text-white" />
                         </button>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                {!selectedImage && (
-                    <label className="flex flex-col items-center justify-center w-full h-32 bg-white text-blue-600 rounded-lg tracking-wide uppercase border border-blue-500 cursor-pointer hover:bg-blue-50 hover:text-blue-700">
-                        <CloudUpload className="text-blue-700" />
-                        <span className="mt-2 text-base leading-normal">
-                            Select a file
-                        </span>
-                        <input
-                            type="file"
-                            className="hidden"
-                            onChange={event => {
-                                setSelectedImage(event.target.files[0]);
-                                choosePicture(event.target.files[0]).then(
-                                    console.log,
-                                );
-                            }}
-                        />
-                    </label>
-                )}
+                <label className="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow-sm tracking-wide uppercase border border-gray-300 cursor-pointer hover:bg-gray-300 transition duration-300">
+                    <span className="text-base leading-normal">
+                        Upload Image
+                    </span>
+                    <input
+                        type="file"
+                        className="hidden"
+                        onChange={event => {
+                            const file = event.target.files[0];
+                            if (file) {
+                                setSelectedImage(file);
+                                choosePicture(file).then(console.log);
+                            }
+                        }}
+                    />
+                </label>
             </div>
         </div>
     );
