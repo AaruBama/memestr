@@ -79,11 +79,7 @@ function LoginModal({ isOpen, onClose }) {
                                                 <button
                                                     type="button"
                                                     className="absolute top-3 right-3 p-3 sm:p-0"
-                                                    onClick={() => {
-                                                        onClose(
-                                                            loggedInUserDetails,
-                                                        );
-                                                    }}>
+                                                    onClick={() => onClose({})}>
                                                     <CloseIcon
                                                         className="h-6 w-6 text-gray-700"
                                                         aria-hidden="true"

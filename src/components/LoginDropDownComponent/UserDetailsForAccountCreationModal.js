@@ -3,11 +3,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import UploadAndDisplayImage from './UploadUserPicture';
 import { getProfileFromPublicKey } from '../Profile';
+import { ReactComponent as TickIcon } from '../../Icons/RoundTick.svg';
 
 function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     const [username, setUsername] = useState('');
     const [aboutMe, setAboutMe] = useState('');
     const [fileString, setFileString] = useState('');
+    const [showPopup, setShowPopup] = useState(false);
 
     const choosePicture = url => {
         setFileString(url);
@@ -64,6 +66,8 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
             details.privateKey = encodedSk; // Encrypt it.
             localStorage.setItem('memestr', JSON.stringify(details));
             console.log('Set the default login in local cache.', details);
+            setShowPopup(true);
+            setTimeout(() => setShowPopup(false), 3000);
         } catch (error) {
             console.error('Error during registration:', error);
         }
@@ -123,91 +127,102 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     }
 
     return (
-        <Transition.Root show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        <>
+            <Transition.Root show={isOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={onClose}>
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 
-                <div className="fixed inset-0 z-50 overflow-y-auto">
-                    <div className="flex items-center justify-center min-h-full p-4 text-center">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                            enterTo="opacity-100 translate-y-0 sm:scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                <div className="text-center">
-                                    <Dialog.Title
-                                        as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900">
-                                        Create Your Account
-                                    </Dialog.Title>
-                                    <p className="text-sm text-gray-500">
-                                        Join the world of memes!
-                                    </p>
-                                </div>
+                    <div className="fixed inset-0 z-50 overflow-y-auto">
+                        <div className="flex items-center justify-center min-h-full p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <div className="text-center">
+                                        <Dialog.Title
+                                            as="h3"
+                                            className="text-lg font-medium leading-6 text-gray-900">
+                                            Create Your Account
+                                        </Dialog.Title>
+                                        <p className="text-sm text-gray-500">
+                                            Join the world of memes!
+                                        </p>
+                                    </div>
 
-                                <div className="mt-4">
-                                    <label
-                                        htmlFor="username"
-                                        className="block text-sm font-medium text-gray-700 py-2">
-                                        Username:
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-2 border rounded-lg bg-gray-50  text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Username"
-                                        value={username}
-                                        onChange={handleUsernameChange}
-                                    />
-                                </div>
+                                    <div className="mt-4">
+                                        <label
+                                            htmlFor="username"
+                                            className="block text-sm font-medium text-gray-700 py-2">
+                                            Username:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 border rounded-lg bg-gray-50  text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Username"
+                                            value={username}
+                                            onChange={handleUsernameChange}
+                                        />
+                                    </div>
 
-                                <div className="mt-4">
-                                    <label
-                                        htmlFor="aboutMe"
-                                        className="block text-sm font-medium text-gray-700 py-2">
-                                        About Me:
-                                    </label>
-                                    <textarea
-                                        className="w-full px-4 py-2 border rounded-lg  bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-                                        rows="3"
-                                        placeholder="Tell us about yourself"
-                                        value={aboutMe}
-                                        onChange={
-                                            handleAboutMeChange
-                                        }></textarea>
-                                </div>
+                                    <div className="mt-4">
+                                        <label
+                                            htmlFor="aboutMe"
+                                            className="block text-sm font-medium text-gray-700 py-2">
+                                            About Me:
+                                        </label>
+                                        <textarea
+                                            className="w-full px-4 py-2 border rounded-lg  bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                                            rows="3"
+                                            placeholder="Tell us about yourself"
+                                            value={aboutMe}
+                                            onChange={
+                                                handleAboutMeChange
+                                            }></textarea>
+                                    </div>
 
-                                <div className="mt-4 ">
-                                    <label
-                                        htmlFor="imageUpload"
-                                        className="block text-sm font-medium text-gray-700">
-                                        Profile Picture:
-                                    </label>
-                                    <UploadAndDisplayImage
-                                        setPicture={choosePicture}
-                                    />
-                                </div>
+                                    <div className="mt-4 ">
+                                        <label
+                                            htmlFor="imageUpload"
+                                            className="block text-sm font-medium text-gray-700">
+                                            Profile Picture:
+                                        </label>
+                                        <UploadAndDisplayImage
+                                            setPicture={choosePicture}
+                                        />
+                                    </div>
 
-                                <div className="mt-4 flex justify-end">
-                                    <button
-                                        type="button"
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
-                                        onClick={async () => {
-                                            await registerAccount(sk, pk);
-                                            onClose();
-                                        }}>
-                                        Create Account and Login
-                                    </button>
-                                </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
+                                    <div className="mt-4 flex justify-end">
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
+                                            onClick={async () => {
+                                                await registerAccount(sk, pk);
+                                                onClose();
+                                            }}>
+                                            Create Account and Login
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+
+            {showPopup && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <TickIcon className="h-6 w-6 mr-2 text-white" />
+                        <p>Created Account Successfully</p>
                     </div>
                 </div>
-            </Dialog>
-        </Transition.Root>
+            )}
+        </>
     );
 }
 export default UserDetailsForAccountCreation;
