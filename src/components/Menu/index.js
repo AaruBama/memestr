@@ -23,10 +23,8 @@ export default function Header() {
         } else {
             document.body.classList.remove('overflow-hidden');
         }
-
-        // Cleanup function
         return () => document.body.classList.remove('overflow-hidden');
-    }, [isNavOpen]); // isNavOpen is the only dependency now
+    }, [isNavOpen]);
 
     return (
         <div className="relative z-50">
