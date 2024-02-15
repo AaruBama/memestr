@@ -12,8 +12,16 @@ export function VideoPlayer({ imageLink }) {
     };
     const togglePlayPause = () => {
         if (videoRef.current.paused || videoRef.current.ended) {
-            videoRef.current.play();
-            setIsPlaying(true);
+            const playPromise = videoRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        setIsPlaying(true);
+                    })
+                    .catch(error => {
+                        console.error('Error attempting to play video:', error);
+                    });
+            }
         } else {
             videoRef.current.pause();
             setIsPlaying(false);
@@ -25,8 +33,19 @@ export function VideoPlayer({ imageLink }) {
             entries => {
                 const entry = entries[0];
                 if (entry.isIntersecting) {
-                    videoRef.current.play();
-                    setIsPlaying(true);
+                    const playPromise = videoRef.current.play();
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                setIsPlaying(true);
+                            })
+                            .catch(error => {
+                                console.error(
+                                    'Error attempting to play video:',
+                                    error,
+                                );
+                            });
+                    }
                 } else {
                     videoRef.current.pause();
                     setIsPlaying(false);
