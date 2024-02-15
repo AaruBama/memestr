@@ -37,7 +37,7 @@ function LoginModal({ isOpen, onClose }) {
     }
 
     return (
-        <Transition.Root show={isOpen} as={Fragment}>
+        <Transition.Root show={isOpen} as={Fragment} className="z-50">
             <Dialog
                 as="div"
                 className="relative z-40"
