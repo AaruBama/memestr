@@ -331,7 +331,7 @@ function Posts(props) {
     }
 
     function convertHashtagsToLinks(text) {
-        const hashtagRegex = /#(\w+)/g;
+        const hashtagRegex = /#(\w+)(?=\s|#|$)/g;
         const tokens = [];
         let match;
         let lastIndex = 0;
