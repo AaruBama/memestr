@@ -80,34 +80,29 @@ export async function upvotePost(noteId, userPublicKey) {
     const userData = JSON.parse(storedData);
     userPublicKey = userData.pubKey;
 
-    if (!userPublicKey) {
-        alert('Invalid user data.');
-        return false;
-    }
+    let upvoteEvent = {
+        kind: 7,
+        pubkey: userPublicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ['e', noteId],
+            ['p', userData.pubKey],
+        ],
+        content: '+',
+    };
 
-    let usersLikes = JSON.parse(localStorage.getItem('usersLikes')) || {};
-    if (usersLikes[userPublicKey] && usersLikes[userPublicKey][noteId]) {
-        alert('Already liked this post');
-        return false;
-    }
     try {
-        let sk = nip19.decode(userData.privateKey);
-
+        if (userData.privateKey) {
+            let sk = nip19.decode(userData.privateKey);
+            upvoteEvent.id = getEventHash(upvoteEvent);
+            upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
+        } else if (window.nostr) {
+            upvoteEvent = await window.nostr.signEvent(upvoteEvent);
+        } else {
+            throw new Error('No authentication method available');
+        }
         const pool = new SimplePool();
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
-
-        let upvoteEvent = {
-            kind: 7,
-            pubkey: userPublicKey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [
-                ['e', noteId],
-                ['p', userPublicKey],
-            ],
-            content: '+',
-        };
-        upvoteEvent.id = getEventHash(upvoteEvent);
-        upvoteEvent.sig = getSignature(upvoteEvent, sk.data);
         await pool.publish(relays, upvoteEvent);
         manageLikedPosts(noteId, userPublicKey, true);
         pool.close(relays);
