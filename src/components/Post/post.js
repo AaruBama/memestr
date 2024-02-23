@@ -10,6 +10,7 @@ import {
     upvotePost,
     getLocalLikeCountForPost,
     manageLikedPosts,
+    convertHashtagsToLinks,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
@@ -75,7 +76,7 @@ function Post() {
         }
 
         let data = {
-            title: removeHashtagsAndLinks(post.content),
+            title: convertHashtagsToLinks(removeHashtagsAndLinks(post.content)),
             imageLink: extractLinksFromText(post.content),
             opPubKey: post.pubKey,
         };
@@ -313,12 +314,12 @@ function Post() {
                         {isLoading ? (
                             <CommentSpinner />
                         ) : replies.length === 0 ? (
-                            <div className="text-gray-500 text-center my-4 lg:mr-60">
+                            <div className="pb-16 md:text-gray-500 text-center my-4 lg:mr-60">
                                 No comments yet.
                             </div>
                         ) : (
                             <div className="flex justify-center lg:mr-60">
-                                <div className="bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
+                                <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
                                     {replies.map((object, index) => (
                                         <Comments key={index} reply={object} />
                                     ))}
