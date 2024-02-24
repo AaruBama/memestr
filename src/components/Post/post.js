@@ -220,13 +220,13 @@ function Post() {
                 <main className="flex-1 overflow-y-auto">
                     <div className="mt-16 flex flex-col items-center lg:mr-60">
                         <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
-                            <div className="p-4 ">
+                            <div className="px-4 py-2 ">
                                 <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
                                     {postData['title']}
                                 </h3>
                             </div>
 
-                            <div className="w-full">
+                            <div className="w-full border-t-2 border-gray-300">
                                 <img
                                     alt={''}
                                     src={postData['imageLink']}
