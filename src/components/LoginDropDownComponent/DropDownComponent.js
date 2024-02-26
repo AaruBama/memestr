@@ -9,10 +9,7 @@ import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
 import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
-import {
-    getProfileFromPublicKey,
-    getUserDetailsFromPublicKey,
-} from '../Profile';
+import { getUserDetailsFromPublicKey } from '../Profile';
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
@@ -70,11 +67,8 @@ function DropdownComponent() {
         if (window.nostr) {
             try {
                 const publicKey = await window.nostr.getPublicKey();
-                const profile = await getProfileFromPublicKey(publicKey);
-                console.log(profile);
                 const userDetails =
                     await getUserDetailsFromPublicKey(publicKey);
-
                 if (userDetails) {
                     setUserDetails({
                         display_name: userDetails.display_name,
@@ -102,7 +96,7 @@ function DropdownComponent() {
             }
         } else {
             alert(
-                'Nostr extension not detected. Please install it to use this login method.',
+                'No extension found. Please try logging in with key instead.',
             );
         }
     };
@@ -124,9 +118,6 @@ function DropdownComponent() {
         setIsLoggedIn(false);
         alert('Logged out successfully');
     }
-
-    const menuItemsCount = isLoggedIn ? 2 : 3;
-    const menuHeight = menuItemsCount === 3 ? 'h-36' : 'h-24';
     return (
         <div className="inline-block text-left">
             <Menu as="div" className="relative ">
@@ -167,7 +158,7 @@ function DropdownComponent() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95">
                     <Menu.Items
-                        className={`absolute z-50 md:z-10 mb-12 md:mt-12 w-48 ${menuHeight} p-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none right-0 md:right-0 bottom-0 md:top-0`}>
+                        className={`absolute z-50 md:z-10 mb-12 md:mt-12 w-48 h-max p-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none right-0 md:right-0 bottom-0 md:top-0`}>
                         <div className="py-1">
                             {!isLoggedIn ? (
                                 <>
