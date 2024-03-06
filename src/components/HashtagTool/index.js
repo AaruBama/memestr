@@ -191,6 +191,7 @@ export function HashTagToolProvider({ children, filterTags }) {
         setScrollPosition,
         LoadMoreMedia,
         isLoading,
+        filterTags,
     };
 
     return (
@@ -198,6 +199,13 @@ export function HashTagToolProvider({ children, filterTags }) {
             {isLoading ? <Spinner /> : children}
         </HashTagContext.Provider>
     );
+}
+export function useResetScrollOnFilterChange(filterTags) {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        // Or, if you're scrolling within a specific element:
+        // document.getElementById('your-scrollable-element-id').scrollTop = 0;
+    }, [filterTags]);
 }
 
 // Custom hook to access the context
@@ -247,9 +255,10 @@ export function useHashTagContext() {
 // }
 
 export function HashtagTool() {
-    const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
+    const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+    useResetScrollOnFilterChange(filterTags);
 
     function showNewPostModal() {
         setNewPostModal(true);
