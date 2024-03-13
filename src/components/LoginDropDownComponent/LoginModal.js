@@ -118,10 +118,10 @@ function LoginModal({ isOpen, onClose }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="px-6 py-3 bg-white text-right">
+                                <div className="px-6 pb-3 bg-white text-right">
                                     <button
                                         type="button"
-                                        className={`inline-flex justify-end rounded-md border border-transparent shadow-sm px-4 py-2 text-white font-medium sm:text-sm ${
+                                        className={`inline-flex justify-end rounded-full border border-transparent shadow-sm px-10 py-2 text-white font-medium sm:text-sm ${
                                             privateKey.trim()
                                                 ? 'bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700'
                                                 : 'bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700'

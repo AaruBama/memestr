@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReactComponent as ProfileIcon } from '../../Icons/Profile.svg';
-import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
+// import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
 const UploadAndDisplayImage = ({ setPicture }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -71,39 +71,37 @@ const UploadAndDisplayImage = ({ setPicture }) => {
     };
 
     return (
-        <div className="mt-4 border-2 border-gray-300 shadow-sm rounded-lg p-4 bg-gray-50">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
+        <div className="mt-4 border border-gray-200 shadow-sm rounded-lg p-4 bg-gray-50">
+            <div className="flex items-center justify-center">
+                <label className="cursor-pointer">
                     <div
-                        className={`flex items-center justify-center w-24 h-24 border-2 border-gray-300 rounded-full ${
-                            selectedImage ? 'mr-4' : ''
+                        className={`w-24 h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center ${
+                            selectedImage
+                                ? 'border-blue-500'
+                                : 'border-gray-300'
                         }`}>
                         {selectedImage ? (
                             <img
                                 src={URL.createObjectURL(selectedImage)}
                                 alt="Uploaded"
-                                className="w-full h-full rounded-full object-cover"
+                                className="w-full h-full object-cover"
                             />
                         ) : (
-                            <ProfileIcon className="w-16 h-16 text-white" />
+                            <div className="flex items-center justify-center">
+                                <ProfileIcon className="w-16 h-16 text-gray-400" />
+                            </div>
                         )}
                     </div>
-                    {selectedImage && (
-                        <button
-                            onClick={() => {
-                                setSelectedImage(null);
-                                setPicture('');
-                            }}
-                            className="flex items-center justify-center ml-4 w-10 h-10 bg-red-500 rounded-full hover:bg-red-600 transition duration-300">
-                            <CloseIcon className="w-6 h-6 text-white" />
-                        </button>
-                    )}
-                </div>
-
-                <label className="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow-sm tracking-wide uppercase border border-gray-300 cursor-pointer hover:bg-gray-300 transition duration-300">
-                    <span className="text-base leading-normal">
-                        Upload Image
-                    </span>
+                    <div className="flex flex-col items-center mt-3">
+                        <span className="block text-sm font-medium text-gray-700">
+                            {selectedImage ? 'Change Image' : 'Upload Image'}
+                        </span>
+                        <span className="block text-xs text-gray-500">
+                            {selectedImage
+                                ? 'Tap to select another'
+                                : 'Tap to select a file'}
+                        </span>
+                    </div>
                     <input
                         type="file"
                         className="hidden"

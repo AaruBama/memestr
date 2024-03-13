@@ -5,6 +5,39 @@ import UploadAndDisplayImage from './UploadUserPicture';
 import { getProfileFromPublicKey } from '../Profile';
 import { ReactComponent as TickIcon } from '../../Icons/RoundTick.svg';
 
+function InputField({ label, placeholder, value, onChange }) {
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-700">
+                {label}
+            </label>
+            <input
+                type="text"
+                className="w-full px-4 py-2 mt-1 border rounded-md bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+            />
+        </div>
+    );
+}
+
+function TextAreaField({ label, placeholder, value, onChange }) {
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-700">
+                {label}
+            </label>
+            <textarea
+                className="w-full px-4 py-2 mt-1 border rounded-md bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                rows="3"
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}></textarea>
+        </div>
+    );
+}
+
 function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     const [username, setUsername] = useState('');
     const [aboutMe, setAboutMe] = useState('');
@@ -142,64 +175,41 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                                 leave="ease-in duration-200"
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    <div className="text-center">
+                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-lg transition-all">
+                                    <div className="text-center mb-4">
                                         <Dialog.Title
                                             as="h3"
-                                            className="text-lg font-medium leading-6 text-gray-900">
+                                            className="text-xl font-semibold leading-6 text-gray-800">
                                             Create Your Account
                                         </Dialog.Title>
-                                        <p className="text-sm text-gray-500">
-                                            Join the world of memes!
+                                        <p className="text-sm text-gray-600">
+                                            Start exploring the world of memes!
                                         </p>
                                     </div>
 
-                                    <div className="mt-4">
-                                        <label
-                                            htmlFor="username"
-                                            className="block text-sm font-medium text-gray-700 py-2">
-                                            Username:
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-2 border rounded-lg bg-gray-50  text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                                    <div className="space-y-4">
+                                        <InputField
+                                            label="Username:"
                                             placeholder="Username"
                                             value={username}
                                             onChange={handleUsernameChange}
                                         />
-                                    </div>
 
-                                    <div className="mt-4">
-                                        <label
-                                            htmlFor="aboutMe"
-                                            className="block text-sm font-medium text-gray-700 py-2">
-                                            About Me:
-                                        </label>
-                                        <textarea
-                                            className="w-full px-4 py-2 border rounded-lg  bg-gray-50 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-                                            rows="3"
+                                        <TextAreaField
+                                            label="About Me:"
                                             placeholder="Tell us about yourself"
                                             value={aboutMe}
-                                            onChange={
-                                                handleAboutMeChange
-                                            }></textarea>
-                                    </div>
+                                            onChange={handleAboutMeChange}
+                                        />
 
-                                    <div className="mt-4 ">
-                                        <label
-                                            htmlFor="imageUpload"
-                                            className="block text-sm font-medium text-gray-700">
-                                            Profile Picture:
-                                        </label>
                                         <UploadAndDisplayImage
+                                            label="Profile Picture:"
                                             setPicture={choosePicture}
                                         />
-                                    </div>
 
-                                    <div className="mt-4 flex justify-end">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
+                                            className="w-full rounded-md bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-bold text-white shadow focus:outline-none transition duration-300"
                                             onClick={async () => {
                                                 await registerAccount(sk, pk);
                                                 onClose();

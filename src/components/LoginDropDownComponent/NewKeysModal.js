@@ -95,7 +95,7 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                     leave="ease-in duration-200"
                                     leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                         <div className="bg-white px-6 py-5">
                                             <div className="text-center">
                                                 <Dialog.Title
@@ -186,18 +186,14 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
                                         </div>
 
                                         {isTooltipOpen && (
-                                            <div className="absolute bottom-4 left-16 w-64 p-4 bg-white border border-gray-300 shadow-lg rounded-lg text-sm z-50">
+                                            <div className=" m-4 p-4 bg-white border border-gray-300 shadow-lg rounded-lg text-sm">
                                                 <p>
-                                                    Our meme-sharing application
-                                                    leverages the Nostr
-                                                    protocol, which requires a
-                                                    unique set of cryptographic
-                                                    keys for each user. The
-                                                    public key is your
-                                                    identifier on the network,
-                                                    while the private key
-                                                    secures your communications
-                                                    and should be kept secret.
+                                                    Our application leverages
+                                                    cryptographic keys for
+                                                    security. The public key is
+                                                    your identifier, while the
+                                                    private key should be kept
+                                                    secret.
                                                 </p>
                                             </div>
                                         )}
