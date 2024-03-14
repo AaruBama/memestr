@@ -69,7 +69,7 @@ function HeaderBar({ isSearchVisible }) {
                 className={
                     'flex flex-row items-center justify-between h-14 px-3'
                 }>
-                <div className="flex basis-1/3 justify-start pl-3">
+                <div className="flex basis-1/3 justify-start ">
                     <Menu />
                 </div>
 
