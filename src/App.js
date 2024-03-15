@@ -2,9 +2,9 @@ import './App.css';
 import { HashTagToolProvider } from './components/HashtagTool';
 import PostViewTool from './components/Post/post.js';
 import HeaderBar from './components/Login';
-import FootorBar from './components/Login/FootorBar.js';
+import FooterBar from './components/Login/FooterBar.js';
 import { AuthProvider } from './AuthContext';
-import MobileSearchBar from './components/Login/MobileSearchBar.js';
+import MobileSearchPage from './components/Login/MobileSearchPage.js';
 import React from 'react';
 import {
     HashRouter as Router,
@@ -57,7 +57,7 @@ function App() {
                             element={<SearchRouteWrapper />}
                         />
 
-                        <Route path="/search" element={<MobileSearchBar />} />
+                        <Route path="/search" element={<MobileSearchPage />} />
                     </Routes>
                 </HashTagToolProvider>
 
@@ -85,7 +85,7 @@ function App() {
                         />
                     </Routes>
                 </HashTagToolProvider>
-                <FootorBar />
+                <FooterBar />
             </Router>
         </AuthProvider>
     );

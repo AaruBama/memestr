@@ -298,8 +298,8 @@ export function HashtagTool() {
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        className="block md:fixed z-49 bottom-4 right-3 right-8 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl  ">
-                        <UploadSvg />
+                        className="hidden md:block fixed bottom-4 right-8 z-49 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
+                        <UploadSvg className="m-auto h-6 w-6" />
                     </button>
 
                     {newPostModal && (
