@@ -66,144 +66,140 @@ function RegistrationModal({ isOpen, onClose, sk, pk }) {
     }, [copied]);
     return (
         <>
-            <div className="relative z-0">
-                <Transition.Root show={isOpen} as={Fragment}>
-                    <Dialog
-                        as="div"
-                        className="relative z-40"
-                        onClose={() => {
-                            onClose();
-                        }}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-10">
-                            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                        </Transition.Child>
+            <Transition.Root show={isOpen} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="relative z-50"
+                    onClose={() => {
+                        onClose();
+                    }}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-10">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                    </Transition.Child>
 
-                        <div className="fixed inset-0 z-10 overflow-hidden">
-                            <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                        <div className="bg-white px-6 py-5">
-                                            <div className="text-center">
-                                                <Dialog.Title
-                                                    as="h3"
-                                                    className="text-lg font-semibold leading-6 text-gray-800">
-                                                    Your Keys
-                                                </Dialog.Title>
-                                                <p className="mt-1 text-sm text-gray-600">
-                                                    Please save these keys
-                                                    securely.
-                                                </p>
+                    <div className="fixed inset-0 z-10 overflow-hidden">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                    <div className="bg-white px-6 py-5">
+                                        <div className="text-center">
+                                            <Dialog.Title
+                                                as="h3"
+                                                className="text-lg font-semibold leading-6 text-gray-800">
+                                                Your Keys
+                                            </Dialog.Title>
+                                            <p className="mt-1 text-sm text-gray-600">
+                                                Please save these keys securely.
+                                            </p>
 
-                                                <div className="mt-4">
-                                                    <div className="text-left">
-                                                        <div className="flex justify-between items-center mb-2">
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                Public Key:
-                                                            </span>
-                                                            <div
-                                                                onClick={() =>
-                                                                    copyValueToClipboardPublic(
-                                                                        pk,
-                                                                    )
-                                                                }
-                                                                className="cursor-pointer transition duration-300 ease-in-out transform ">
-                                                                {copySuccessPublic ? (
-                                                                    <div className="opacity-0 transition-opacity duration-1000">
-                                                                        <Tick className="h-6 w-6 text-green-500" />
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className="opacity-100 transition-opacity duration-1000">
-                                                                        <Copy className="h-6 w-6" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <div className="bg-gray-50 p-2 text-sm text-gray-700 border border-gray-300 rounded-md shadow-sm">
-                                                            <div className="break-all">
-                                                                {pk}
-                                                            </div>
+                                            <div className="mt-4">
+                                                <div className="text-left">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-sm font-medium text-gray-700">
+                                                            Public Key:
+                                                        </span>
+                                                        <div
+                                                            onClick={() =>
+                                                                copyValueToClipboardPublic(
+                                                                    pk,
+                                                                )
+                                                            }
+                                                            className="cursor-pointer transition duration-300 ease-in-out transform ">
+                                                            {copySuccessPublic ? (
+                                                                <div className="opacity-0 transition-opacity duration-1000">
+                                                                    <Tick className="h-6 w-6 text-green-500" />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="opacity-100 transition-opacity duration-1000">
+                                                                    <Copy className="h-6 w-6" />
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
-                                                    <div className="text-left mt-4">
-                                                        <div className="flex justify-between items-center mb-2">
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                Private Key:
-                                                            </span>
-                                                            <div
-                                                                onClick={() =>
-                                                                    copyValueToClipboardPrivate(
-                                                                        sk,
-                                                                    )
-                                                                }
-                                                                className="cursor-pointer transition duration-300 ease-in-out transform ">
-                                                                {copySuccessPrivate ? (
-                                                                    <div className="opacity-0 transition-opacity duration-1000">
-                                                                        <Tick className="h-6 w-6 text-green-500" />
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className="opacity-100 transition-opacity duration-1000">
-                                                                        <Copy className="h-6 w-6" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
+                                                    <div className="bg-gray-50 p-2 text-sm text-gray-700 border border-gray-300 rounded-md shadow-sm">
+                                                        <div className="break-all">
+                                                            {pk}
                                                         </div>
-                                                        <div className="bg-gray-50 p-2 text-sm text-gray-700 border border-gray-300 rounded-md shadow-sm hide-scrollbar">
-                                                            <div className="break-all">
-                                                                {sk}
-                                                            </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-left mt-4">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-sm font-medium text-gray-700">
+                                                            Private Key:
+                                                        </span>
+                                                        <div
+                                                            onClick={() =>
+                                                                copyValueToClipboardPrivate(
+                                                                    sk,
+                                                                )
+                                                            }
+                                                            className="cursor-pointer transition duration-300 ease-in-out transform ">
+                                                            {copySuccessPrivate ? (
+                                                                <div className="opacity-0 transition-opacity duration-1000">
+                                                                    <Tick className="h-6 w-6 text-green-500" />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="opacity-100 transition-opacity duration-1000">
+                                                                    <Copy className="h-6 w-6" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-gray-50 p-2 text-sm text-gray-700 border border-gray-300 rounded-md shadow-sm hide-scrollbar">
+                                                        <div className="break-all">
+                                                            {sk}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex justify-between items-center bg-white px-6 py-3">
-                                            <div className="relative">
-                                                <QuestionIcon
-                                                    className="h-6 w-6 cursor-pointer"
-                                                    onClick={toggleTooltip}
-                                                />
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
-                                                onClick={() => onClose()}>
-                                                I've Saved my Keys
-                                            </button>
+                                    </div>
+                                    <div className="flex justify-between items-center bg-white px-6 py-3">
+                                        <div className="relative">
+                                            <QuestionIcon
+                                                className="h-6 w-6 cursor-pointer"
+                                                onClick={toggleTooltip}
+                                            />
                                         </div>
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-gradient-to-r from-blue-500 to-teal-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none"
+                                            onClick={() => onClose()}>
+                                            I've Saved my Keys
+                                        </button>
+                                    </div>
 
-                                        {isTooltipOpen && (
-                                            <div className=" m-4 p-4 bg-white border border-gray-300 shadow-lg rounded-lg text-sm">
-                                                <p>
-                                                    Our application leverages
-                                                    cryptographic keys for
-                                                    security. The public key is
-                                                    your identifier, while the
-                                                    private key should be kept
-                                                    secret.
-                                                </p>
-                                            </div>
-                                        )}
-                                    </Dialog.Panel>
-                                </Transition.Child>
-                            </div>
+                                    {isTooltipOpen && (
+                                        <div className=" m-4 p-4 bg-white border border-gray-300 shadow-lg rounded-lg text-sm">
+                                            <p>
+                                                Our application leverages
+                                                cryptographic keys for security.
+                                                The public key is your
+                                                identifier, while the private
+                                                key should be kept secret.
+                                            </p>
+                                        </div>
+                                    )}
+                                </Dialog.Panel>
+                            </Transition.Child>
                         </div>
-                    </Dialog>
-                </Transition.Root>
-            </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
         </>
     );
 }

@@ -2,10 +2,28 @@ import './App.css';
 import { HashTagToolProvider } from './components/HashtagTool';
 import PostViewTool from './components/Post/post.js';
 import HeaderBar from './components/Login';
-import { AuthProvider } from './AuthContext'; // Import AuthProvider
+import FooterBar from './components/Login/FooterBar.js';
+import { AuthProvider } from './AuthContext';
+import MobileSearchPage from './components/Login/MobileSearchPage.js';
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+    HashRouter as Router,
+    Routes,
+    Route,
+    useParams,
+    useLocation,
+} from 'react-router-dom';
 import HashtagTool from './components/HashtagTool';
+
+function SearchRouteWrapper() {
+    let { searchQuery } = useParams();
+    return (
+        <HashTagToolProvider filterTags={[searchQuery]}>
+            <HashtagTool />
+        </HashTagToolProvider>
+    );
+}
+
 function App() {
     const pageFilters = {
         '/': null,
@@ -15,10 +33,18 @@ function App() {
         '/photography': ['photography'],
     };
 
+    function ConditionalHeader() {
+        let location = useLocation();
+        if (location.pathname !== '/search') {
+            return <HeaderBar />;
+        }
+        return null;
+    }
+
     return (
         <AuthProvider>
             <Router>
-                <HeaderBar />
+                <ConditionalHeader />
                 <HashTagToolProvider filterTags={pageFilters['/']}>
                     <Routes>
                         <Route exact path="/" element={<HashtagTool />} />
@@ -26,6 +52,12 @@ function App() {
                             path="/post/:postId"
                             element={<PostViewTool />}
                         />
+                        <Route
+                            path="/search/:searchQuery"
+                            element={<SearchRouteWrapper />}
+                        />
+
+                        <Route path="/search" element={<MobileSearchPage />} />
                     </Routes>
                 </HashTagToolProvider>
 
@@ -53,6 +85,7 @@ function App() {
                         />
                     </Routes>
                 </HashTagToolProvider>
+                <FooterBar />
             </Router>
         </AuthProvider>
     );

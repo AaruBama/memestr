@@ -55,3 +55,32 @@
 /*    float: right;*/
 /*    right: 5px;*/
 /*}*/
+
+.headerClasses {
+  z-index: 100;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.upload-btn-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgb(243, 244, 245);
+  z-index: -1;
+}
+
+.upload-button {
+  background-color: transparent;
+  padding: 15px;
+  z-index: 1;
+}
