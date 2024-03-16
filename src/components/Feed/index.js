@@ -32,15 +32,13 @@ function useIntersectionObserver(loadMore) {
 
 function Feed(props) {
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
+    const triggerPoint = Math.max(0, props.notes.length - 10);
     return (
         <div className="feed-container bg-white mt-12 mx-auto max-w-xl lg:mr-60">
             {props.notes.map((note, index) => (
                 <div key={note.id}>
                     <Posts note={note} />
-                    {/* Load more reference */}
-                    {index === props.notes.length - 10 && (
-                        <div ref={loadMoreRef} />
-                    )}
+                    {index === triggerPoint && <div ref={loadMoreRef} />}
                 </div>
             ))}
         </div>
