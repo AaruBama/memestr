@@ -294,8 +294,10 @@ function Posts(props) {
     }, [postCreatedAt]);
 
     useEffect(() => {
-        const localLikeCount = getLocalLikeCountForPost(props.note.id);
-        setVotesCount(props.note.voteCount + localLikeCount);
+        // const localLikeCount = getLocalLikeCountForPost(props.note.id);
+        // console.log(localLikeCount);
+        console.log(props.note.voteCount);
+        setVotesCount(props.note.voteCount);
         (async () => {
             try {
                 var cc = await getCommentCount(props.note.id);
@@ -414,8 +416,7 @@ function Posts(props) {
         upvotePost(props.note.id, userPublicKey).then(wasLiked => {
             if (wasLiked) {
                 manageLikedPosts(props.note.id, userPublicKey, true);
-                const localLikeCount = getLocalLikeCountForPost(props.note.id);
-                setVotesCount(localLikeCount + props.note.voteCount);
+                setVotesCount(props.note.voteCount + 1);
                 setFillLike(true);
             }
         });
