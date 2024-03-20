@@ -11,6 +11,7 @@ import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 const MAX_POSTS = 200;
 
 export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
@@ -172,7 +173,7 @@ export const saveComment = (postId, comment) => {
     const pool = new SimplePool();
     const storedData = localStorage.getItem('memestr');
     if (!storedData) {
-        alert('Login required to upvote.');
+        alert('Login required to comment.');
         return;
     }
     let uesrPublicKey = JSON.parse(storedData).pubKey;
@@ -248,6 +249,9 @@ function Posts(props) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { isLoggedIn } = useAuth();
     const [userPublicKey, setUserPublicKey] = useState(null);
+
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState('');
 
     useEffect(() => {
         const storedData = localStorage.getItem('memestr');
@@ -335,7 +339,9 @@ function Posts(props) {
     function handleZapButton() {
         const storedData = localStorage.getItem('memestr');
         if (!storedData) {
-            alert('Login to send zaps.');
+            setNotificationMessage('Login to send Zaps');
+            setShowNotification(true);
+            setTimeout(() => setShowNotification(false), 3000);
             return false;
         }
         openModal();
@@ -408,7 +414,9 @@ function Posts(props) {
 
     function handleLikeButtonClick() {
         if (!isLoggedIn) {
-            alert('Login required to upvote.');
+            setNotificationMessage('Login required to upvote');
+            setShowNotification(true);
+            setTimeout(() => setShowNotification(false), 3000);
             return;
         }
         upvotePost(props.note.id, userPublicKey).then(wasLiked => {
@@ -489,7 +497,7 @@ function Posts(props) {
                             </button>
 
                             <button onClick={openShareModal} className="p-1">
-                                <ShareButtonSvg className="h-4 w-4 text-gray-600" />
+                                <ShareButtonSvg className="h-6 w-6 text-gray-600" />
                             </button>
                         </div>
                     </div>
@@ -503,6 +511,33 @@ function Posts(props) {
                 onClose={closeShareModal}
                 postUrl={postUrl}
             />
+            {/* {showLoginNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <p className="text-bold text-white px-2">
+                            Login required to upvote
+                        </p>
+                        <CloseIcon
+                            className="h-6 w-6 mr-2 text-white"
+                            onClick={handleCloseNotification}
+                        />
+                    </div>
+                </div>
+            )} */}
+
+            {showNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <p className="text-bold text-white px-2">
+                            {notificationMessage}
+                        </p>
+                        <CloseIcon
+                            className="h-6 w-6 mr-2 text-white"
+                            onClick={() => setShowNotification(false)}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 }

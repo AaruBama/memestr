@@ -235,7 +235,6 @@ function Post() {
                                     {postData['title']}
                                 </h3>
                             </div>
-
                             <div className="w-full border-t-2 border-gray-300">
                                 <img
                                     alt={''}
@@ -244,7 +243,6 @@ function Post() {
                                 />
                             </div>
                             <div className="flex justify-between items-center p-4 bg-gray-50">
-                                {/* Zap Button */}
                                 <button
                                     onClick={handleZapButton}
                                     className="flex items-center">
@@ -288,7 +286,7 @@ function Post() {
                                 <button
                                     onClick={openShareModal}
                                     className="flex items-center">
-                                    <ShareButtonSvg className="h-4 w-4 text-black" />
+                                    <ShareButtonSvg className="h-6 w-6 text-black" />
                                 </button>
                             </div>
                         </div>
@@ -329,7 +327,7 @@ function Post() {
                             </div>
                         ) : (
                             <div className="flex justify-center lg:mr-60">
-                                <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
+                                <div className="pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
                                     {replies.map((object, index) => (
                                         <Comments key={index} reply={object} />
                                     ))}
