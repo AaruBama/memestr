@@ -6,6 +6,7 @@ import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
 import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
 import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
+import pic from '../LoginDropDownComponent/default_profile.jpg';
 import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
@@ -122,9 +123,20 @@ function DropdownComponent() {
         <div className="inline-block text-left">
             <Menu as="div" className="relative ">
                 <div>
-                    <Menu.Button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hidden md:inline-flex">
-                        {!userDetails || userDetails.picture === undefined ? (
+                    <Menu.Button
+                        className={
+                            !userDetails
+                                ? 'inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hidden md:inline-flex'
+                                : 'inline-flex items-center justify-center rounded-full bg-white hidden p-1 md:inline-flex'
+                        }>
+                        {!userDetails ? (
                             <Profile />
+                        ) : userDetails.picture === undefined ? (
+                            <img
+                                src={pic}
+                                alt="Default Profile"
+                                className="w-10 h-10 rounded-full"
+                            />
                         ) : (
                             <img
                                 src={userDetails.picture}
@@ -137,8 +149,14 @@ function DropdownComponent() {
 
                 <div className="md:hidden">
                     <Menu.Button>
-                        {!userDetails || userDetails.picture === undefined ? (
+                        {!userDetails ? (
                             <ProfileCircle />
+                        ) : userDetails.picture === undefined ? (
+                            <img
+                                src={pic}
+                                alt="Default Profile"
+                                className="w-8 h-8 rounded-full"
+                            />
                         ) : (
                             <img
                                 src={userDetails.picture}
