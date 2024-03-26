@@ -3,6 +3,7 @@ import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
 import noProfilePictureURL from '../../../Icons/noImageUser.svg';
+import { ReactComponent as CloseIcon } from '../../../Icons/CloseIcon.svg';
 import './style.css';
 
 // import ShareOnWhatsApp from '../shareOnWhatsApp';
@@ -40,7 +41,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
+    const [showNotification, setShowNotification] = useState(false);
     const [searchedUser, setSearchedUser] = useState([]);
     // const [cachedUsers, setCachedUser] = useState(JSON.parse(localStorage.getItem("frequent_shares")) || []);
 
@@ -172,8 +173,9 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
         return storedData !== null;
     }
 
-    function showSignInAlert() {
-        alert('Please sign in to send messages.');
+    function showSignInNotification() {
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
     }
 
     return (
@@ -328,7 +330,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                                     );
                                                 } else {
                                                     // User is not logged in, show sign-in alert
-                                                    showSignInAlert(); // This will now use the correct function
+                                                    showSignInNotification(); // This will now use the correct function
                                                 }
                                             }}
                                             className={`mt-2 p-2 bg-green-500 text-white rounded ${
@@ -369,6 +371,19 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                 <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
                     <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
                         <p>Meme Sent Successfully</p>
+                    </div>
+                </div>
+            )}
+            {showNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start notification">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <p className="text-bold text-white px-2">
+                            Please Login to Send Messages
+                        </p>
+                        <CloseIcon
+                            className="h-6 w-6 mr-2 text-white"
+                            onClick={() => setShowNotification(false)}
+                        />
                     </div>
                 </div>
             )}

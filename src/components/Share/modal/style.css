@@ -12,3 +12,7 @@
 .animate-slideInSlideOut {
   animation: slideInSlideOut 3s ease-in-out forwards;
 }
+
+.notification {
+  z-index: 9999;
+}
