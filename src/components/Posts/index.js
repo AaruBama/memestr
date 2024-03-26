@@ -511,19 +511,6 @@ function Posts(props) {
                 onClose={closeShareModal}
                 postUrl={postUrl}
             />
-            {/* {showLoginNotification && (
-                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
-                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
-                        <p className="text-bold text-white px-2">
-                            Login required to upvote
-                        </p>
-                        <CloseIcon
-                            className="h-6 w-6 mr-2 text-white"
-                            onClick={handleCloseNotification}
-                        />
-                    </div>
-                </div>
-            )} */}
 
             {showNotification && (
                 <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
