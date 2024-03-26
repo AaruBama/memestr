@@ -3,6 +3,7 @@ import { relayInit, SimplePool } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
+import TrendingSidebar from './TrendingSideBar';
 import Sidebar from './SideBar';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 
@@ -309,6 +310,7 @@ export function HashtagTool() {
                         />
                     )}
                 </main>
+                <TrendingSidebar />
             </div>
         </>
     );
