@@ -294,9 +294,6 @@ function Posts(props) {
     }, [postCreatedAt]);
 
     useEffect(() => {
-        // const localLikeCount = getLocalLikeCountForPost(props.note.id);
-        // console.log(localLikeCount);
-        console.log(props.note.voteCount);
         setVotesCount(props.note.voteCount);
         (async () => {
             try {
