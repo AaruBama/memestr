@@ -122,9 +122,11 @@ function Post() {
             alert('Login required to comment.');
             return;
         }
+        const userData = JSON.parse(storedData);
+
         let uesrPublicKey = JSON.parse(storedData).pubKey;
         let userPrivateKey = JSON.parse(storedData).privateKey;
-        let sk = nip19.decode(userPrivateKey);
+
         let commentEvent = {
             kind: 1,
             pubkey: uesrPublicKey,
@@ -137,8 +139,16 @@ function Post() {
             content: comment,
         };
 
-        commentEvent.id = getEventHash(commentEvent);
-        commentEvent.sig = getSignature(commentEvent, sk.data);
+        if (userData.privateKey) {
+            let sk = nip19.decode(userPrivateKey);
+            commentEvent.id = getEventHash(commentEvent);
+            commentEvent.sig = getSignature(commentEvent, sk.data);
+        } else if (window.nostr) {
+            commentEvent = await window.nostr.signEvent(commentEvent);
+        } else {
+            throw new Error('No authentication method available');
+        }
+
         try {
             let x = await pool.publish(relays, commentEvent);
             Promise.resolve(x);

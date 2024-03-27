@@ -27,14 +27,22 @@ export async function sendDM(pubKeys, text) {
         alert('Login required to upvote.');
         return;
     }
+    const userData = JSON.parse(storedData);
     let userPublicKey = JSON.parse(storedData).pubKey;
     let userPrivateKey = JSON.parse(storedData).privateKey;
-    let sk = nip19.decode(userPrivateKey);
+
     for (const key of pubKeys) {
         const relay = relayInit('wss://relay.damus.io');
         await relay.connect();
         let theirPublicKey = key;
-        let content = await nip04.encrypt(sk.data, theirPublicKey, text);
+        let content;
+        let sk;
+        if (userData.privateKey) {
+            sk = nip19.decode(userPrivateKey);
+            content = await nip04.encrypt(sk.data, theirPublicKey, text);
+        } else if (window.nostr) {
+            content = await window.nostr.nip04.encrypt(theirPublicKey, text);
+        }
         let event = {
             pubkey: userPublicKey,
             created_at: Math.floor(Date.now() / 1000),
@@ -42,7 +50,14 @@ export async function sendDM(pubKeys, text) {
             tags: [['p', theirPublicKey]],
             content: content,
         };
-        const signedEvent = finishEvent(event, sk.data);
+        let signedEvent;
+
+        if (userData.privateKey) {
+            sk = nip19.decode(userPrivateKey);
+            signedEvent = finishEvent(event, sk.data);
+        } else if (window.nostr) {
+            signedEvent = await window.nostr.signEvent(event);
+        }
         console.log('Publishing event. should check DMS');
         let x = await relay.publish(signedEvent);
         console.log('x is ', x);

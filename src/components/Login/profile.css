@@ -84,3 +84,16 @@
   padding: 15px;
   z-index: 1;
 }
+
+.footer-bar {
+  z-index: 9999;
+}
+@media (max-width: 320px) {
+  .footer-bar button {
+    padding: 0 4px;
+  }
+  .footer-bar svg {
+    width: 24px;
+    height: 24px;
+  }
+}
