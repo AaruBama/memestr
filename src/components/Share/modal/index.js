@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { useState } from 'react';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
 import noProfilePictureURL from '../../../Icons/noImageUser.svg';
@@ -10,31 +10,31 @@ import './style.css';
 import { ReactComponent as CopyLinkSvg } from '../../../Icons/CopyLinkSvg.svg';
 import { getUserFromName, sendDM } from '../../../helpers/user';
 // Inside ShareModal component
-const Alert = ({ message, duration }) => {
-    const [showAlert, setShowAlert] = useState(true);
+// const Alert = ({ message, duration }) => {
+//     const [showAlert, setShowAlert] = useState(true);
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShowAlert(false);
-        }, duration);
+//     useEffect(() => {
+//         const timeout = setTimeout(() => {
+//             setShowAlert(false);
+//         }, duration);
 
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [duration]);
+//         return () => {
+//             clearTimeout(timeout);
+//         };
+//     }, [duration]);
 
-    return showAlert ? (
-        <div
-            className={`fixed inset-0 flex items-center text-yellow-400 justify-center bg-opacity-50 bg-gray-800 dark:bg-gray-900 transition-opacity`}
-            style={{
-                height: showAlert ? '5%' : '0',
-                transition: `height ${duration}ms ease-in-out`,
-            }}
-            role="alert">
-            {message}
-        </div>
-    ) : null;
-};
+//     return showAlert ? (
+//         <div
+//             className={`fixed inset-0 flex items-center text-yellow-400 justify-center bg-opacity-50 bg-gray-800 dark:bg-gray-900 transition-opacity`}
+//             style={{
+//                 height: showAlert ? '5%' : '0',
+//                 transition: `height ${duration}ms ease-in-out`,
+//             }}
+//             role="alert">
+//             {message}
+//         </div>
+//     ) : null;
+// };
 
 export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
@@ -358,10 +358,10 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                 </Dialog>
             </Transition>
             {showAlert && (
-                <div className="relative">
-                    <div className="h-screen bg-gray-600 dark:bg-gray-900 opacity-30 absolute inset-0" />
-
-                    <Alert message="Link Copied Successfully" duration={3000} />
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
+                        <p>Link Copied Successfully</p>
+                    </div>
                 </div>
             )}
 
