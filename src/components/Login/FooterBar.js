@@ -6,6 +6,7 @@ import { ReactComponent as MessageSvg } from '../../Icons/Notification.svg';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
 import { ReactComponent as PlusSvg } from '../../Icons/PlusArrow.svg';
 import PostUpload from '../Post/newPost';
+import './profile.css';
 
 const FooterBar = () => {
     const [newPostModal, setNewPostModal] = useState(false);
@@ -25,7 +26,7 @@ const FooterBar = () => {
     }
 
     return (
-        <div className="fixed inset-x-0 bottom-0 bg-white border-t border-gray-400 shadow-md flex justify-around items-center md:hidden z-50">
+        <div className="footer-bar fixed inset-x-0 bottom-0 bg-white border-t border-gray-400 shadow-md flex justify-around items-center md:hidden z-50">
             <div className="flex w-full justify-around items-center">
                 <button
                     onClick={() => navigate('/')}

@@ -9,6 +9,7 @@ import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
 import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
+import { ReactComponent as ExtensionLogin } from '../../Icons/ExtentionLogin.svg';
 import { getUserDetailsFromPublicKey } from '../Profile';
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
@@ -202,7 +203,7 @@ function DropdownComponent() {
                                                         ? 'font-semibold'
                                                         : 'font-normal'
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm text-gray-700 hover:text-gray-900`}>
-                                                <LoginIcon className="mr-2 h-6 w-6" />
+                                                <ExtensionLogin className="mr-2 h-6 w-6" />
                                                 Extension Login
                                             </button>
                                         )}
