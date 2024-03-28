@@ -73,14 +73,17 @@ function HeaderBar({ isSearchVisible }) {
                     <Menu />
                 </div>
 
-                <div className="flex basis-1/3 justify-center">
+                <div className="flex basis-1/3 pl-32 ">
                     <Memestr />
                 </div>
 
                 <div className="flex basis-1/3 justify-end items-center">
+                    <button className="hidden md:block pr-8">
+                        <DropdownComponent />
+                    </button>
                     <form
                         onSubmit={handleSearchSubmit}
-                        className="hidden md:flex items-center w-42 px-2 ">
+                        className="hidden md:flex items-center w-80 px-2 ">
                         <div className="relative w-full">
                             <input
                                 type="search"
@@ -96,9 +99,6 @@ function HeaderBar({ isSearchVisible }) {
                             </button>
                         </div>
                     </form>
-                    <button className="hidden md:block">
-                        <DropdownComponent />
-                    </button>
                 </div>
             </header>
         </div>
