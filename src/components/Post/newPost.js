@@ -15,6 +15,8 @@ const PostUpload = ({ isOpen, onClose }) => {
     const [postStage, setPostStage] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
     const [showMaxTagsAlert, setShowMaxTagsAlert] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
+
     const MAX_TAGS = 3;
     let alertTimeout = useRef(null);
 
@@ -82,7 +84,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                 ['p', uesrPublicKey],
                 ['category', 'memestrrr'],
             ],
-            content: title + ' ' + link,
+            content: title + ' ' + link + ' ' + hashtags,
         };
 
         // console.log("event", commentEvent)
@@ -95,6 +97,8 @@ const PostUpload = ({ isOpen, onClose }) => {
             value => {
                 console.log('Success', value);
                 setPostStage(4); // Success!
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 3000);
             },
             reason => {
                 console.error('something went wrong', reason); // Error!
@@ -236,262 +240,286 @@ const PostUpload = ({ isOpen, onClose }) => {
     }, []);
 
     return (
-        <div className="z-50">
-            <Transition.Root show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={onClose}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-10">
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                    </Transition.Child>
+        <>
+            <div className="z-50">
+                <Transition.Root show={isOpen} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        className="relative z-50"
+                        onClose={onClose}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-10">
+                            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                        </Transition.Child>
 
-                    <div className="fixed inset-0 z-10 p-4 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                enterTo="opacity-100 translate-y-0 sm:scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-[95%]  sm:max-w-lg mx-auto">
-                                    <div className="flex items-center justify-between px-2 pt-2 sm:p-4">
-                                        <div className="mb-1">
-                                            <h3 className="text-lg pt-2 px-2 font-medium text-gray-900">
-                                                Upload
-                                            </h3>
+                        <div className="fixed inset-0 z-10 p-4 overflow-y-auto">
+                            <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-[95%]  sm:max-w-lg mx-auto">
+                                        <div className="flex items-center justify-between px-2 pt-2 sm:p-4">
+                                            <div className="mb-1">
+                                                <h3 className="text-lg pt-2 px-2 font-medium text-gray-900">
+                                                    Upload
+                                                </h3>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                                onClick={onClose}>
+                                                <span className="sr-only">
+                                                    Close
+                                                </span>
+
+                                                <CloseIcon />
+                                            </button>
                                         </div>
-                                        <button
-                                            type="button"
-                                            className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                            onClick={onClose}>
-                                            <span className="sr-only">
-                                                Close
-                                            </span>
 
-                                            <CloseIcon />
-                                        </button>
-                                    </div>
-
-                                    <div
-                                        className="flex-1 overflow-auto"
-                                        style={{ paddingBottom: '70px' }}>
-                                        <div className="bg-white px-4 pt-2 pb-4">
-                                            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
-                                                <div className="sm:col-span-2">
-                                                    <label
-                                                        htmlFor="title"
-                                                        className="block text-sm font-medium text-gray-700"></label>
-                                                    <div className="mt-1">
-                                                        <input
-                                                            type="text"
-                                                            name="title"
-                                                            id="title"
-                                                            onChange={
-                                                                handleTitleChange
-                                                            }
-                                                            value={title}
-                                                            className="bg-gray-50 border text-wrap border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                                                            placeholder="Add a Title...(140 Characters Max)"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="sm:col-span-2">
-                                                    <label
-                                                        htmlFor="hashtags"
-                                                        className="block text-sm font-medium text-gray-700"></label>
-
-                                                    <div className="mt-1 flex flex-wrap gap-2 ">
-                                                        <div className="flex w-full">
-                                                            <div className="bg-white border border-gray-300 rounded-l-md p-2.5 flex items-center">
-                                                                <span className="text-indigo-600">
-                                                                    #
-                                                                </span>
-                                                            </div>
+                                        <div
+                                            className="flex-1 overflow-auto"
+                                            style={{ paddingBottom: '70px' }}>
+                                            <div className="bg-white px-4 pt-2 pb-4">
+                                                <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-1">
+                                                    <div className="sm:col-span-2">
+                                                        <label
+                                                            htmlFor="title"
+                                                            className="block text-sm font-medium text-gray-700"></label>
+                                                        <div className="mt-1">
                                                             <input
                                                                 type="text"
-                                                                name="hashtags"
-                                                                id="hashtags"
-                                                                value={
-                                                                    inputValue
-                                                                }
+                                                                name="title"
+                                                                id="title"
                                                                 onChange={
-                                                                    handleHashtagsChange
+                                                                    handleTitleChange
                                                                 }
-                                                                onKeyDown={
-                                                                    handleKeyDown
-                                                                }
-                                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500
-        focus:border-blue-500 block w-full p-2.5"
-                                                                placeholder="Add Tags"
+                                                                value={title}
+                                                                className="bg-gray-50 border text-wrap border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                                                                placeholder="Add a Title...(140 Characters Max)"
                                                             />
                                                         </div>
-                                                        <div
-                                                            className={
-                                                                'pl-2 text-gray-400 text-sm'
-                                                            }>
-                                                            Upto 3 tags,
-                                                            seperated with
-                                                            space.
-                                                        </div>
-                                                        {hashtags.map(
-                                                            (tag, index) => (
-                                                                <div
-                                                                    key={tag}
-                                                                    className="flex items-center text-wrap gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                                                    {tag}
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() =>
-                                                                            removeTag(
-                                                                                index,
-                                                                            )
-                                                                        }
-                                                                        className="text-blue-500 hover:text-blue-700">
-                                                                        &times;
-                                                                    </button>
-                                                                </div>
-                                                            ),
-                                                        )}
-
-                                                        {showMaxTagsAlert && (
-                                                            <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
-                                                                <div className="mt-2 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
-                                                                    <p>
-                                                                        Max
-                                                                        allowed
-                                                                        tags: 3
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        )}
                                                     </div>
-                                                </div>
+                                                    <div className="sm:col-span-2">
+                                                        <label
+                                                            htmlFor="hashtags"
+                                                            className="block text-sm font-medium text-gray-700"></label>
 
-                                                <div className="sm:col-span-2">
-                                                    <label
-                                                        htmlFor="file-upload"
-                                                        className="block text-sm font-medium text-gray-700"></label>
-                                                    <div className="mt-1 flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                                        <div className="space-y-1 text-center">
-                                                            {!preview &&
-                                                                !isUploading && (
-                                                                    <>
-                                                                        <UploadNew />
-                                                                        <label
-                                                                            htmlFor="file-upload"
-                                                                            className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
-                                                                            <span>
-                                                                                Upload
-                                                                                a
-                                                                                file
-                                                                            </span>
-                                                                            <input
-                                                                                id="file-upload"
-                                                                                name="file-upload"
-                                                                                type="file"
-                                                                                onChange={
-                                                                                    handleFileChange
-                                                                                }
-                                                                                className="sr-only"
-                                                                            />
-                                                                        </label>
-                                                                        <p className="text-xs text-gray-500">
-                                                                            PNG,
-                                                                            JPG,
-                                                                            GIF,
-                                                                            MP4
-                                                                            up
-                                                                            to
-                                                                            10MB
-                                                                        </p>
-                                                                    </>
-                                                                )}
-                                                            {isUploading && (
-                                                                <div className="flex justify-center items-center">
-                                                                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                                                        <div className="mt-1 flex flex-wrap gap-2 ">
+                                                            <div className="flex w-full">
+                                                                <div className="bg-white border border-gray-300 rounded-l-md p-2.5 flex items-center">
+                                                                    <span className="text-indigo-600">
+                                                                        #
+                                                                    </span>
                                                                 </div>
-                                                            )}
-                                                            {preview && (
-                                                                <div className="relative">
-                                                                    <img
-                                                                        src={
-                                                                            preview
+                                                                <input
+                                                                    type="text"
+                                                                    name="hashtags"
+                                                                    id="hashtags"
+                                                                    value={
+                                                                        inputValue
+                                                                    }
+                                                                    onChange={
+                                                                        handleHashtagsChange
+                                                                    }
+                                                                    onKeyDown={
+                                                                        handleKeyDown
+                                                                    }
+                                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500
+        focus:border-blue-500 block w-full p-2.5"
+                                                                    placeholder="Add Tags"
+                                                                />
+                                                            </div>
+                                                            <div
+                                                                className={
+                                                                    'pl-2 text-gray-400 text-sm'
+                                                                }>
+                                                                Upto 3 tags,
+                                                                seperated with
+                                                                space.
+                                                            </div>
+                                                            {hashtags.map(
+                                                                (
+                                                                    tag,
+                                                                    index,
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            tag
                                                                         }
-                                                                        alt="Preview"
-                                                                        className="mt-4 w-full h-auto max-h-[300px] object-contain rounded"
-                                                                    />
-                                                                    <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-2 bg-white bg-opacity-75">
-                                                                        <label
-                                                                            htmlFor="file-upload"
-                                                                            className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer">
-                                                                            <UpwardArrow />
-                                                                            <input
-                                                                                id="file-upload"
-                                                                                name="file-upload"
-                                                                                type="file"
-                                                                                onChange={
-                                                                                    handleFileChange
-                                                                                }
-                                                                                className="sr-only"
-                                                                            />
-                                                                            <span className="sr-only">
-                                                                                Change
-                                                                                image
-                                                                            </span>
-                                                                        </label>
+                                                                        className="flex items-center text-wrap gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                                                        {tag}
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => {
-                                                                                setPreview(
-                                                                                    null,
-                                                                                ); // Remove preview
-                                                                                setLink(
-                                                                                    null,
-                                                                                ); // Remove link
-                                                                                // Additional logic to handle the removal on the backend might be required
-                                                                            }}
-                                                                            className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                                                                            <CloseIcon />
-                                                                            <span className="sr-only">
-                                                                                Remove
-                                                                                image
-                                                                            </span>
+                                                                            onClick={() =>
+                                                                                removeTag(
+                                                                                    index,
+                                                                                )
+                                                                            }
+                                                                            className="text-blue-500 hover:text-blue-700">
+                                                                            &times;
                                                                         </button>
+                                                                    </div>
+                                                                ),
+                                                            )}
+
+                                                            {showMaxTagsAlert && (
+                                                                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                                                                    <div className="mt-2 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
+                                                                        <p>
+                                                                            Max
+                                                                            allowed
+                                                                            tags:
+                                                                            3
+                                                                        </p>
                                                                     </div>
                                                                 </div>
                                                             )}
                                                         </div>
                                                     </div>
+
+                                                    <div className="sm:col-span-2">
+                                                        <label
+                                                            htmlFor="file-upload"
+                                                            className="block text-sm font-medium text-gray-700"></label>
+                                                        <div className="mt-1 flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                                            <div className="space-y-1 text-center">
+                                                                {!preview &&
+                                                                    !isUploading && (
+                                                                        <>
+                                                                            <UploadNew />
+                                                                            <label
+                                                                                htmlFor="file-upload"
+                                                                                className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                                                                                <span>
+                                                                                    Upload
+                                                                                    a
+                                                                                    file
+                                                                                </span>
+                                                                                <input
+                                                                                    id="file-upload"
+                                                                                    name="file-upload"
+                                                                                    type="file"
+                                                                                    onChange={
+                                                                                        handleFileChange
+                                                                                    }
+                                                                                    className="sr-only"
+                                                                                />
+                                                                            </label>
+                                                                            <p className="text-xs text-gray-500">
+                                                                                PNG,
+                                                                                JPG,
+                                                                                GIF,
+                                                                                MP4
+                                                                                up
+                                                                                to
+                                                                                10MB
+                                                                            </p>
+                                                                        </>
+                                                                    )}
+                                                                {isUploading && (
+                                                                    <div className="flex justify-center items-center">
+                                                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                                                                    </div>
+                                                                )}
+                                                                {preview && (
+                                                                    <div className="relative">
+                                                                        <img
+                                                                            src={
+                                                                                preview
+                                                                            }
+                                                                            alt="Preview"
+                                                                            className="mt-4 w-full h-auto max-h-[300px] object-contain rounded"
+                                                                        />
+                                                                        <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-2 bg-white bg-opacity-75">
+                                                                            <label
+                                                                                htmlFor="file-upload"
+                                                                                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer">
+                                                                                <UpwardArrow />
+                                                                                <input
+                                                                                    id="file-upload"
+                                                                                    name="file-upload"
+                                                                                    type="file"
+                                                                                    onChange={
+                                                                                        handleFileChange
+                                                                                    }
+                                                                                    className="sr-only"
+                                                                                />
+                                                                                <span className="sr-only">
+                                                                                    Change
+                                                                                    image
+                                                                                </span>
+                                                                            </label>
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    setPreview(
+                                                                                        null,
+                                                                                    ); // Remove preview
+                                                                                    setLink(
+                                                                                        null,
+                                                                                    ); // Remove link
+                                                                                    // Additional logic to handle the removal on the backend might be required
+                                                                                }}
+                                                                                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+                                                                                <CloseIcon />
+                                                                                <span className="sr-only">
+                                                                                    Remove
+                                                                                    image
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-3 sm:p-4 text-right shadow-top">
-                                        <button
-                                            type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-                                            onClick={() => {
-                                                sendNewPostEvent();
-                                                onClose();
-                                            }}>
-                                            Post
-                                        </button>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
+                                        <div className="fixed bottom-0 left-0 right-0 bg-gray-50 p-3 sm:p-4 text-right shadow-top">
+                                            <button
+                                                type="button"
+                                                className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                                                onClick={() => {
+                                                    sendNewPostEvent();
+                                                    onClose();
+                                                }}>
+                                                Post
+                                            </button>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
                         </div>
+                    </Dialog>
+                </Transition.Root>
+            </div>
+            {showNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start notification">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <p className="text-bold text-white px-2">
+                            Post Uploaded Successfully
+                        </p>
+                        <CloseIcon
+                            className="h-6 w-6 mr-2 text-white"
+                            onClick={() => setShowNotification(false)}
+                        />
                     </div>
-                </Dialog>
-            </Transition.Root>
-        </div>
+                </div>
+            )}
+        </>
     );
 };
 
