@@ -5,7 +5,7 @@ import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { ReactComponent as UpwardArrow } from '../../Icons/upwardArrow.svg';
 import { ReactComponent as UploadNew } from '../../Icons/uploadNewPost.svg';
 
-const PostUpload = ({ isOpen, onClose }) => {
+const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
     const [link, setLink] = useState(null);
     const [title, setTitle] = useState('');
     const [hashtags, setHashtags] = useState([]);
@@ -15,7 +15,6 @@ const PostUpload = ({ isOpen, onClose }) => {
     const [postStage, setPostStage] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
     const [showMaxTagsAlert, setShowMaxTagsAlert] = useState(false);
-    const [showNotification, setShowNotification] = useState(false);
 
     const MAX_TAGS = 3;
     let alertTimeout = useRef(null);
@@ -88,6 +87,7 @@ const PostUpload = ({ isOpen, onClose }) => {
         };
 
         // console.log("event", commentEvent)
+        console.log('Comment Event: ', commentEvent);
 
         commentEvent.id = getEventHash(commentEvent);
         commentEvent.sig = getSignature(commentEvent, sk.data);
@@ -96,12 +96,14 @@ const PostUpload = ({ isOpen, onClose }) => {
         Promise.resolve(p1).then(
             value => {
                 console.log('Success', value);
-                setPostStage(4); // Success!
-                setShowNotification(true);
-                setTimeout(() => setShowNotification(false), 3000);
+                // Call the callback function passed from the parent component
+                if (onUploadSuccess) {
+                    onUploadSuccess(); // Call the callback if it's provided
+                }
+                onClose(); // Close the upload dialog
             },
             reason => {
-                console.error('something went wrong', reason); // Error!
+                console.error('something went wrong', reason); // Error handling
             },
         );
     };
@@ -494,7 +496,6 @@ const PostUpload = ({ isOpen, onClose }) => {
                                                 className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                                                 onClick={() => {
                                                     sendNewPostEvent();
-                                                    onClose();
                                                 }}>
                                                 Post
                                             </button>
@@ -506,19 +507,6 @@ const PostUpload = ({ isOpen, onClose }) => {
                     </Dialog>
                 </Transition.Root>
             </div>
-            {showNotification && (
-                <div className="fixed top-0 inset-x-0 flex justify-center items-start notification">
-                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
-                        <p className="text-bold text-white px-2">
-                            Post Uploaded Successfully
-                        </p>
-                        <CloseIcon
-                            className="h-6 w-6 mr-2 text-white"
-                            onClick={() => setShowNotification(false)}
-                        />
-                    </div>
-                </div>
-            )}
         </>
     );
 };

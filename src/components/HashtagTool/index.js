@@ -5,6 +5,7 @@ import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
 import Sidebar from './SideBar';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
 const HashTagContext = React.createContext();
 
@@ -258,6 +259,14 @@ export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+    const [showSuccessNotification, setShowSuccessNotification] =
+        useState(false);
+
+    function handlePostUploadSuccess() {
+        setShowSuccessNotification(true);
+        setTimeout(() => setShowSuccessNotification(false), 3000); // Auto-hide after 3 seconds
+    }
+
     useResetScrollOnFilterChange(filterTags);
 
     function showNewPostModal() {
@@ -306,7 +315,24 @@ export function HashtagTool() {
                         <PostUpload
                             isOpen={newPostModal}
                             onClose={closePostModal}
+                            onUploadSuccess={handlePostUploadSuccess}
                         />
+                    )}
+
+                    {showSuccessNotification && (
+                        <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
+                            <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                                <p className="text-bold text-white px-2">
+                                    Post Uploaded Successfully
+                                </p>
+                                <CloseIcon
+                                    className="h-6 w-6 mr-2 text-white"
+                                    onClick={() =>
+                                        setShowSuccessNotification(false)
+                                    }
+                                />
+                            </div>
+                        </div>
                     )}
                 </main>
             </div>
