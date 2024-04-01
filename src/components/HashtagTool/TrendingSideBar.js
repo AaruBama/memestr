@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ReactComponent as SearchSVG } from '../../Icons/SearchIconBlack.svg';
 
 function TrendingSidebar() {
+    const [searchQuery, setSearchQuery] = useState('');
     const suggestions = [
         'meme',
         'nostr',
@@ -54,18 +56,49 @@ function TrendingSidebar() {
         navigate(`/search/${suggestions}`);
     };
 
+    const handleSearchChange = event => {
+        setSearchQuery(event.target.value);
+    };
+
+    const handleSearchSubmit = event => {
+        event.preventDefault();
+        if (searchQuery.trim().length > 0) {
+            navigate(`/search/${searchQuery.trim()}`);
+            setSearchQuery('');
+        }
+    };
+
     return (
-        <aside className="hidden lg:block w-1/4 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 z-40 ">
-            <h2 className="text-2xl font-bold text-center pt-14 text-gray-900 mb-4 ">
+        <aside className="hidden lg:block w-1/3 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 z-50 ">
+            <form
+                onSubmit={handleSearchSubmit}
+                className="hidden md:flex items-center w-80 px-2 ">
+                <div className="relative w-full">
+                    <input
+                        type="search"
+                        className="pl-4 pr-8 py-2 w-full border border-gray-200  bg-slate-50 rounded-full focus:outline-none focus:border-grey-400 transition-shadow"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
+                    <button
+                        type="submit"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-600 hover:text-gray-500 focus:text-gray-500 outline-none">
+                        <SearchSVG className="h-6 w-6" />
+                    </button>
+                </div>
+            </form>
+
+            <h2 className="text-2xl font-bold text-center pt-2 text-gray-900 mb-4 pr-32">
                 Trending Memes
             </h2>
 
-            <div className="flex flex-wrap gap-2 p-2 mt-2 overflow-x-auto justify-center">
+            <div className="flex flex-wrap gap-2 p-2 mt-2 overflow-x-auto justify-center pr-32">
                 {suggestions.map((suggestion, index) => (
                     <button
                         key={index}
                         onClick={() => handleTagClick(suggestion)}
-                        className="bg-gray-200 text-black rounded-full px-4 py-1 text-lg focus:outline-none "
+                        className="bg-gray-200 text-black rounded-full px-4 py-1 text-sm focus:outline-none "
                         style={{ flex: '0 0 auto' }}>
                         {suggestion}
                     </button>
