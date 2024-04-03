@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.df328717.css",
-    "main.js": "/static/js/main.850c4b74.js",
+    "main.css": "/static/css/main.81028b32.css",
+    "main.js": "/static/js/main.94f9f4ea.js",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
     "static/media/VolumeDown.svg": "/static/media/VolumeDown.a48258a7204b48573798f3a750f93f1d.svg",
@@ -35,7 +35,7 @@
     "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg"
   },
   "entrypoints": [
-    "static/css/main.df328717.css",
-    "static/js/main.850c4b74.js"
+    "static/css/main.81028b32.css",
+    "static/js/main.94f9f4ea.js"
   ]
 }
