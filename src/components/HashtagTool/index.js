@@ -3,6 +3,7 @@ import { relayInit, SimplePool } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
+import TrendingSidebar from './TrendingSideBar';
 import Sidebar from './SideBar';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 
@@ -298,7 +299,8 @@ export function HashtagTool() {
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        className="hidden md:block fixed bottom-4 right-8 z-49 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
+                        style={{ zIndex: 999 }}
+                        className="hidden md:block fixed bottom-4 right-8  bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
                         <UploadSvg className="m-auto h-6 w-6" />
                     </button>
 
@@ -309,6 +311,7 @@ export function HashtagTool() {
                         />
                     )}
                 </main>
+                <TrendingSidebar />
             </div>
         </>
     );
