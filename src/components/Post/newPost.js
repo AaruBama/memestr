@@ -15,6 +15,7 @@ const PostUpload = ({ isOpen, onClose }) => {
     const [postStage, setPostStage] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
     const [showMaxTagsAlert, setShowMaxTagsAlert] = useState(false);
+    const [postSuccess, setPostSuccess] = useState(false);
     const MAX_TAGS = 3;
     let alertTimeout = useRef(null);
 
@@ -480,6 +481,7 @@ const PostUpload = ({ isOpen, onClose }) => {
                                             className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                                             onClick={() => {
                                                 sendNewPostEvent();
+                                                setPostSuccess(true);
                                                 onClose();
                                             }}>
                                             Post
@@ -491,6 +493,11 @@ const PostUpload = ({ isOpen, onClose }) => {
                     </div>
                 </Dialog>
             </Transition.Root>
+            {postSuccess && (
+                <div className="flex justify-center items-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+            )}
         </div>
     );
 };
