@@ -69,7 +69,7 @@ function TrendingSidebar() {
     };
 
     return (
-        <aside className="hidden lg:block w-1/3 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 z-50 ">
+        <aside className="hidden lg:block w-96 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 z-50 ">
             <form
                 onSubmit={handleSearchSubmit}
                 className="hidden md:flex items-center w-80 px-2 ">
@@ -89,11 +89,13 @@ function TrendingSidebar() {
                 </div>
             </form>
 
-            <h2 className="text-2xl font-bold text-center pt-2 text-gray-900 mb-4 pr-32">
-                Trending Memes
-            </h2>
+            <div className="flex justify-center">
+                <h2 className="text-2xl font-bold text-center pt-2 text-gray-900 mb-2">
+                    Trending Tags
+                </h2>
+            </div>
 
-            <div className="flex flex-wrap gap-2 p-2 mt-2 overflow-x-auto justify-center pr-32">
+            <div className="flex flex-wrap gap-2 p-2 mt-2 overflow-x-auto justify-center">
                 {suggestions.map((suggestion, index) => (
                     <button
                         key={index}
