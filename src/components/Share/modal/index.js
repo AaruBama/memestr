@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
+import { ReactComponent as Search } from '../../../Icons/SearchIcon.svg';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
 import noProfilePictureURL from '../../../Icons/noImageUser.svg';
 import './style.css';
@@ -221,7 +222,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                         <button
                                             type="submit"
                                             className="mt-2 ml-2 p-2 bg-blue-500 text-white rounded">
-                                            Submit
+                                            <Search className="h-6 w-6" />
                                         </button>
                                     </form>
 
