@@ -1,6 +1,7 @@
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
@@ -93,6 +94,10 @@ export const removeHashtagsAndLinks = text => {
     // Remove links
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
+
+export function extractHashtags(text) {
+    return text.match(/#\w+/g) || [];
+}
 
 export async function upvotePost(noteId, userPublicKey) {
     const storedData = localStorage.getItem('memestr');
@@ -322,6 +327,7 @@ function Posts(props) {
     let title = removeHashtagsAndLinks(props.note.content)
         .trimLeft()
         .trimRight();
+
     if (title.length === 0) {
         title = ' ';
     }
@@ -376,6 +382,7 @@ function Posts(props) {
     }
 
     let truncatedTitle = truncateTitle(title, 70);
+    let hashtags = extractHashtags(truncatedTitle);
     let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
 
     function renderContent(imageLink) {
@@ -420,6 +427,10 @@ function Posts(props) {
             }
         });
     }
+    const navigate = useNavigate();
+    const handleTagClick = suggestions => {
+        navigate(`/search/${suggestions}`);
+    };
 
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
@@ -446,51 +457,78 @@ function Posts(props) {
                     </div>
 
                     <div className="border-x border-grey-100 flex flex-col p-3">
-                        <div className="flex justify-between items-centre">
-                            <Link to={postUrl} className="flex items-center ">
-                                <CommentSvg className="h-4 w-4 text-black-600" />
-                                <span className="text-xs text-gray-600 ml-1">
-                                    {commentCount > 0 ? commentCount : ''}
-                                </span>
-                            </Link>
+                        <div className="flex gap-2 py-2">
+                            {hashtags.slice(0, 4).map((tag, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() =>
+                                        handleTagClick(tag.substring(1))
+                                    }
+                                    className="bg-gray-200 text-black rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    {tag.substring(1)}
+                                </button>
+                            ))}
+                        </div>
 
-                            <button
-                                onClick={handleZapButton}
-                                className={`flex items-center ${
-                                    fillZap
-                                        ? 'text-yellow-300'
-                                        : 'text-black-600'
-                                }`}>
-                                <ZapSvg className="h-4 w-4 text-black-600" />
-                                {processedValue && (
-                                    <span className="text-xs ml-1">
-                                        {processedValue}
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                                <Link
+                                    to={postUrl}
+                                    className="flex items-center">
+                                    <CommentSvg className="h-4 w-4 text-black-600" />
+                                    <span className="text-xs text-gray-600 ml-1">
+                                        {commentCount > 0 ? commentCount : ''}
                                     </span>
-                                )}
-                                <ZapModal
-                                    isOpenm={isModalOpen}
-                                    onConfirm={handleConfirm}
-                                />
-                            </button>
+                                </Link>
+                            </div>
 
-                            <button
-                                onClick={handleLikeButtonClick}
-                                disabled={isTodisabled()}
-                                className={`flex items-center ${
-                                    fillLike ? 'text-red-600' : 'text-black-600'
-                                }`}>
-                                <LikeSvg
-                                    fill={fillLike ? 'red' : 'none'}
-                                    className="h-4 w-4"
-                                />
-                                <span className="text-xs ml-1 text-black-600">
-                                    {votesCount}
-                                </span>
-                            </button>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={handleZapButton}
+                                    className={`flex items-center ${
+                                        fillZap
+                                            ? 'text-yellow-300'
+                                            : 'text-black-600'
+                                    }`}>
+                                    <ZapSvg className="h-4 w-4 text-black-600" />
+                                    {processedValue && (
+                                        <span className="text-xs ml-1">
+                                            {processedValue}
+                                        </span>
+                                    )}
+                                    <ZapModal
+                                        isOpenm={isModalOpen}
+                                        onConfirm={handleConfirm}
+                                    />
+                                </button>
+                            </div>
 
-                            <button onClick={openShareModal} className="p-1">
-                                <ShareButtonSvg className="h-4 w-4 text-gray-600" />
-                            </button>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={handleLikeButtonClick}
+                                    disabled={isTodisabled()}
+                                    className={`flex items-center ${
+                                        fillLike
+                                            ? 'text-red-600'
+                                            : 'text-black-600'
+                                    }`}>
+                                    <LikeSvg
+                                        fill={fillLike ? 'red' : 'none'}
+                                        className="h-4 w-4"
+                                    />
+                                    <span className="text-xs ml-1 text-black-600">
+                                        {votesCount}
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div className="flex items-center">
+                                <button
+                                    onClick={openShareModal}
+                                    className="p-1">
+                                    <ShareButtonSvg className="h-4 w-4 text-gray-600" />
+                                </button>
+                            </div>
                         </div>
                     </div>
 
