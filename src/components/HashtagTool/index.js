@@ -197,7 +197,7 @@ export function HashTagToolProvider({ children, filterTags }) {
 
     return (
         <HashTagContext.Provider value={contextValue}>
-            {isLoading ? <Spinner /> : children}
+            {children}
         </HashTagContext.Provider>
     );
 }
@@ -270,11 +270,8 @@ export function HashtagTool() {
     }
 
     function handleLoadMore() {
-        // Set the loading state before fetching more posts
         setLoadingMorePosts(true);
-        // Call the LoadMoreMedia function to fetch more posts
         LoadMoreMedia().then(() => {
-            // Reset the loading state after posts are fetched
             setLoadingMorePosts(false);
         });
     }
@@ -284,6 +281,7 @@ export function HashtagTool() {
             <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar />
                 <main className="flex-1 overflow-y-auto">
+                    {isLoading && <Spinner />}
                     <Feed
                         notes={notes}
                         onLoadMore={handleLoadMore}
