@@ -24,6 +24,7 @@ export const getProfileMetadata = async authorId => {
             kinds: [0],
         });
     } catch (error) {
+        alert('not able to find user profile');
         throw new Error('failed to fetch user profile :(');
     } finally {
         pool.close(relays);
@@ -37,8 +38,11 @@ export const getZapEndpoint = async profileMetadata => {
     const zapEndpoint = await nip57.getZapEndpoint(profileMetadata);
 
     if (!zapEndpoint) {
+        alert('not able to find user end point');
         throw new Error('failed to retrieve zap endpoint :(');
     }
+
+    console.log('Zap Endpoint:', zapEndpoint); // Log the Zap endpoint
 
     return zapEndpoint;
 };

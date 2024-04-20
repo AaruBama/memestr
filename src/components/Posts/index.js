@@ -1,5 +1,10 @@
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
-import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
+import {
+    fetchInvoice,
+    getProfileMetadata,
+    getZapEndpoint,
+    listenForZapReceipt,
+} from '../ZapHelper';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
@@ -138,7 +143,7 @@ export async function upvotePost(noteId, userPublicKey) {
     }
 }
 
-export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
+export const sendNewZaps = async (postId, opPubKey, sats = 2) => {
     console.log('Sending zaps');
     const pubKey = opPubKey;
     let relays = [
@@ -147,9 +152,17 @@ export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
         'wss://nos.lol',
         'wss://nostr.bitcoiner.social',
     ];
-    const encodedNoteId = nip19.noteEncode(postId);
+
+    console.log('Fetching profile metadata for publicKey:', pubKey);
     let userDetails = await getProfileMetadata(pubKey);
+    console.log('User details:', userDetails);
+
+    console.log('Fetching Zap endpoint for userDetails:', userDetails);
     let zapEndpoint = await getZapEndpoint(userDetails);
+    console.log('Zap endpoint:', zapEndpoint);
+
+    console.log('Fetching invoice');
+    let encodedNoteId = nip19.noteEncode(postId);
     let invoice = await fetchInvoice({
         zapEndpoint: zapEndpoint,
         amount: sats * 1000,
@@ -158,7 +171,11 @@ export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
         noteId: encodedNoteId,
         normalizedRelays: relays,
     });
+    console.log('Invoice:', invoice);
+
     let zapUrl = 'lightning:' + invoice;
+    console.log('Zap URL:', zapUrl);
+
     window.location.assign(zapUrl);
 };
 
@@ -279,7 +296,9 @@ function Posts(props) {
 
     const handleConfirm = value => {
         const postId = props.note.id;
+        console.log(postId);
         let opPubKey = props.note.pubkey;
+        console.log(opPubKey);
         console.log(`Processing value: ${value}`);
 
         sendNewZaps(postId, opPubKey, value);
@@ -292,6 +311,20 @@ function Posts(props) {
             setTimeDifference({ unit: unit, duration: duration });
         }
     }, [postCreatedAt]);
+
+    useEffect(() => {
+        const relays = [
+            'wss://relay.nostr.band',
+            'wss://purplepag.es',
+            'wss://relay.damus.io',
+        ];
+        const invoice =
+            'lnbc50n1pnzz7azpp5hj3mln4qaz7fv2t7w2yqdsuawqn5ztjqv9z94rzx3z644lcvg28qhp5n4c2qkxxva69yh95kmy05ltpvwpgnthq8jk033c75tu3hwxhrn3qcqzzsxqyz5vqsp5c4j58uqnfgkmc0xugg6xvvvkjsmmwfxdujrq6ahuyxh8fhkk2k7s9qyyssq0lq00gmmj6hksws4mzlecw258na4tduavuyjvys52hkz902egl3pts85jrpcgwghgy3ua3ut94xcfx6hfrq4wrr6r0pgundzs2chedcq3jtu9l:lnbc110n1pnzzuqmpp58fza0jpqgkk9prremdwyl7xds2hz4qzpdva4afzd7gc5a58tmw8qhp59wnyet69g9q5juej43g43xra33fqhgfza6p90dpspfc9urg8eagqcqzzsxqyz5vqsp5vzrly506plwkd09c2whahsf7erlgg8j488w2u367qnc2v4ws9szq9qyyssq40uds0hgyxqh3wagaka55d07gff6t3crwjat65gzcze3ngyzwkz96tqdtdvntyh0hm05p9844zheg043cem87348s50t38slgdxfc0sq77e9ygp6u59c0a6pj2u0636t6f3vf9k9eue0c7hakara9sjslup9a4pshp5xpyytuef9p89lk8k7atu4lequ97nftmdzjmuvyz45va6h396p78qcqzzsxqyz5vqsp5ycv0d5xwqc3vdy0067kysyttzq4qku52hcf9lnxca5k4w5m33d5s9qyyssqljeyf4p4uzzmfgdljzzqhwwm9j866xwwasv9ls9h5nngrcudwyfqd22whtec4z250285llhrt7f3zv4jrkuasvr0t9ahr8k4n59uqyqpld9gw3';
+        const closeListener = listenForZapReceipt({ relays, invoice });
+        return () => {
+            closeListener();
+        };
+    }, []);
 
     useEffect(() => {
         const localLikeCount = getLocalLikeCountForPost(props.note.id);
