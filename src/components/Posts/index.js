@@ -441,7 +441,7 @@ function Posts(props) {
 
                     {/* Post Media Content */}
 
-                    <div className="h-max lg:px-1 bg-gray-200 border border-gray-300">
+                    <div className="h-max lg: bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
 
