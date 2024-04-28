@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import RegistrationModal from './NewKeysModal';
 import UserDetailsForAccountCreationModal from './UserDetailsForAccountCreationModal';
 import { generateNewKeys } from '../Login';
@@ -11,7 +12,9 @@ import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 import { ReactComponent as ExtensionLogin } from '../../Icons/ExtentionLogin.svg';
 import { getUserDetailsFromPublicKey } from '../Profile';
+
 function DropdownComponent() {
+    const navigate = useNavigate(); // Initialize navigate
     const [newKeysModal, setNewKeysModal] = useState(false);
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
     const [loginModal, setLoginModal] = useState(false);
@@ -119,6 +122,11 @@ function DropdownComponent() {
         setIsLoggedIn(false);
         alert('Logged out successfully');
     }
+
+    const redirectToProfile = () => {
+        navigate('/profile');
+    };
+
     return (
         <div className="inline-block text-left">
             <Menu as="div" className="relative ">
@@ -213,17 +221,19 @@ function DropdownComponent() {
                                 <>
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <span
+                                            <button
+                                                onClick={redirectToProfile}
                                                 className={`${
                                                     active
                                                         ? 'font-semibold text-gray-900'
                                                         : 'font-normal text-gray-700'
-                                                } flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
                                                 <ProfileCircle className="mr-2 h-6 w-6" />
                                                 {userDetails.name}
-                                            </span>
+                                            </button>
                                         )}
                                     </Menu.Item>
+
                                     <Menu.Item>
                                         {({ active }) => (
                                             <button

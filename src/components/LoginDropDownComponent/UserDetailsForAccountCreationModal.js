@@ -4,7 +4,7 @@ import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import UploadAndDisplayImage from './UploadUserPicture';
 import { getProfileFromPublicKey } from '../Profile';
 
-function LoadingScreen() {
+export function LoadingScreen() {
     return (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
             <div className="flex justify-center items-center">
