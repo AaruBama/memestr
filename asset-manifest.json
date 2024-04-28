@@ -1,10 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.81028b32.css",
-    "main.js": "/static/js/main.94f9f4ea.js",
+    "main.css": "/static/css/main.f7671b7e.css",
+    "main.js": "/static/js/main.a6c534e8.js",
+    "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
     "static/media/VolumeDown.svg": "/static/media/VolumeDown.a48258a7204b48573798f3a750f93f1d.svg",
+    "static/media/ExtentionLogin.svg": "/static/media/ExtentionLogin.5ea5f9fe75803ebaa1d02fb8be8e3e93.svg",
     "index.html": "/index.html",
     "static/media/upwardArrow.svg": "/static/media/upwardArrow.b8edfe2e34596f4361354a484e75f158.svg",
     "static/media/CommentSvg.svg": "/static/media/CommentSvg.62525e8e512723ebaa4dcedc5734340e.svg",
@@ -31,11 +33,12 @@
     "static/media/ProfileCircle.svg": "/static/media/ProfileCircle.a4a21174f68d57c6d1c02cb13b7b8bb0.svg",
     "static/media/LikeSvg.svg": "/static/media/LikeSvg.aa629c435b86f40ef8bf4dc3b9297f5d.svg",
     "static/media/SearchIconBlack.svg": "/static/media/SearchIconBlack.b3a12fa517c4a7fd6c681afeb19b18eb.svg",
+    "static/media/SearchIcon.svg": "/static/media/SearchIcon.2ccc36d4e84693dc2e83e37daaf34207.svg",
     "static/media/Notification.svg": "/static/media/Notification.d14f855fa1cc7c9ce23c469407fdfb0b.svg",
     "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg"
   },
   "entrypoints": [
-    "static/css/main.81028b32.css",
-    "static/js/main.94f9f4ea.js"
+    "static/css/main.f7671b7e.css",
+    "static/js/main.a6c534e8.js"
   ]
 }
