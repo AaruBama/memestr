@@ -51,6 +51,34 @@ export function convertHashtagsToLinks(text) {
     return tokens;
 }
 
+export function renderContent(imageLink) {
+    try {
+        const extension = imageLink.split('.').pop();
+        if (extension === 'undefined') {
+            return;
+        }
+        if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
+            return (
+                <img
+                    alt={''}
+                    src={imageLink}
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block',
+                        objectFit: 'cover',
+                    }}
+                />
+            );
+        } else {
+            return <VideoPlayer imageLink={imageLink} />;
+        }
+    } catch (e) {
+        console.log('Image link is ', imageLink);
+        console.log('Something happened here' + e);
+    }
+}
+
 export function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
     const jpgRegex = /\.(jpg|jpeg)$/i;
@@ -376,34 +404,6 @@ function Posts(props) {
 
     let truncatedTitle = truncateTitle(title, 70);
     let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
-
-    function renderContent(imageLink) {
-        try {
-            const extension = imageLink.split('.').pop();
-            if (extension === 'undefined') {
-                return;
-            }
-            if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
-                return (
-                    <img
-                        alt={''}
-                        src={imageLink}
-                        style={{
-                            width: '100%',
-                            height: 'auto',
-                            display: 'block',
-                            objectFit: 'cover',
-                        }}
-                    />
-                );
-            } else {
-                return <VideoPlayer imageLink={imageLink} />;
-            }
-        } catch (e) {
-            console.log('Image link is ', imageLink);
-            console.log('Something happened here' + e);
-        }
-    }
 
     function handleLikeButtonClick() {
         if (!isLoggedIn) {
