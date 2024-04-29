@@ -4,8 +4,10 @@ import Sidebar from '../HashtagTool/SideBar';
 import TrendingSidebar from '../HashtagTool/TrendingSideBar';
 import { ReactComponent as ProfileIcon } from '../../Icons/Profile.svg';
 import { useAuth } from '../../AuthContext';
-import { getUserDetailsFromPublicKey } from '../Profile';
+import { getProfileFromPublicKey } from '../Profile';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { LoadingScreen } from './UserDetailsForAccountCreationModal';
+import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 
 function ProfilePage() {
     const { isLoggedIn } = useAuth();
@@ -15,6 +17,14 @@ function ProfilePage() {
     const [profileImage, setProfileImage] = useState(null);
     const [bannerImage, setBannerImage] = useState(null);
     const [publicKey, setPublicKey] = useState(null);
+    const [username, setUsername] = useState('');
+    const [bio, setBio] = useState('');
+    const [lightningAddress, setLightningAddress] = useState('');
+    const [initialUsername, setInitialUsername] = useState('');
+    const [initialBio, setInitialBio] = useState('');
+    const [initialLightningAddress, setInitialLightningAddress] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState('');
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -24,13 +34,23 @@ function ProfilePage() {
         }
     }, [isLoggedIn, navigate]);
 
+    useEffect(() => {
+        if (userDetails) {
+            setInitialUsername(userDetails.name);
+            setInitialBio(userDetails.about);
+            setInitialLightningAddress(userDetails.lightningAddress);
+        }
+    }, [userDetails]);
+
     const getUserDetails = async () => {
         const storedData = localStorage.getItem('memestr');
         if (storedData) {
             const publicKey = JSON.parse(storedData).pubKey;
             setPublicKey(publicKey);
             try {
-                const details = await getUserDetailsFromPublicKey(publicKey);
+                const profile = await getProfileFromPublicKey(publicKey);
+                const content = profile.content;
+                const details = JSON.parse(content);
                 console.log(details);
 
                 const profileImage = localStorage.getItem(
@@ -46,7 +66,9 @@ function ProfilePage() {
                     profileImage,
                     bannerImage,
                 });
-
+                setUsername(details.name);
+                setBio(details.about);
+                setLightningAddress(details.lightningAddress);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching user details:', error);
@@ -89,17 +111,86 @@ function ProfilePage() {
         }
     };
 
+    const handleSaveChanges = async () => {
+        const relays = [
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://relay.snort.social',
+            'wss://relay.hllo.live',
+        ];
+        const pool = new SimplePool();
+        const storedData = localStorage.getItem('memestr');
+        if (storedData) {
+            const publicKey = JSON.parse(storedData).pubKey;
+            const encodedSk = JSON.parse(storedData).privateKey;
+            console.log(publicKey);
+            console.log(encodedSk);
+            let sk = nip19.decode(encodedSk);
+
+            const content = {
+                name: username,
+                about: bio,
+                lightningAddress: lightningAddress,
+            };
+
+            const userRegisterEvent = {
+                kind: 0,
+                pubkey: publicKey,
+                created_at: Math.floor(Date.now() / 1000),
+                tags: [
+                    ['p', publicKey],
+                    ['w', 'memestrAccount'],
+                ],
+                content: JSON.stringify(content),
+            };
+
+            userRegisterEvent.id = getEventHash(userRegisterEvent);
+            userRegisterEvent.sig = getSignature(userRegisterEvent, sk.data);
+
+            try {
+                await pool.publish(relays, userRegisterEvent);
+                console.log('changes published');
+                pool.close(relays);
+                const profile = await getProfileFromPublicKey(publicKey);
+                console.log(profile);
+                let details = JSON.parse(profile.content);
+                details.pubKey = publicKey;
+                details.privateKey = encodedSk;
+                localStorage.setItem('memestr', JSON.stringify(details));
+                setUserDetails(details);
+                setLoading(false);
+                console.log('Changes saved successfully.');
+                setNotificationMessage('User Details Saved Successfully');
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 3000);
+            } catch (error) {
+                console.error('Error during saving changes:', error);
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleCancel = () => {
+        setUsername(initialUsername);
+        setBio(initialBio);
+        setLightningAddress(initialLightningAddress);
+    };
+
     return (
         <div className="flex flex-col md:flex-row min-h-screen ">
             <Sidebar />
-            <main className="md:w-7/12 p-4 pt-8 pb-16 md:pb-0">
+            <main className="md:w-7/12 p-4 pt-8">
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Edit Profile</h1>
                     <div>
-                        <button className="text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-4 font-medium rounded-full text-md px-5 py-2.5 me-2 mb-2 ">
+                        <button
+                            onClick={handleSaveChanges}
+                            className="text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-4 font-medium rounded-full text-md px-5 py-2.5 me-2 mb-2 ">
                             Save
                         </button>
-                        <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-full">
+                        <button
+                            onClick={handleCancel}
+                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-full">
                             Cancel
                         </button>
                     </div>
@@ -109,6 +200,21 @@ function ProfilePage() {
                     <LoadingScreen />
                 ) : (
                     <>
+                        {showNotification && (
+                            <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                                <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                                    <p className="text-bold text-white px-2">
+                                        {notificationMessage}
+                                    </p>
+                                    <CloseIcon
+                                        className="h-6 w-6 mr-2 text-white cursor-pointer"
+                                        onClick={() =>
+                                            setShowNotification(false)
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        )}
                         <div className="flex items-center justify-center mb-4">
                             <label htmlFor="banner-upload">
                                 <input
@@ -175,8 +281,8 @@ function ProfilePage() {
                                 type="text"
                                 id="username"
                                 className="w-full px-4 py-2 border rounded"
-                                value={userDetails && userDetails.name}
-                                readOnly
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
                             />
                         </div>
                         <div className="mb-4">
@@ -190,10 +296,11 @@ function ProfilePage() {
                                 className="w-full px-4 py-2 border rounded"
                                 rows="4"
                                 placeholder="Write your bio here..."
-                                value={userDetails && userDetails.about}
-                                readOnly={false}></textarea>
+                                value={bio}
+                                onChange={e =>
+                                    setBio(e.target.value)
+                                }></textarea>
                         </div>
-
                         <div className="mb-4">
                             <label
                                 htmlFor="lightning-address"
@@ -205,12 +312,10 @@ function ProfilePage() {
                                 id="lightning-address"
                                 className="w-full px-4 py-2 border rounded"
                                 placeholder="Enter your Bitcoin Lightning address"
-                                value={
-                                    userDetails && userDetails.lightningAddress
-                                        ? userDetails.lightningAddress
-                                        : 'Not mentioned'
+                                value={lightningAddress}
+                                onChange={e =>
+                                    setLightningAddress(e.target.value)
                                 }
-                                readOnly
                             />
                         </div>
 
