@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as SearchIcon } from '../../Icons/SearchIconBlack.svg';
 import { ReactComponent as BackArrow } from '../../Icons/BackArrow.svg';
 
 const MobileSearchBar = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [maxSuggestionsHeight, setMaxSuggestionsHeight] = useState('700px');
     const navigate = useNavigate();
 
     const suggestions = [
@@ -74,7 +75,20 @@ const MobileSearchBar = () => {
         navigate(`/search/${suggestion}`);
     };
 
-    const maxSuggestionsHeight = '700px';
+    useEffect(() => {
+        const calculateMaxHeight = () => {
+            const viewportHeight = window.innerHeight;
+            const availableHeight = viewportHeight - 140;
+            setMaxSuggestionsHeight(`${availableHeight}px`);
+        };
+
+        calculateMaxHeight();
+        window.addEventListener('resize', calculateMaxHeight);
+
+        return () => {
+            window.removeEventListener('resize', calculateMaxHeight);
+        };
+    }, []);
 
     return (
         <div

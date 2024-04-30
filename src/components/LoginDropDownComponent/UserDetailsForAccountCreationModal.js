@@ -38,10 +38,21 @@ function TextAreaField({ label, placeholder, value, onChange }) {
     );
 }
 
+function LoadingScreen() {
+    return (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
+            <div className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        </div>
+    );
+}
+
 function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     const [username, setUsername] = useState('');
     const [aboutMe, setAboutMe] = useState('');
     const [fileString, setFileString] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
     const choosePicture = url => {
@@ -51,15 +62,15 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
     function handleUsernameChange(event) {
         setUsername(event.target.value);
     }
-
     async function registerAccount(sk, pk) {
+        setIsLoading(true);
+
         const relays = [
             'wss://relay.damus.io',
             'wss://relay.primal.net',
             'wss://relay.snort.social',
             'wss://relay.hllo.live',
         ];
-
         const pool = new SimplePool();
         const encodedSk = sk;
         sk = nip19.decode(sk);
@@ -90,19 +101,20 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
 
         try {
             await pool.publish(relays, userRegisterEvent);
-
             pool.close(relays);
-
             const profile = await getProfileFromPublicKey(pk.data);
             let details = JSON.parse(profile.content);
             details.pubKey = pk.data;
             details.privateKey = encodedSk; // Encrypt it.
             localStorage.setItem('memestr', JSON.stringify(details));
+            setIsLoading(false);
+            onClose();
             console.log('Set the default login in local cache.', details);
             setShowPopup(true);
             setTimeout(() => setShowPopup(false), 3000);
         } catch (error) {
             console.error('Error during registration:', error);
+            setIsLoading(false); // Set loading to false on failure
         }
     }
 
@@ -216,6 +228,7 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
                                             }}>
                                             Create Account and Login
                                         </button>
+                                        {isLoading && <LoadingScreen />}
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>

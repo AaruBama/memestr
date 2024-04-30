@@ -3,6 +3,7 @@ import { relayInit, SimplePool } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
+import TrendingSidebar from './TrendingSideBar';
 import Sidebar from './SideBar';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 
@@ -191,13 +192,21 @@ export function HashTagToolProvider({ children, filterTags }) {
         setScrollPosition,
         LoadMoreMedia,
         isLoading,
+        filterTags,
     };
 
     return (
         <HashTagContext.Provider value={contextValue}>
-            {isLoading ? <Spinner /> : children}
+            {children}
         </HashTagContext.Provider>
     );
+}
+export function useResetScrollOnFilterChange(filterTags) {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        // Or, if you're scrolling within a specific element:
+        // document.getElementById('your-scrollable-element-id').scrollTop = 0;
+    }, [filterTags]);
 }
 
 // Custom hook to access the context
@@ -247,9 +256,10 @@ export function useHashTagContext() {
 // }
 
 export function HashtagTool() {
-    const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
+    const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+    useResetScrollOnFilterChange(filterTags);
 
     function showNewPostModal() {
         setNewPostModal(true);
@@ -260,11 +270,8 @@ export function HashtagTool() {
     }
 
     function handleLoadMore() {
-        // Set the loading state before fetching more posts
         setLoadingMorePosts(true);
-        // Call the LoadMoreMedia function to fetch more posts
         LoadMoreMedia().then(() => {
-            // Reset the loading state after posts are fetched
             setLoadingMorePosts(false);
         });
     }
@@ -274,6 +281,7 @@ export function HashtagTool() {
             <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar />
                 <main className="flex-1 overflow-y-auto">
+                    {isLoading && <Spinner />}
                     <Feed
                         notes={notes}
                         onLoadMore={handleLoadMore}
@@ -289,7 +297,8 @@ export function HashtagTool() {
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        className="hidden md:block fixed bottom-4 right-8 z-49 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
+                        style={{ zIndex: 999 }}
+                        className="hidden md:block fixed bottom-4 right-8  bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
                         <UploadSvg className="m-auto h-6 w-6" />
                     </button>
 
@@ -300,6 +309,7 @@ export function HashtagTool() {
                         />
                     )}
                 </main>
+                <TrendingSidebar />
             </div>
         </>
     );
