@@ -9,8 +9,9 @@ function Spinner() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100vh',
-                backgroundColor: 'white', // This sets the background color to black
+                minHeight: '50vh',
+                marginTop: '25vh',
+                backgroundColor: 'transparent',
             }}>
             <div className="lds-ellipsis">
                 <div></div>

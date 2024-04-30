@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './profile.css';
 import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools';
 import Menu from '../Menu';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
 import { ReactComponent as Memestr } from '../../Icons/MemestrLogo.svg';
-import { ReactComponent as SearchSVG } from '../../Icons/SearchIconBlack.svg';
 
 export function generateNewKeys() {
     const pk = generatePrivateKey();
@@ -21,20 +19,6 @@ function HeaderBar({ isSearchVisible }) {
 
     const [prevScrollY, setPrevScrollY] = useState(0);
     const scrollThreshold = 100;
-
-    const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
-    const handleSearchChange = event => {
-        setSearchQuery(event.target.value);
-    };
-
-    const handleSearchSubmit = event => {
-        event.preventDefault();
-        if (searchQuery.trim().length > 0) {
-            navigate(`/search/${searchQuery.trim()}`);
-            setSearchQuery('');
-        }
-    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -73,33 +57,14 @@ function HeaderBar({ isSearchVisible }) {
                     <Menu />
                 </div>
 
-                <div className="flex basis-1/3 justify-center">
+                <div className="flex basis-1/3 justify-between items-center pl-20">
                     <Memestr />
-                </div>
-
-                <div className="flex basis-1/3 justify-end items-center">
-                    <form
-                        onSubmit={handleSearchSubmit}
-                        className="hidden md:flex items-center w-42 px-2 ">
-                        <div className="relative w-full">
-                            <input
-                                type="search"
-                                className="pl-4 pr-8 py-2 w-full border border-gray-200  bg-slate-50 rounded-full focus:outline-none focus:border-grey-400 transition-shadow"
-                                placeholder="Search..."
-                                value={searchQuery}
-                                onChange={handleSearchChange}
-                            />
-                            <button
-                                type="submit"
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent text-gray-600 hover:text-gray-500 focus:text-gray-500 outline-none">
-                                <SearchSVG className="h-6 w-6" />
-                            </button>
-                        </div>
-                    </form>
-                    <button className="hidden md:block">
+                    <button className="hidden md:block pr-1">
                         <DropdownComponent />
                     </button>
                 </div>
+
+                <div className="flex basis-1/3 justify-end items-center"></div>
             </header>
         </div>
     );

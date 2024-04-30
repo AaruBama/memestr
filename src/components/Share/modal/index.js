@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
+import { ReactComponent as Search } from '../../../Icons/SearchIcon.svg';
 import { copyValueToClipboard } from '../../LoginDropDownComponent/NewKeysModal';
 import noProfilePictureURL from '../../../Icons/noImageUser.svg';
 import './style.css';
@@ -40,6 +41,7 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
     const [inputValue, setInputValue] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [searchedUser, setSearchedUser] = useState([]);
     // const [cachedUsers, setCachedUser] = useState(JSON.parse(localStorage.getItem("frequent_shares")) || []);
@@ -67,11 +69,19 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
 
     const handleSearch = async e => {
         e.preventDefault();
+        setIsLoading(true);
         setSearchedUser(null);
+
         if (inputValue.trim() !== '') {
-            const userList = await getUserFromName(inputValue);
-            const parsedUsers = parseUserContent(userList);
-            setSearchedUser(parsedUsers);
+            try {
+                const userList = await getUserFromName(inputValue);
+                const parsedUsers = parseUserContent(userList);
+                setSearchedUser(parsedUsers);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setIsLoading(false);
         }
     };
 
@@ -221,68 +231,74 @@ export function ShareModal({ isOpen, onClose, postUrl }) {
                                         <button
                                             type="submit"
                                             className="mt-2 ml-2 p-2 bg-blue-500 text-white rounded">
-                                            Submit
+                                            <Search className="h-6 w-6" />
                                         </button>
                                     </form>
 
                                     <div className="mt-4">
-                                        {getUserList() && (
-                                            <div className="flex flex-wrap pl-4 ">
-                                                {getUserList().map(user => (
-                                                    <div
-                                                        key={user.pubKey}
-                                                        className={
-                                                            'flex flex-col items-center m-2 ' +
-                                                            (isUserSelected(
-                                                                user.pubKey,
-                                                            )
-                                                                ? 'selected-user'
-                                                                : '')
-                                                        }
-                                                        style={{
-                                                            width: '80px', // Add margin to create a gap
-                                                        }}
-                                                        onClick={() => {
-                                                            toggleUserSelection(
-                                                                user.pubKey,
-                                                            );
-                                                            addUserToCache(
-                                                                user,
-                                                            );
-                                                        }}>
-                                                        <div className="w-full h-12 flex items-center justify-center overflow-hidden ">
-                                                            <img
-                                                                src={
-                                                                    user.picture ||
-                                                                    noProfilePictureURL
-                                                                }
-                                                                alt={
-                                                                    user.name ||
-                                                                    'Anonymous'
-                                                                }
-                                                                className="w-12 h-12 rounded-full"
-                                                                onError={e => {
-                                                                    e.target.src =
-                                                                        noProfilePictureURL; // Replace with your default image URL
-                                                                    e.target.alt =
-                                                                        'Default Image';
-                                                                }}
-                                                            />
-                                                            {isUserSelected(
-                                                                user.pubKey,
-                                                            ) && (
-                                                                <div className="selected-overlay">
-                                                                    {/* Add a tick mark or any other indicator */}
-                                                                    ✓
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <span className="mt-1 text-s text-center block">
-                                                            {user.name}
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                        {isLoading ? (
+                                            <div className="flex justify-center items-center">
+                                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
                                             </div>
+                                        ) : (
+                                            getUserList() && (
+                                                <div className="flex flex-wrap pl-4 ">
+                                                    {getUserList().map(user => (
+                                                        <div
+                                                            key={user.pubKey}
+                                                            className={
+                                                                'flex flex-col items-center m-2 ' +
+                                                                (isUserSelected(
+                                                                    user.pubKey,
+                                                                )
+                                                                    ? 'selected-user'
+                                                                    : '')
+                                                            }
+                                                            style={{
+                                                                width: '80px',
+                                                            }}
+                                                            onClick={() => {
+                                                                toggleUserSelection(
+                                                                    user.pubKey,
+                                                                );
+                                                                addUserToCache(
+                                                                    user,
+                                                                );
+                                                            }}>
+                                                            <div className="w-full h-12 flex items-center justify-center overflow-hidden ">
+                                                                <img
+                                                                    src={
+                                                                        user.picture ||
+                                                                        noProfilePictureURL
+                                                                    }
+                                                                    alt={
+                                                                        user.name ||
+                                                                        'Anonymous'
+                                                                    }
+                                                                    className="w-12 h-12 rounded-full"
+                                                                    onError={e => {
+                                                                        e.target.src =
+                                                                            noProfilePictureURL; // Replace with your default image URL
+                                                                        e.target.alt =
+                                                                            'Default Image';
+                                                                    }}
+                                                                />
+                                                                {isUserSelected(
+                                                                    user.pubKey,
+                                                                ) && (
+                                                                    <div className="selected-overlay">
+                                                                        {/* Add a tick mark or any other indicator */}
+                                                                        ✓
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <span className="mt-1 text-s text-center block">
+                                                                {user.name}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )
                                         )}
                                     </div>
                                     <span className="flex flex-row gap-2 m-2 justify-start">
