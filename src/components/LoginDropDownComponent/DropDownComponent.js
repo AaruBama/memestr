@@ -10,8 +10,9 @@ import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 import { ReactComponent as ExtensionLogin } from '../../Icons/ExtentionLogin.svg';
-import { getUserDetailsFromPublicKey } from '../Profile';
+
 import { ReactComponent as TickIcon } from '../../Icons/RoundTick.svg';
+import { getUserDetailsFromPublicKey } from '../Profile';
 
 function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
