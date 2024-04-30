@@ -52,6 +52,34 @@ export function convertHashtagsToLinks(text) {
     return tokens;
 }
 
+export function renderContent(imageLink) {
+    try {
+        const extension = imageLink.split('.').pop();
+        if (extension === 'undefined') {
+            return;
+        }
+        if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
+            return (
+                <img
+                    alt={''}
+                    src={imageLink}
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block',
+                        objectFit: 'cover',
+                    }}
+                />
+            );
+        } else {
+            return <VideoPlayer imageLink={imageLink} />;
+        }
+    } catch (e) {
+        console.log('Image link is ', imageLink);
+        console.log('Something happened here' + e);
+    }
+}
+
 export function extractLinksFromText(text) {
     const linkRegex = /(https?:\/\/[^\s]+)/g;
     const jpgRegex = /\.(jpg|jpeg)$/i;
@@ -298,8 +326,7 @@ function Posts(props) {
     }, [postCreatedAt]);
 
     useEffect(() => {
-        const localLikeCount = getLocalLikeCountForPost(props.note.id);
-        setVotesCount(props.note.voteCount + localLikeCount);
+        setVotesCount(props.note.voteCount);
         (async () => {
             try {
                 var cc = await getCommentCount(props.note.id);
@@ -384,34 +411,6 @@ function Posts(props) {
     let truncatedTitle = truncateTitle(title, 70);
     let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
 
-    function renderContent(imageLink) {
-        try {
-            const extension = imageLink.split('.').pop();
-            if (extension === 'undefined') {
-                return;
-            }
-            if (['jpg', 'jpeg', 'gif', 'png'].includes(extension)) {
-                return (
-                    <img
-                        alt={''}
-                        src={imageLink}
-                        style={{
-                            width: '100%',
-                            height: 'auto',
-                            display: 'block',
-                            objectFit: 'cover',
-                        }}
-                    />
-                );
-            } else {
-                return <VideoPlayer imageLink={imageLink} />;
-            }
-        } catch (e) {
-            console.log('Image link is ', imageLink);
-            console.log('Something happened here' + e);
-        }
-    }
-
     function handleLikeButtonClick() {
         if (!isLoggedIn) {
             setNotificationMessage('Login required to upvote');
@@ -422,8 +421,7 @@ function Posts(props) {
         upvotePost(props.note.id, userPublicKey).then(wasLiked => {
             if (wasLiked) {
                 manageLikedPosts(props.note.id, userPublicKey, true);
-                const localLikeCount = getLocalLikeCountForPost(props.note.id);
-                setVotesCount(localLikeCount + props.note.voteCount);
+                setVotesCount(props.note.voteCount + 1);
                 setFillLike(true);
             }
         });
@@ -449,7 +447,7 @@ function Posts(props) {
 
                     {/* Post Media Content */}
 
-                    <div className="h-max lg:px-1 bg-gray-200 border border-gray-300">
+                    <div className="h-max lg: bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
 

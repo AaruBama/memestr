@@ -57,7 +57,7 @@ function HeaderBar({ isSearchVisible }) {
                     <Menu />
                 </div>
 
-                <div className="flex basis-1/3 justify-center">
+                <div className="flex basis-1/3 justify-between items-center pl-20">
                     <Memestr />
                 </div>
 
@@ -66,6 +66,8 @@ function HeaderBar({ isSearchVisible }) {
                         <DropdownComponent />
                     </button>
                 </div>
+
+                <div className="flex basis-1/3 justify-end items-center"></div>
             </header>
         </div>
     );
