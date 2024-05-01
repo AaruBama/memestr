@@ -11,6 +11,8 @@ import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
 import { ReactComponent as ExtensionLogin } from '../../Icons/ExtentionLogin.svg';
+
+import { ReactComponent as TickIcon } from '../../Icons/RoundTick.svg';
 import { getUserDetailsFromPublicKey } from '../Profile';
 
 function DropdownComponent() {
@@ -18,6 +20,8 @@ function DropdownComponent() {
     const [newKeysModal, setNewKeysModal] = useState(false);
     const [newUserDetailsModal, setNewUserDetailsModal] = useState(false);
     const [loginModal, setLoginModal] = useState(false);
+    const [showLogoutNotification, setShowLogoutNotification] = useState(false);
+    const [showLoginNotification, setShowLoginNotification] = useState(false);
     const [sk, setSk] = useState('');
     const [userDetails, setUserDetails] = useState(getUserDetailsFromLocal());
     const [pk, setPk] = useState('');
@@ -62,8 +66,8 @@ function DropdownComponent() {
         if (userDetails && Object.keys(userDetails).length !== 0) {
             setUserDetails(userDetails);
             setIsLoggedIn(true);
-        } else {
-            setUserDetails({});
+            setShowLoginNotification(true);
+            setTimeout(() => setShowLoginNotification(false), 3000);
         }
     };
 
@@ -120,7 +124,8 @@ function DropdownComponent() {
         localStorage.removeItem('memestr');
         setUserDetails(null);
         setIsLoggedIn(false);
-        alert('Logged out successfully');
+        setShowLogoutNotification(true);
+        setTimeout(() => setShowLogoutNotification(false), 3000);
     }
 
     const redirectToProfile = () => {
@@ -267,6 +272,23 @@ function DropdownComponent() {
                 pk={pk}
             />
             <LoginModal isOpen={loginModal} onClose={closeLoginModal} />
+            {showLogoutNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <TickIcon className="h-6 w-6 mr-2 text-white" />
+                        <p>Logged Out Successfully</p>
+                    </div>
+                </div>
+            )}
+
+            {showLoginNotification && (
+                <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                    <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                        <TickIcon className="h-6 w-6 mr-2 text-white" />
+                        <p>Logged In Successfully</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
