@@ -174,6 +174,7 @@ function ProfilePage() {
         setUsername(initialUsername);
         setBio(initialBio);
         setLightningAddress(initialLightningAddress);
+        navigate('/');
     };
 
     return (
