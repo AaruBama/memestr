@@ -13,7 +13,7 @@ function Sidebar() {
             : 'flex items-center px-4 py-2 mt-5 text-gray-700 hover:bg-gray-100 rounded-md';
     };
     return (
-        <aside className="hidden md:block md:w-1/5 bg-white p-5 sticky top-0 h-screen overflow-y-auto border-r z-50">
+        <aside className="hidden md:block md:w-64 bg-white p-5 sticky top-0 h-screen overflow-y-auto border-r z-50">
             <h1 className="font-bungee px-4 py-2 text-xl ">Category</h1>
             <nav className="mt-8 ">
                 <NavLink to="/" className={getNavLinkClass}>
