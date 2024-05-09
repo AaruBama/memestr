@@ -28,7 +28,7 @@ function ProfilePage() {
 
     useEffect(() => {
         if (!isLoggedIn) {
-            navigate('/');
+            navigate(-1);
         } else {
             getUserDetails();
         }
@@ -174,7 +174,7 @@ function ProfilePage() {
         setUsername(initialUsername);
         setBio(initialBio);
         setLightningAddress(initialLightningAddress);
-        navigate('/');
+        navigate(-1);
     };
 
     return (
