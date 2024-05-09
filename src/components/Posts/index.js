@@ -95,6 +95,11 @@ export const removeHashtagsAndLinks = text => {
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
 
+export const removeHashtags = text => {
+    const withoutHastags = text.replace(/#\w+/g, '');
+    return withoutHastags.replace(/(https?:\/\/[^\s]+)/g, '');
+};
+
 export function extractHashtags(text) {
     return text.match(/#\w+/g) || [];
 }
@@ -356,34 +361,9 @@ function Posts(props) {
         }
     }
 
-    function convertHashtagsToLinks(text) {
-        const hashtagRegex = /#(\w+)(?=\s|#|$)/g;
-        const tokens = [];
-        let match;
-        let lastIndex = 0;
-        while ((match = hashtagRegex.exec(text)) !== null) {
-            if (match.index > lastIndex) {
-                tokens.push(text.slice(lastIndex, match.index));
-            }
-            tokens.push(
-                <Link
-                    to={`/search/${match[1]}`}
-                    key={match[1]}
-                    className="text-customBlue hover:text-customBlue-700 hover:decoration-customBlue-700 transition duration-300 ease-in-out hover:scale-112">
-                    {match[0]}
-                </Link>,
-            );
-            lastIndex = match.index + match[0].length;
-        }
-        if (lastIndex < text.length) {
-            tokens.push(text.slice(lastIndex));
-        }
-        return tokens;
-    }
-
     let truncatedTitle = truncateTitle(title, 70);
     let hashtags = extractHashtags(truncatedTitle);
-    let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
+    let titleWithLinks = removeHashtags(truncatedTitle);
 
     function renderContent(imageLink) {
         try {
@@ -437,39 +417,13 @@ function Posts(props) {
         <>
             <div className="flex flex-col items-center">
                 <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
-                    {/* Post Header: Title and Time */}
-                    <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-bold font-nunito">
-                                {titleWithLinks}
-                            </h3>
-                            <span className="text-xs text-gray-500">
-                                {timeDifference.duration}
-                                {timeDifference.unit}
-                            </span>
-                        </div>
-                    </div>
-
                     {/* Post Media Content */}
 
-                    <div className="h-max lg:px-1 bg-gray-200 border border-gray-300">
+                    <div className="h-max lg: bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
-
+                    <div className="border-t border-grey-100 rounded-b-md "></div>
                     <div className="border-x border-grey-100 flex flex-col p-3">
-                        <div className="flex gap-2 py-2">
-                            {hashtags.slice(0, 4).map((tag, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() =>
-                                        handleTagClick(tag.substring(1))
-                                    }
-                                    className="bg-gray-200 text-black rounded-full px-4 py-1 text-sm focus:outline-none">
-                                    {tag.substring(1)}
-                                </button>
-                            ))}
-                        </div>
-
                         <div className="flex justify-between items-center">
                             <div className="flex items-center">
                                 <Link
@@ -530,6 +484,33 @@ function Posts(props) {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                    <div className="border-t border-grey-100 rounded-b-md "></div>
+
+                    <div className="border-x border-grey-100 flex justify-between items-center px-1 ">
+                        <div className="flex gap-2 py-2">
+                            {hashtags.slice(0, 4).map((tag, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() =>
+                                        handleTagClick(tag.substring(1))
+                                    }
+                                    className="bg-gray-200 text-black rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    {tag.substring(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <span className="text-xs text-gray-500">
+                            {timeDifference.duration}
+                            {timeDifference.unit}
+                        </span>
+                    </div>
+
+                    <div className="border-x border-grey-100">
+                        <h3 className="font-bold font-nunito px-1">
+                            {titleWithLinks}
+                        </h3>
                     </div>
 
                     <div className="border-t border-grey-100 rounded-b-md "></div>
