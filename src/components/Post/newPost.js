@@ -5,6 +5,31 @@ import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { ReactComponent as UpwardArrow } from '../../Icons/upwardArrow.svg';
 import { ReactComponent as UploadNew } from '../../Icons/uploadNewPost.svg';
 
+export const uploadToImgur = async media => {
+    // if (!validateFile(file)) {
+    //     alert("Only jpg,jpeg,mp4 allowed")
+    // }
+    const apiUrl = 'https://api.imgur.com/3/upload';
+
+    const formData = new FormData();
+    formData.append('image', media);
+    const headers = new Headers();
+    headers.append('Authorization', 'Client-ID c41537d03e6c984');
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: formData,
+    });
+
+    const parsedjson = await response.json();
+
+    if (!response.ok) {
+        throw new Error('Upload failed');
+    }
+    return parsedjson;
+};
+
 const PostUpload = ({ isOpen, onClose }) => {
     const [link, setLink] = useState(null);
     const [title, setTitle] = useState('');
@@ -95,6 +120,7 @@ const PostUpload = ({ isOpen, onClose }) => {
         Promise.resolve(p1).then(
             value => {
                 console.log('Success', value);
+                console.log('link' + link);
                 setPostStage(4); // Success!
             },
             reason => {
@@ -164,30 +190,6 @@ const PostUpload = ({ isOpen, onClose }) => {
     //     return response.json();
     // };
 
-    const uploadToImgur = async media => {
-        // if (!validateFile(file)) {
-        //     alert("Only jpg,jpeg,mp4 allowed")
-        // }
-        const apiUrl = 'https://api.imgur.com/3/upload';
-
-        const formData = new FormData();
-        formData.append('image', media);
-        const headers = new Headers();
-        headers.append('Authorization', 'Client-ID c41537d03e6c984');
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers,
-            body: formData,
-        });
-
-        const parsedjson = await response.json();
-
-        if (!response.ok) {
-            throw new Error('Upload failed');
-        }
-        return parsedjson;
-    };
     function handleTitleChange(event) {
         setTitle(event.target.value);
     }

@@ -8,7 +8,7 @@ import { getProfileFromPublicKey } from '../Profile';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { LoadingScreen } from './UserDetailsForAccountCreationModal';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
-
+import { uploadToImgur } from '../Post/newPost';
 function ProfilePage() {
     const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
@@ -23,8 +23,13 @@ function ProfilePage() {
     const [initialUsername, setInitialUsername] = useState('');
     const [initialBio, setInitialBio] = useState('');
     const [initialLightningAddress, setInitialLightningAddress] = useState('');
+    const [initialProfile, setInitialProfile] = useState('');
+    const [initialBanner, setInitialBanner] = useState('');
+
     const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
+    const [preview, setPreview] = useState(null);
+    const [bannerPreview, setBannerPreview] = useState(null);
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -39,6 +44,8 @@ function ProfilePage() {
             setInitialUsername(userDetails.name);
             setInitialBio(userDetails.about);
             setInitialLightningAddress(userDetails.lightningAddress);
+            setInitialBanner(userDetails.banner);
+            setInitialProfile(userDetails.link);
         }
     }, [userDetails]);
 
@@ -51,24 +58,14 @@ function ProfilePage() {
                 const profile = await getProfileFromPublicKey(publicKey);
                 const content = profile.content;
                 const details = JSON.parse(content);
-                console.log(details);
-
-                const profileImage = localStorage.getItem(
-                    `profileImage_${publicKey}`,
-                );
-                console.log(profileImage);
-                const bannerImage = localStorage.getItem(
-                    `bannerImage_${publicKey}`,
-                );
-
                 setUserDetails({
                     ...details,
-                    profileImage,
-                    bannerImage,
                 });
                 setUsername(details.name);
                 setBio(details.about);
                 setLightningAddress(details.lightningAddress);
+                setProfileImage(details.link);
+                setBannerImage(details.banner);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching user details:', error);
@@ -76,38 +73,33 @@ function ProfilePage() {
         }
     };
 
-    const handleProfileUpload = e => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setProfileImage(reader.result);
-            const storedData = localStorage.getItem('memestr');
-            if (storedData) {
-                const publicKey = JSON.parse(storedData).pubKey;
-                localStorage.setItem(
-                    `profileImage_${publicKey}`,
-                    reader.result,
-                );
-            }
-        };
-        if (file) {
-            reader.readAsDataURL(file);
+    const handleProfileUpload = async event => {
+        const file = event.target.files[0];
+        if (!file) {
+            return;
+        }
+        try {
+            const response = await uploadToImgur(file);
+            setProfileImage(response.data.link);
+            setPreview(URL.createObjectURL(file));
+        } catch (error) {
+            console.error('An error occurred:', error);
+            setProfileImage(null);
         }
     };
 
-    const handleBannerUpload = e => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setBannerImage(reader.result);
-            const storedData = localStorage.getItem('memestr');
-            if (storedData) {
-                const publicKey = JSON.parse(storedData).pubKey;
-                localStorage.setItem(`bannerImage_${publicKey}`, reader.result);
-            }
-        };
-        if (file) {
-            reader.readAsDataURL(file);
+    const handleBannerUpload = async event => {
+        const file = event.target.files[0];
+        if (!file) {
+            return;
+        }
+        try {
+            const response = await uploadToImgur(file);
+            setBannerImage(response.data.link);
+            setBannerPreview(URL.createObjectURL(file));
+        } catch (error) {
+            console.error('An error occured:', error);
+            setBannerPreview(null);
         }
     };
 
@@ -123,16 +115,15 @@ function ProfilePage() {
         if (storedData) {
             const publicKey = JSON.parse(storedData).pubKey;
             const encodedSk = JSON.parse(storedData).privateKey;
-            console.log(publicKey);
-            console.log(encodedSk);
             let sk = nip19.decode(encodedSk);
 
             const content = {
                 name: username,
                 about: bio,
                 lightningAddress: lightningAddress,
+                link: profileImage,
+                banner: bannerImage,
             };
-
             const userRegisterEvent = {
                 kind: 0,
                 pubkey: publicKey,
@@ -143,23 +134,18 @@ function ProfilePage() {
                 ],
                 content: JSON.stringify(content),
             };
-
             userRegisterEvent.id = getEventHash(userRegisterEvent);
             userRegisterEvent.sig = getSignature(userRegisterEvent, sk.data);
-
             try {
                 await pool.publish(relays, userRegisterEvent);
-                console.log('changes published');
                 pool.close(relays);
                 const profile = await getProfileFromPublicKey(publicKey);
-                console.log(profile);
                 let details = JSON.parse(profile.content);
                 details.pubKey = publicKey;
                 details.privateKey = encodedSk;
                 localStorage.setItem('memestr', JSON.stringify(details));
                 setUserDetails(details);
                 setLoading(false);
-                console.log('Changes saved successfully.');
                 setNotificationMessage('User Details Saved Successfully');
                 setShowNotification(true);
                 setTimeout(() => setShowNotification(false), 3000);
@@ -176,7 +162,6 @@ function ProfilePage() {
         setLightningAddress(initialLightningAddress);
         navigate(-1);
     };
-
     return (
         <div className="flex flex-col md:flex-row min-h-screen ">
             <Sidebar />
@@ -229,11 +214,10 @@ function ProfilePage() {
                                     className="w-screen h-48 bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden"
                                     style={{
                                         backgroundImage: `url(${
+                                            bannerPreview ||
                                             bannerImage ||
                                             userDetails.banner ||
-                                            localStorage.getItem(
-                                                `bannerImage_${publicKey}`,
-                                            )
+                                            initialBanner
                                         })`,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
@@ -253,17 +237,17 @@ function ProfilePage() {
                                     className="flex items-center justify-center mr-auto -mt-20 bg-gray-50 rounded-full border-gray-100 w-32 h-32 cursor-pointer overflow-hidden"
                                     style={{
                                         backgroundImage: `url(${
+                                            preview ||
                                             profileImage ||
-                                            userDetails.profile ||
-                                            localStorage.getItem(
-                                                `profileImage_${publicKey}`,
-                                            )
+                                            userDetails.link ||
+                                            initialProfile
                                         })`,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                     }}>
-                                    {!profileImage &&
-                                        !userDetails.profile &&
+                                    {!preview &&
+                                        !profileImage &&
+                                        !userDetails.link &&
                                         !localStorage.getItem(
                                             `profileImage_${publicKey}`,
                                         ) && (
