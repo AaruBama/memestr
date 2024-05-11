@@ -435,7 +435,7 @@ function Posts(props) {
                                     onClick={() =>
                                         handleTagClick(tag.substring(1))
                                     }
-                                    className="bg-gray-100 text-blue-900 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    className="bg-gray-100 text-purple-500 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
                                     #{tag.substring(1)}
                                 </button>
                             ))}
