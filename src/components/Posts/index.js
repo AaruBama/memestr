@@ -417,7 +417,7 @@ function Posts(props) {
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
                         <div className="border-x border-t border-grey-100 p-2">
-                            <h3 className="font-semibold font-nunito font-light">
+                            <h3 className="font-semibold font-nunito font-medium">
                                 {titleWithoutTagsOrLinks}
                             </h3>
                         </div>
