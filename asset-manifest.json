@@ -1,10 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.f7671b7e.css",
-    "main.js": "/static/js/main.a6c534e8.js",
+    "main.css": "/static/css/main.d1567ece.css",
+    "main.js": "/static/js/main.f33c7e6a.js",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
+    "static/media/Profile.svg": "/static/media/Profile.be7881726ada434d72d55c590cf6b9fd.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
+    "static/media/QuestionMarkIcon.svg": "/static/media/QuestionMarkIcon.45e2978ea712836b1d24af3f8ef16e31.svg",
     "static/media/VolumeDown.svg": "/static/media/VolumeDown.a48258a7204b48573798f3a750f93f1d.svg",
     "static/media/ExtentionLogin.svg": "/static/media/ExtentionLogin.5ea5f9fe75803ebaa1d02fb8be8e3e93.svg",
     "index.html": "/index.html",
@@ -22,6 +24,7 @@
     "static/media/PhotographySvg.svg": "/static/media/PhotographySvg.357b408a26cfbcf3f8ae7c931ca8dd01.svg",
     "static/media/ShareButtonSvg.svg": "/static/media/ShareButtonSvg.b71984ebcf9fcb7386b4f4339d9c1fd7.svg",
     "static/media/uploadNewPost.svg": "/static/media/uploadNewPost.cde5b6adbd7dbd0393f99872965d8156.svg",
+    "static/media/Copy.svg": "/static/media/Copy.a0828285f013c4120c669afccd48f692.svg",
     "static/media/UploadSvg.svg": "/static/media/UploadSvg.cf19c8def5b75fc166ecf2b7183b54f1.svg",
     "static/media/BackArrow.svg": "/static/media/BackArrow.6f1c9d15c683d2fbbccd68f03efb94b9.svg",
     "static/media/SubmitIcon.svg": "/static/media/SubmitIcon.7a0d0bd067419a1715ddaac5c21f0fbe.svg",
@@ -35,10 +38,11 @@
     "static/media/SearchIconBlack.svg": "/static/media/SearchIconBlack.b3a12fa517c4a7fd6c681afeb19b18eb.svg",
     "static/media/SearchIcon.svg": "/static/media/SearchIcon.2ccc36d4e84693dc2e83e37daaf34207.svg",
     "static/media/Notification.svg": "/static/media/Notification.d14f855fa1cc7c9ce23c469407fdfb0b.svg",
-    "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg"
+    "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg",
+    "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.f7671b7e.css",
-    "static/js/main.a6c534e8.js"
+    "static/css/main.d1567ece.css",
+    "static/js/main.f33c7e6a.js"
   ]
 }
