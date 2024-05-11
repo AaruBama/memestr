@@ -1,6 +1,7 @@
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ShareModal } from '../Share/modal';
@@ -121,6 +122,15 @@ export const removeHashtagsAndLinks = text => {
     // Remove links
     return text.replace(/(https?:\/\/[^\s]+)/g, '');
 };
+
+export const removeHashtags = text => {
+    const withoutHastags = text.replace(/#\w+/g, '');
+    return withoutHastags.replace(/(https?:\/\/[^\s]+)/g, '');
+};
+
+export function extractHashtags(text) {
+    return text.match(/#\w+/g) || [];
+}
 
 export async function upvotePost(noteId, userPublicKey) {
     const storedData = localStorage.getItem('memestr');
@@ -346,9 +356,8 @@ function Posts(props) {
         }
     }, [props.note.id]);
 
-    let title = removeHashtagsAndLinks(props.note.content)
-        .trimLeft()
-        .trimRight();
+    let title = removeHashtagsAndLinks(props.note.content);
+
     if (title.length === 0) {
         title = ' ';
     }
@@ -377,33 +386,9 @@ function Posts(props) {
         }
     }
 
-    function convertHashtagsToLinks(text) {
-        const hashtagRegex = /#(\w+)(?=\s|#|$)/g;
-        const tokens = [];
-        let match;
-        let lastIndex = 0;
-        while ((match = hashtagRegex.exec(text)) !== null) {
-            if (match.index > lastIndex) {
-                tokens.push(text.slice(lastIndex, match.index));
-            }
-            tokens.push(
-                <Link
-                    to={`/search/${match[1]}`}
-                    key={match[1]}
-                    className="text-customBlue hover:text-customBlue-700 hover:decoration-customBlue-700 transition duration-300 ease-in-out hover:scale-112">
-                    {match[0]}
-                </Link>,
-            );
-            lastIndex = match.index + match[0].length;
-        }
-        if (lastIndex < text.length) {
-            tokens.push(text.slice(lastIndex));
-        }
-        return tokens;
-    }
-
-    let truncatedTitle = truncateTitle(title, 70);
-    let titleWithLinks = convertHashtagsToLinks(truncatedTitle);
+    let truncatedTitle = truncateTitle(title, 100);
+    let hashtags = extractHashtags(title);
+    let titleWithoutTagsOrLinks = removeHashtags(truncatedTitle);
 
     function handleLikeButtonClick() {
         if (!isLoggedIn) {
@@ -418,77 +403,111 @@ function Posts(props) {
             }
         });
     }
+    const navigate = useNavigate();
+    const handleTagClick = suggestions => {
+        navigate(`/search/${suggestions}`);
+    };
 
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
             <div className="flex flex-col items-center">
                 <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
-                    {/* Post Header: Title and Time */}
-                    <div className="py-2 px-1 pb-1 border-t border-x border-gray-300 rounded-t-md">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-bold font-nunito">
-                                {titleWithLinks}
-                            </h3>
-                            <span className="text-xs text-gray-500">
-                                {timeDifference.duration}
-                                {timeDifference.unit}
-                            </span>
-                        </div>
-                    </div>
-
                     {/* Post Media Content */}
+
+                    {titleWithoutTagsOrLinks.trim() !== '' && (
+                        <div className="border-x border-t border-grey-100 p-2">
+                            <h3 className="font-nunito font-semibold text-gray-700">
+                                {titleWithoutTagsOrLinks}
+                            </h3>
+                        </div>
+                    )}
 
                     <div className="h-max lg: bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
 
+                    <div className="border-x border-grey-100 flex justify-between items-center px-2">
+                        <div className="flex gap-2 py-2">
+                            {hashtags.slice(0, 3).map((tag, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() =>
+                                        handleTagClick(tag.substring(1))
+                                    }
+                                    className="bg-gray-100 text-blue-800 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    #{tag.substring(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <span className="text-xs text-gray-500">
+                            {timeDifference.duration}
+                            {timeDifference.unit}
+                        </span>
+                    </div>
+
+                    <div className="border-t border-grey-100 rounded-b-md "></div>
                     <div className="border-x border-grey-100 flex flex-col p-3">
-                        <div className="flex justify-between items-centre">
-                            <Link to={postUrl} className="flex items-center ">
-                                <CommentSvg className="h-4 w-4 text-black-600" />
-                                <span className="text-xs text-gray-600 ml-1">
-                                    {commentCount > 0 ? commentCount : ''}
-                                </span>
-                            </Link>
-
-                            <button
-                                onClick={handleZapButton}
-                                className={`flex items-center ${
-                                    fillZap
-                                        ? 'text-yellow-300'
-                                        : 'text-black-600'
-                                }`}>
-                                <ZapSvg className="h-4 w-4 text-black-600" />
-                                {processedValue && (
-                                    <span className="text-xs ml-1">
-                                        {processedValue}
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                                <Link
+                                    to={postUrl}
+                                    className="flex items-center">
+                                    <CommentSvg className="h-4 w-4 text-black-600" />
+                                    <span className="text-xs text-gray-600 ml-1">
+                                        {commentCount > 0 ? commentCount : ''}
                                     </span>
-                                )}
-                                <ZapModal
-                                    isOpenm={isModalOpen}
-                                    onConfirm={handleConfirm}
-                                />
-                            </button>
+                                </Link>
+                            </div>
 
-                            <button
-                                onClick={handleLikeButtonClick}
-                                disabled={isTodisabled()}
-                                className={`flex items-center ${
-                                    fillLike ? 'text-red-600' : 'text-black-600'
-                                }`}>
-                                <LikeSvg
-                                    fill={fillLike ? 'red' : 'none'}
-                                    className="h-4 w-4"
-                                />
-                                <span className="text-xs ml-1 text-black-600">
-                                    {votesCount}
-                                </span>
-                            </button>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={handleZapButton}
+                                    className={`flex items-center ${
+                                        fillZap
+                                            ? 'text-yellow-300'
+                                            : 'text-black-600'
+                                    }`}>
+                                    <ZapSvg className="h-4 w-4 text-black-600" />
+                                    {processedValue && (
+                                        <span className="text-xs ml-1">
+                                            {processedValue}
+                                        </span>
+                                    )}
+                                    <ZapModal
+                                        isOpenm={isModalOpen}
+                                        onConfirm={handleConfirm}
+                                    />
+                                </button>
+                            </div>
 
-                            <button onClick={openShareModal} className="p-1">
-                                <ShareButtonSvg className="h-4 w-4 text-gray-600" />
-                            </button>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={handleLikeButtonClick}
+                                    disabled={isTodisabled()}
+                                    className={`flex items-center ${
+                                        fillLike
+                                            ? 'text-red-600'
+                                            : 'text-black-600'
+                                    }`}>
+                                    <LikeSvg
+                                        fill={fillLike ? 'red' : 'none'}
+                                        className="h-4 w-4"
+                                    />
+                                    <span className="text-xs ml-1 text-black-600">
+                                        {votesCount}
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div className="flex items-center">
+                                <button
+                                    onClick={openShareModal}
+                                    className="p-1">
+                                    <ShareButtonSvg className="h-4 w-4 text-gray-600" />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

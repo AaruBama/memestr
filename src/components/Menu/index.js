@@ -29,7 +29,7 @@ export default function Header() {
     return (
         <div className="relative z-50">
             <div
-                className="lg:hidden HAMBURGER-ICON space-y-2"
+                className="md:hidden HAMBURGER-ICON space-y-2"
                 onClick={() => setIsNavOpen(prev => !prev)}>
                 <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>
                 <span className="block h-0.5 w-8 animate-pulse bg-gray-700"></span>

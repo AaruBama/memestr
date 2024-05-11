@@ -5,6 +5,28 @@ import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { ReactComponent as UpwardArrow } from '../../Icons/upwardArrow.svg';
 import { ReactComponent as UploadNew } from '../../Icons/uploadNewPost.svg';
 
+export const uploadToImgur = async media => {
+    const apiUrl = 'https://api.imgur.com/3/upload';
+
+    const formData = new FormData();
+    formData.append('image', media);
+    const headers = new Headers();
+    headers.append('Authorization', 'Client-ID c41537d03e6c984');
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: formData,
+    });
+
+    const parsedjson = await response.json();
+
+    if (!response.ok) {
+        throw new Error('Upload failed');
+    }
+    return parsedjson;
+};
+
 const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
     const [link, setLink] = useState(null);
     const [title, setTitle] = useState('');
@@ -18,26 +40,6 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
 
     const MAX_TAGS = 3;
     let alertTimeout = useRef(null);
-
-    // function checkFileUploaded(retryCount) {
-    //     console.log("running checkFileUploaded", retryCount)
-    //     if (retryCount >= 5) {
-    //         console.error('Upload failed after 5 retries. Please try later.');
-    //         alert('Upload failed after 5 retries. Please try later.');
-    //         return false;
-    //     }
-    //
-    //     if (postStage === 2) {
-    //         // Execute your function when postStage is 3
-    //         console.log('Post submitted successfully.');
-    //         return true
-    //         // Add your logic here
-    //     } else {
-    //         setTimeout(() => {
-    //             checkFileUploaded(retryCount + 1);
-    //         }, 1000);
-    //     }
-    // };
 
     const sendNewPostEvent = () => {
         // const uploaded = checkFileUploaded(retryCount)
@@ -59,9 +61,12 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
                 return;
             }
         }
-        if (!title || !link) {
-            alert('Can not create post without media and title.');
+        if (!title) {
+            alert('Can not create post without title.');
             return;
+        }
+        if (!link) {
+            alert('Image could not be uploaded. Please try again.');
         }
         let relays = ['wss://relay.damus.io'];
         const pool = new SimplePool();
@@ -83,7 +88,7 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
                 ['p', uesrPublicKey],
                 ['category', 'memestrrr'],
             ],
-            content: title + ' ' + link + ' ' + hashtags,
+            content: title + ' ' + link + ' ' + hashtags.join(' '),
         };
 
         // console.log("event", commentEvent)
@@ -96,17 +101,21 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
         Promise.resolve(p1).then(
             value => {
                 console.log('Success', value);
+                console.log('link' + link);
+                setPostStage(4);
                 // Call the callback function passed from the parent component
                 if (onUploadSuccess) {
                     onUploadSuccess(); // Call the callback if it's provided
                 }
                 onClose(); // Close the upload dialog
+                // Success!
             },
             reason => {
                 console.error('something went wrong', reason); // Error handling
             },
         );
     };
+
     const handleFileChange = async event => {
         setPostStage(1);
         const file = event.target.files[0];
@@ -133,66 +142,6 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
         }
     };
 
-    // Helper function to convert media to base64
-    // const convertToBase64 = (file) => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             resolve(reader.result);
-    //         };
-    //         reader.onerror = (error) => {
-    //             reject(error);
-    //         };
-    //         reader.readAsDataURL(file);
-    //     });
-    // };
-
-    // Helper function to make the API call
-    // const uploadToImgbb = async (encodedMedia) => {
-    //     console.log("Encoded media is", encodedMedia)
-    //     const apiKey = '32ece32ad2ce29376f55cba38a41f807';
-    //     const apiUrl = `https://api.imgbb.com/1/upload?key=${apiKey}`;
-    //
-    //     const formData = new FormData();
-    //     formData.append('image', encodedMedia);
-    //
-    //
-    //     const response = await fetch(apiUrl, {
-    //         method: 'POST',
-    //         body: formData,
-    //     });
-    //
-    //     if (!response.ok) {
-    //         throw new Error('Upload failed');
-    //     }
-    //
-    //     return response.json();
-    // };
-
-    const uploadToImgur = async media => {
-        // if (!validateFile(file)) {
-        //     alert("Only jpg,jpeg,mp4 allowed")
-        // }
-        const apiUrl = 'https://api.imgur.com/3/upload';
-
-        const formData = new FormData();
-        formData.append('image', media);
-        const headers = new Headers();
-        headers.append('Authorization', 'Client-ID c41537d03e6c984');
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers,
-            body: formData,
-        });
-
-        const parsedjson = await response.json();
-
-        if (!response.ok) {
-            throw new Error('Upload failed');
-        }
-        return parsedjson;
-    };
     function handleTitleChange(event) {
         setTitle(event.target.value);
     }
