@@ -121,7 +121,7 @@ function ProfilePage() {
                 name: username,
                 about: bio,
                 lightningAddress: lightningAddress,
-                link: profileImage,
+                picture: profileImage,
                 banner: bannerImage,
             };
             const userRegisterEvent = {
