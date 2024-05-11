@@ -329,9 +329,7 @@ function Posts(props) {
         }
     }, [props.note.id]);
 
-    let title = removeHashtagsAndLinks(props.note.content)
-        .trimLeft()
-        .trimRight();
+    let title = removeHashtagsAndLinks(props.note.content);
 
     if (title.length === 0) {
         title = ' ';
@@ -361,9 +359,9 @@ function Posts(props) {
         }
     }
 
-    let truncatedTitle = truncateTitle(title, 70);
-    let hashtags = extractHashtags(truncatedTitle);
-    let titleWithLinks = removeHashtags(truncatedTitle);
+    let truncatedTitle = truncateTitle(title, 100);
+    let hashtags = extractHashtags(title);
+    let titleWithoutTagsOrLinks = removeHashtags(truncatedTitle);
 
     function renderContent(imageLink) {
         try {
@@ -419,9 +417,38 @@ function Posts(props) {
                 <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
+                    {titleWithoutTagsOrLinks.trim() !== '' && (
+                        <div className="border-x border-t border-grey-100 p-2">
+                            <h3 className="font-semibold font-nunito font-light  px-2">
+                                {titleWithoutTagsOrLinks}
+                            </h3>
+                        </div>
+                    )}
+
                     <div className="h-max lg: bg-gray-200 border border-gray-300">
                         {renderContent(imageLink)}
                     </div>
+
+                    <div className="border-x border-grey-100 flex justify-between items-center px-2">
+                        <div className="flex gap-2 py-2">
+                            {hashtags.slice(0, 3).map((tag, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() =>
+                                        handleTagClick(tag.substring(1))
+                                    }
+                                    className="bg-gray-100 text-blue-900 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    #{tag.substring(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <span className="text-xs text-gray-500">
+                            {timeDifference.duration}
+                            {timeDifference.unit}
+                        </span>
+                    </div>
+
                     <div className="border-t border-grey-100 rounded-b-md "></div>
                     <div className="border-x border-grey-100 flex flex-col p-3">
                         <div className="flex justify-between items-center">
@@ -484,33 +511,6 @@ function Posts(props) {
                                 </button>
                             </div>
                         </div>
-                    </div>
-                    <div className="border-t border-grey-100 rounded-b-md "></div>
-
-                    <div className="border-x border-grey-100 flex justify-between items-center px-1 ">
-                        <div className="flex gap-2 py-2">
-                            {hashtags.slice(0, 4).map((tag, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() =>
-                                        handleTagClick(tag.substring(1))
-                                    }
-                                    className="bg-gray-200 text-black rounded-full px-4 py-1 text-sm focus:outline-none">
-                                    {tag.substring(1)}
-                                </button>
-                            ))}
-                        </div>
-
-                        <span className="text-xs text-gray-500">
-                            {timeDifference.duration}
-                            {timeDifference.unit}
-                        </span>
-                    </div>
-
-                    <div className="border-x border-grey-100">
-                        <h3 className="font-bold font-nunito px-1">
-                            {titleWithLinks}
-                        </h3>
                     </div>
 
                     <div className="border-t border-grey-100 rounded-b-md "></div>
