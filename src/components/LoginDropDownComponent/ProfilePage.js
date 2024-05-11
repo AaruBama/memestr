@@ -45,7 +45,7 @@ function ProfilePage() {
             setInitialBio(userDetails.about);
             setInitialLightningAddress(userDetails.lightningAddress);
             setInitialBanner(userDetails.banner);
-            setInitialProfile(userDetails.link);
+            setInitialProfile(userDetails.picture);
         }
     }, [userDetails]);
 
@@ -64,7 +64,7 @@ function ProfilePage() {
                 setUsername(details.name);
                 setBio(details.about);
                 setLightningAddress(details.lightningAddress);
-                setProfileImage(details.link);
+                setProfileImage(details.picture);
                 setBannerImage(details.banner);
                 setLoading(false);
             } catch (error) {
@@ -121,7 +121,7 @@ function ProfilePage() {
                 name: username,
                 about: bio,
                 lightningAddress: lightningAddress,
-                link: profileImage,
+                picture: profileImage,
                 banner: bannerImage,
             };
             const userRegisterEvent = {
@@ -239,7 +239,7 @@ function ProfilePage() {
                                         backgroundImage: `url(${
                                             preview ||
                                             profileImage ||
-                                            userDetails.link ||
+                                            userDetails.picture ||
                                             initialProfile
                                         })`,
                                         backgroundSize: 'cover',
@@ -247,7 +247,7 @@ function ProfilePage() {
                                     }}>
                                     {!preview &&
                                         !profileImage &&
-                                        !userDetails.link &&
+                                        !userDetails.picture &&
                                         !localStorage.getItem(
                                             `profileImage_${publicKey}`,
                                         ) && (

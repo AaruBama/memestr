@@ -79,7 +79,7 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
         const content = {
             name: username,
             about: aboutMe,
-            link: fileString,
+            picture: fileString,
         };
 
         if (fileString.length > 0) {
