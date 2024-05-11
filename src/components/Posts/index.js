@@ -417,7 +417,7 @@ function Posts(props) {
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
                         <div className="border-x border-t border-grey-100 p-2">
-                            <h3 className="font-semibold font-nunito font-medium">
+                            <h3 className="font-nunito font-semibold text-gray-700">
                                 {titleWithoutTagsOrLinks}
                             </h3>
                         </div>
@@ -435,7 +435,7 @@ function Posts(props) {
                                     onClick={() =>
                                         handleTagClick(tag.substring(1))
                                     }
-                                    className="bg-gray-100 text-purple-500 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    className="bg-gray-100 text-blue-700 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
                                     #{tag.substring(1)}
                                 </button>
                             ))}
