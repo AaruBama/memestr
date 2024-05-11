@@ -51,20 +51,25 @@ function HeaderBar({ isSearchVisible }) {
         <div className={headerClasses}>
             <header
                 className={
-                    'flex flex-row items-center justify-between h-14 px-3'
+                    'flex flex-row items-center h-14 px-3 lg:pr-96 md:pl-64'
                 }>
                 <div className="flex basis-1/3 justify-start ">
                     <Menu />
                 </div>
 
-                <div className="flex basis-1/3 justify-between items-center pl-20">
+                <div className="flex basis-1/3 justify-between items-center  md:hidden">
                     <Memestr />
-                    <button className="hidden md:block pr-1">
+                </div>
+
+                <div className="hidden md:flex md:flex-1 md:justify-center md:items-center">
+                    <Memestr />
+                </div>
+
+                <div className="flex basis-1/3 justify-end items-center">
+                    <button className="hidden md:block pr-4">
                         <DropdownComponent />
                     </button>
                 </div>
-
-                <div className="flex basis-1/3 justify-end items-center"></div>
             </header>
         </div>
     );

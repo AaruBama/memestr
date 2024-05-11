@@ -2,6 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import './post.css';
 import { ReactComponent as SubmitIcon } from '../../Icons/SubmitIcon.svg';
+import Spinner from '../Spinner';
 
 import {
     extractLinksFromText,
@@ -11,6 +12,7 @@ import {
     getLocalLikeCountForPost,
     manageLikedPosts,
     convertHashtagsToLinks,
+    renderContent,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
 import Comments from '../Comments';
@@ -40,6 +42,7 @@ function Post() {
     const [postData, setPostData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const { isLoggedIn } = useAuth();
+    const [profileLoading, setProfileLoading] = useState(false);
     const [userPublicKey, setUserPublicKey] = useState(null);
 
     useEffect(() => {
@@ -58,38 +61,59 @@ function Post() {
 
     let postUrl = `/post/${postId}?voteCount=${voteCount}`;
 
-    async function getPostFromId(postId) {
+    async function getPostFromId(postId, retries = 3) {
+        setProfileLoading(true);
         const pool = new SimplePool();
-
-        // const relay = relayInit('wss://relay.nostr.band/');
         let relays = [
             'wss://relay.damus.io',
             'wss://relay.primal.net',
             'wss://relay.snort.social',
         ];
 
-        let post = await pool.get(relays, {
-            ids: [postId],
-        });
+        let post = null;
+        for (let i = 0; i < retries; i++) {
+            post = await pool.get(relays, {
+                ids: [postId],
+            });
+            if (post && post.content) {
+                break;
+            }
+        }
+
         if (pool) {
             pool.close(relays);
         }
 
-        let data = {
-            title: convertHashtagsToLinks(removeHashtagsAndLinks(post.content)),
-            imageLink: extractLinksFromText(post.content),
-            opPubKey: post.pubKey,
-        };
-        setPostData(data);
+        if (post && post.content) {
+            let data = {
+                title: convertHashtagsToLinks(
+                    removeHashtagsAndLinks(post.content),
+                ),
+                imageLink: extractLinksFromText(post.content),
+                opPubKey: post.pubKey,
+            };
+
+            setPostData(data);
+            setProfileLoading(false);
+        } else {
+            console.error(
+                `Post with ID ${postId} not found after ${retries} retries`,
+            );
+        }
     }
 
     const captureComment = event => {
         setComment(event.target.value);
     };
 
+    const [repliesLoading, setRepliesLoading] = useState(true);
+
     useEffect(() => {
         setIsLoading(true);
-        const getComments = async () => {
+        setRepliesLoading(true); // Start loading replies
+
+        const fetchData = async () => {
+            // Fetch comments
             const relayPool = new SimplePool();
             const relays = [
                 'wss://relay.damus.io',
@@ -103,11 +127,14 @@ function Post() {
             };
             let replies1 = await relayPool.list(relays, [filters]);
             setReplies(replies1);
-            setIsLoading(false);
+            setRepliesLoading(false); // Replies loaded, set loading to false
             relayPool.close(relays);
         };
-        getComments();
-        getPostFromId(postId);
+
+        // Fetch comments and post data
+        Promise.all([getPostFromId(postId), fetchData()]).finally(() => {
+            setIsLoading(false);
+        });
     }, [postId]);
 
     const captureNewComment = async comment => {
@@ -227,123 +254,128 @@ function Post() {
         <>
             <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar />
-                <main className="flex-1 overflow-y-auto">
-                    <div className="mt-16 flex flex-col items-center lg:mr-60">
-                        <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
-                            <div className="px-4 py-2 ">
-                                <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
-                                    {postData['title']}
-                                </h3>
-                            </div>
+                {isLoading || profileLoading || repliesLoading ? (
+                    <div className="flex-1  md:mr-40">
+                        <Spinner />
+                    </div>
+                ) : (
+                    <main className="flex-1 overflow-y-auto">
+                        <div className="mt-16 flex flex-col items-center lg:mr-60">
+                            <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
+                                <div className="px-4 py-2 ">
+                                    <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
+                                        {postData['title']}
+                                    </h3>
+                                </div>
 
-                            <div className="w-full border-t-2 border-gray-300">
-                                <img
-                                    alt={''}
-                                    src={postData['imageLink']}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div className="flex justify-between items-center p-4 bg-gray-50">
-                                {/* Zap Button */}
-                                <button
-                                    onClick={handleZapButton}
-                                    className="flex items-center">
-                                    <ZapSvg
-                                        className={`${
-                                            fillZap
-                                                ? 'text-yellow-300'
-                                                : 'text-black'
-                                        } h-4 w-4`}
-                                    />
-                                    {processedValue && (
-                                        <span className="ml-1">
-                                            {processedValue}
+                                <div className="w-full border-t-2 border-gray-300">
+                                    {postData['imageLink'] &&
+                                        renderContent(postData['imageLink'][0])}
+                                </div>
+                                <div className="flex justify-between items-center p-4 bg-gray-50">
+                                    {/* Zap Button */}
+                                    <button
+                                        onClick={handleZapButton}
+                                        className="flex items-center">
+                                        <ZapSvg
+                                            className={`${
+                                                fillZap
+                                                    ? 'text-yellow-300'
+                                                    : 'text-black'
+                                            } h-4 w-4`}
+                                        />
+                                        {processedValue && (
+                                            <span className="ml-1">
+                                                {processedValue}
+                                            </span>
+                                        )}
+                                        <ZapModal
+                                            isOpenm={isModalOpen}
+                                            onConfirm={handleConfirm}
+                                        />
+                                    </button>
+
+                                    {/* Like Button */}
+                                    <button
+                                        onClick={handleLikeButtonClick}
+                                        disabled={isTodisabled()}
+                                        className={`flex items-center ${
+                                            fillLike
+                                                ? 'text-red-600'
+                                                : 'text-black-600'
+                                        }`}>
+                                        <LikeSvg
+                                            fill={fillLike ? 'red' : 'none'}
+                                            className="h-4 w-4"
+                                        />
+                                        <span className="text-xs ml-1 text-black-600">
+                                            {votesCount}
                                         </span>
-                                    )}
-                                    <ZapModal
-                                        isOpenm={isModalOpen}
-                                        onConfirm={handleConfirm}
-                                    />
-                                </button>
+                                    </button>
 
-                                {/* Like Button */}
-                                <button
-                                    onClick={handleLikeButtonClick}
-                                    disabled={isTodisabled()}
-                                    className={`flex items-center ${
-                                        fillLike
-                                            ? 'text-red-600'
-                                            : 'text-black-600'
-                                    }`}>
-                                    <LikeSvg
-                                        fill={fillLike ? 'red' : 'none'}
-                                        className="h-4 w-4"
-                                    />
-                                    <span className="text-xs ml-1 text-black-600">
-                                        {votesCount}
-                                    </span>
-                                </button>
-
-                                {/* Share Button */}
-                                <button
-                                    onClick={openShareModal}
-                                    className="flex items-center">
-                                    <ShareButtonSvg className="h-4 w-4 text-black" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-center lg:mr-60">
-                        <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-400">
-                            <form
-                                className="flex items-center justify-between"
-                                onSubmit={async event => {
-                                    event.preventDefault();
-                                    await captureNewComment(comment);
-                                    // Additional actions after comment is saved can be added here
-                                }}>
-                                <input
-                                    type="text"
-                                    placeholder="Add a reply..."
-                                    className="flex-grow p-2 text-sm border border-gray-400 rounded-l-md"
-                                    value={comment}
-                                    onChange={captureComment}
-                                    required
-                                />
-                                <button
-                                    type="submit"
-                                    className="ml-2 bg-black text-white p-2 rounded-r-md">
-                                    <SubmitIcon />
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div>
-                        {isLoading ? (
-                            <CommentSpinner />
-                        ) : replies.length === 0 ? (
-                            <div className="pb-16 md:text-gray-500 text-center my-4 lg:mr-60">
-                                No comments yet.
-                            </div>
-                        ) : (
-                            <div className="flex justify-center lg:mr-60">
-                                <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
-                                    {replies.map((object, index) => (
-                                        <Comments key={index} reply={object} />
-                                    ))}
+                                    {/* Share Button */}
+                                    <button
+                                        onClick={openShareModal}
+                                        className="flex items-center">
+                                        <ShareButtonSvg className="h-4 w-4 text-black" />
+                                    </button>
                                 </div>
                             </div>
-                        )}
-                    </div>
+                        </div>
 
-                    <ShareModal
-                        isOpen={isShareModalOpen}
-                        onClose={closeShareModal}
-                        postUrl={postUrl}
-                    />
-                </main>
+                        <div className="flex justify-center lg:mr-60">
+                            <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-400">
+                                <form
+                                    className="flex items-center justify-between"
+                                    onSubmit={async event => {
+                                        event.preventDefault();
+                                        await captureNewComment(comment);
+                                    }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Add a reply..."
+                                        className="flex-grow p-2 text-sm border border-gray-400 rounded-l-md"
+                                        value={comment}
+                                        onChange={captureComment}
+                                        required
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="ml-2 bg-black text-white p-2 rounded-r-md">
+                                        <SubmitIcon />
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div>
+                            {isLoading ? (
+                                <CommentSpinner />
+                            ) : replies.length === 0 ? (
+                                <div className="pb-16 md:text-gray-500 text-center my-4 lg:mr-60">
+                                    No comments yet.
+                                </div>
+                            ) : (
+                                <div className="flex justify-center lg:mr-60">
+                                    <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
+                                        {replies.map((object, index) => (
+                                            <Comments
+                                                key={index}
+                                                reply={object}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <ShareModal
+                            isOpen={isShareModalOpen}
+                            onClose={closeShareModal}
+                            postUrl={postUrl}
+                        />
+                    </main>
+                )}
             </div>
         </>
     );
