@@ -14,6 +14,7 @@ import {
     useLocation,
 } from 'react-router-dom';
 import HashtagTool from './components/HashtagTool';
+import ProfilePage from './components/LoginDropDownComponent/ProfilePage.js';
 
 function SearchRouteWrapper() {
     let { searchQuery } = useParams();
@@ -52,6 +53,7 @@ function App() {
                             path="/post/:postId"
                             element={<PostViewTool />}
                         />
+                        <Route path="/profile" element={<ProfilePage />} />
                         <Route
                             path="/search/:searchQuery"
                             element={<SearchRouteWrapper />}

@@ -2,6 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import './post.css';
 import { ReactComponent as SubmitIcon } from '../../Icons/SubmitIcon.svg';
+import Spinner from '../Spinner';
 
 import {
     extractLinksFromText,
@@ -251,11 +252,13 @@ function Post() {
 
     return (
         <>
-            {isLoading || profileLoading || repliesLoading ? (
-                <div className="h-screen bg-white" />
-            ) : (
-                <div className="flex flex-col md:flex-row min-h-screen">
-                    <Sidebar />
+            <div className="flex flex-col md:flex-row min-h-screen">
+                <Sidebar />
+                {isLoading || profileLoading || repliesLoading ? (
+                    <div className="flex-1  md:mr-40">
+                        <Spinner />
+                    </div>
+                ) : (
                     <main className="flex-1 overflow-y-auto">
                         <div className="mt-16 flex flex-col items-center lg:mr-60">
                             <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
@@ -372,8 +375,8 @@ function Post() {
                             postUrl={postUrl}
                         />
                     </main>
-                </div>
-            )}
+                )}
+            </div>
         </>
     );
 }
