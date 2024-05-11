@@ -42,10 +42,10 @@ const UploadAndDisplayImage = ({ setPicture }) => {
                         onChange={async event => {
                             const file = event.target.files[0];
                             if (file) {
-                                setSelectedImage(file);
                                 try {
                                     const responce = await uploadToImgur(file);
                                     setPicture(responce.data.link);
+                                    setSelectedImage(file);
                                 } catch (error) {
                                     console.error('An error occured', error);
                                     setPicture(null);
