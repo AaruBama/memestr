@@ -9,12 +9,13 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "lnurl": "^0.24.2",
-    "nostr-tools": "^1.14.0",
+    "nostr-tools": "^1.17.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
-    "react-share": "^4.4.1"
+    "react-share": "^4.4.1",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
