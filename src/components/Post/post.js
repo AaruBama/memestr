@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './post.css';
 import { ReactComponent as SubmitIcon } from '../../Icons/SubmitIcon.svg';
 import Spinner from '../Spinner';
+import { parseReferences } from 'nostr-tools/references';
 
 import {
     extractLinksFromText,
@@ -24,6 +25,7 @@ import { ShareModal } from '../Share/modal';
 import CommentSpinner from '../Spinner/CommentSpinner';
 import Sidebar from '../HashtagTool/SideBar';
 import { useAuth } from '../../AuthContext';
+import { getProfileFromPublicKey } from '../Profile';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -126,6 +128,33 @@ function Post() {
                 '#e': [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
+            console.log('replies is ', replies1);
+            for (let i = 0; i < replies1.length; i++) {
+                let event = replies1[i];
+                let references = parseReferences(event);
+                let simpleAugmentedContent = event.content;
+
+                for (let j = 0; j < references.length; j++) {
+                    let { text, profile } = references[j];
+                    if (profile) {
+                        let p = await getProfileFromPublicKey(profile.pubkey);
+                        let content = JSON.parse(p.content);
+                        let displayName = content.display_name;
+                        console.log('name is ', content);
+                        let augmentedReference = profile
+                            ? `@@${displayName}@@`
+                            : ``;
+                        simpleAugmentedContent =
+                            simpleAugmentedContent.replaceAll(
+                                text,
+                                augmentedReference,
+                            );
+                    }
+                }
+
+                replies1[i].content = simpleAugmentedContent; // Update the content with replaced references
+            }
+
             setReplies(replies1);
             setRepliesLoading(false); // Replies loaded, set loading to false
             relayPool.close(relays);
