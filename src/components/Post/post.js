@@ -15,6 +15,7 @@ import {
     renderContent,
 } from '../Posts';
 import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { parse } from './nip10Parser';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
@@ -108,6 +109,38 @@ function Post() {
 
     const [repliesLoading, setRepliesLoading] = useState(true);
 
+    const buildReplyTree = replies => {
+        const rootReplies = [];
+        const repliesById = {};
+
+        replies.forEach(reply => {
+            repliesById[reply.id] = { ...reply, children: [] };
+        });
+
+        replies.forEach(reply => {
+            const parentId = reply.parsed.reply?.id;
+            if (parentId && repliesById[parentId]) {
+                repliesById[parentId].children.push(repliesById[reply.id]);
+            } else {
+                rootReplies.push(repliesById[reply.id]);
+            }
+        });
+
+        return rootReplies;
+    };
+
+    const renderComments = comments => {
+        return comments.map(comment => (
+            <Comments key={comment.id} reply={comment}>
+                {comment.children && comment.children.length > 0 && (
+                    <div className="ml-4">
+                        {renderComments(comment.children)}
+                    </div>
+                )}
+            </Comments>
+        ));
+    };
+
     useEffect(() => {
         setIsLoading(true);
         setRepliesLoading(true); // Start loading replies
@@ -126,9 +159,14 @@ function Post() {
                 '#e': [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
-            setReplies(replies1);
-            setRepliesLoading(false); // Replies loaded, set loading to false
             relayPool.close(relays);
+            const parsedReplies = replies1.map(reply => ({
+                ...reply,
+                parsed: parse(reply),
+            }));
+            const replyTree = buildReplyTree(parsedReplies);
+            setReplies(replyTree);
+            setRepliesLoading(false); // Replies loaded, set loading to false
         };
 
         // Fetch comments and post data
@@ -159,7 +197,7 @@ function Post() {
             pubkey: uesrPublicKey,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ['e', postId],
+                ['e', postId, ' ', 'root'],
                 ['p', uesrPublicKey],
                 ['alt', 'reply'],
             ],
@@ -358,12 +396,7 @@ function Post() {
                             ) : (
                                 <div className="flex justify-center lg:mr-60">
                                     <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
-                                        {replies.map((object, index) => (
-                                            <Comments
-                                                key={index}
-                                                reply={object}
-                                            />
-                                        ))}
+                                        {renderComments(replies)}
                                     </div>
                                 </div>
                             )}
