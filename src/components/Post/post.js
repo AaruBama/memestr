@@ -15,8 +15,14 @@ import {
     convertHashtagsToLinks,
     renderContent,
 } from '../Posts';
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
-import { parse } from './nip10Parser';
+import {
+    getEventHash,
+    getSignature,
+    nip19,
+    SimplePool,
+    nip10,
+} from 'nostr-tools';
+// import { parse } from './nip10Parser';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
@@ -133,13 +139,7 @@ function Post() {
 
     const renderComments = comments => {
         return comments.map(comment => (
-            <Comments key={comment.id} reply={comment}>
-                {comment.children && comment.children.length > 0 && (
-                    <div className="ml-4">
-                        {renderComments(comment.children)}
-                    </div>
-                )}
-            </Comments>
+            <Comments key={comment.id} reply={comment} />
         ));
     };
 
@@ -167,7 +167,6 @@ function Post() {
                 let event = replies1[i];
                 let references = parseReferences(event);
                 let simpleAugmentedContent = event.content;
-
                 for (let j = 0; j < references.length; j++) {
                     let { text, profile } = references[j];
                     if (profile) {
@@ -186,20 +185,19 @@ function Post() {
                     }
                 }
 
-                replies1[i].content = simpleAugmentedContent; // Update the content with replaced references
+                replies1[i].content = simpleAugmentedContent;
             }
             relayPool.close(relays);
             const parsedReplies = replies1.map(reply => ({
                 ...reply,
-                parsed: parse(reply),
+                parsed: nip10.parse(reply),
             }));
             const replyTree = buildReplyTree(parsedReplies);
-
+            console.log(replyTree);
             setReplies(replyTree);
-            setRepliesLoading(false); // Replies loaded, set loading to false
+            setRepliesLoading(false);
         };
 
-        // Fetch comments and post data
         Promise.all([getPostFromId(postId), fetchData()]).finally(() => {
             setIsLoading(false);
         });
