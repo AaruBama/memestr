@@ -6,6 +6,7 @@
   border-radius: 5px;
   max-width: 100%;
   word-wrap: break-word;
+  align-items: flex-start; /* Ensure items align at the top */
 }
 
 .profile1 {
@@ -42,8 +43,8 @@
 .nested-comments {
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: 0;
+  margin-left: 20px;
+  margin-top: 10px;
 }
 
 .view-replies-button {
@@ -51,6 +52,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding-left: 2px;
   font-size: small;
+  margin-top: 5px;
+  text-align: left;
 }
