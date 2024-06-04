@@ -2,50 +2,35 @@ import './index.css';
 import { getUserDetailsFromPublicKey } from '../Profile';
 import React, { useEffect, useState } from 'react';
 import pic from '../Comments/profile.jpeg';
-// import { calculateTimeDifference } from '../Posts';
-
-// export const saveComment = (postId, comment) => {
-//     console.log("Saving comment. ", comment)
-//     let relays = ['wss://relay.damus.io', 'wss://relay.primal.net', "wss://nos.lol"]
-//     const pool = new SimplePool();
-//     const storedData = localStorage.getItem('memestr')
-//     if (!storedData) {
-//         alert("Login required to comment.")
-//         return
-//     }
-//     let uesrPublicKey = JSON.parse(storedData).pubKey
-//     let userPrivateKey = JSON.parse(storedData).privateKey
-//     let sk = nip19.decode(userPrivateKey)
-//     let commentEvent = {
-//         kind: 1,
-//         pubkey: uesrPublicKey,
-//         created_at: Math.floor(Date.now() / 1000),
-//         tags: [["e", postId], ["p", uesrPublicKey], ["alt", "reply"]],
-//         content: comment,
-//     }
-//
-//     commentEvent.id = getEventHash(commentEvent)
-//     commentEvent.sig = getSignature(commentEvent, sk.data)
-//     console.log("calling pool")
-//     let x = pool.publish(relays, commentEvent)
-//     console.log("called pool", x)
-//     x.map(
-//         (p1) => {
-//             p1.then((resposne) => {
-//                 console.log("Pool resolved", resposne)
-//             }
-//             ).catch((error) => {
-//                 console.log("Pool is fucked", error)
-//             })
-//         })
-// }
+import { useNavigate } from 'react-router-dom';
 
 function Comments(props) {
+    const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
     const [username, setUsername] = useState(null);
     const [name, setName] = useState('Anonymous');
     let comment = props.reply;
     const commentatorPubKey = comment.pubkey;
+
+    function processContent(content) {
+        const parts = content.split(/(@@[^@]+@@)/);
+        return parts.map((part, index) => {
+            if (part.startsWith('@@') && part.endsWith('@@')) {
+                const displayName = part.slice(2, -2);
+                return (
+                    <strong
+                        key={index}
+                        className="profile-mention text-purple-500 cursor-pointer"
+                        onClick={() =>
+                            navigate(`/userprofile/${commentatorPubKey}`)
+                        }>
+                        @{displayName}
+                    </strong>
+                );
+            }
+            return part;
+        });
+    }
 
     useEffect(() => {
         let a = getUserDetailsFromPublicKey(commentatorPubKey);
@@ -72,12 +57,18 @@ function Comments(props) {
             <img className="profile1" src={picture} alt="Profile" />
             <div>
                 <div className={'flex flex-row w-full'}>
-                    <span className={'username-comment'}>{username}</span>
+                    <span
+                        className={'username-comment cursor-pointer'}
+                        onClick={() =>
+                            navigate(`/userprofile/${commentatorPubKey}`)
+                        }>
+                        {username}
+                    </span>
                     <span className={'name-comment text-gray-400'}>
                         @{name}
                     </span>
                 </div>
-                <p className={'comment'}>{comment.content}</p>
+                <p className={'comment'}>{processContent(comment.content)}</p>
             </div>
         </div>
     );
