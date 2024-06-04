@@ -346,7 +346,7 @@ function Post() {
                                     <button
                                         onClick={openShareModal}
                                         className="flex items-center">
-                                        <ShareButtonSvg className="h-4 w-4 text-black" />
+                                        <ShareButtonSvg className="h-6 w-6 text-black" />
                                     </button>
                                 </div>
                             </div>
