@@ -5,6 +5,7 @@ import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
 import TrendingSidebar from './TrendingSideBar';
 import Sidebar from './SideBar';
+import MemeEditor from './MemeEditor';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
@@ -260,6 +261,7 @@ export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+    const [showMemeEditor, setShowMemeEditor] = useState(false);
     const [showSuccessNotification, setShowSuccessNotification] =
         useState(false);
 
@@ -288,7 +290,10 @@ export function HashtagTool() {
     return (
         <>
             <div className="flex flex-col md:flex-row min-h-screen">
-                <Sidebar />
+                <Sidebar
+                    showMemeEditor={showMemeEditor}
+                    setShowMemeEditor={setShowMemeEditor}
+                />
                 <main className="flex-1 overflow-y-auto">
                     {isLoading && <Spinner />}
                     <Feed
@@ -335,7 +340,20 @@ export function HashtagTool() {
                         </div>
                     )}
                 </main>
-                <TrendingSidebar />
+                <TrendingSidebar showMemeEditor={showMemeEditor} />
+                {showMemeEditor && (
+                    <div className="fixed editor-container inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity overflow-auto">
+                        <div className="bg-white p-6 rounded-md shadow-md relative max-h-full overflow-auto">
+                            <MemeEditor />
+                            <button
+                                type="button"
+                                className="absolute top-4 right-4 mt-2 mr-2 text-gray-600 hover:text-gray-800"
+                                onClick={() => setShowMemeEditor(false)}>
+                                <CloseIcon />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );
