@@ -12,6 +12,7 @@ const MemeEditor = () => {
     const [currentFont, setCurrentFont] = useState('Arial');
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [editedText, setEditedText] = useState('');
     const stageRef = useRef(null);
     const fileInputRef = useRef(null);
     const transformerRef = useRef(null);
@@ -88,6 +89,10 @@ const MemeEditor = () => {
         setCurrentText(e.target.value);
     };
 
+    const handleEditedTextChange = e => {
+        setEditedText(e.target.value);
+    };
+
     const handleMouseDown = e => {
         if (!isDrawing) {
             return;
@@ -113,39 +118,10 @@ const MemeEditor = () => {
         setIsDrawing(false);
     };
 
-    const handleTextDblClick = textId => {
-        const textNode = stageRef.current.findOne(`#text-${textId}`);
-        const pos = textNode.getAbsolutePosition();
-        const stageBox = stageRef.current.container().getBoundingClientRect();
-
-        const area = document.createElement('textarea');
-        document.body.appendChild(area);
-
-        area.value = textNode.text();
-        area.style.position = 'absolute';
-        area.style.top = `${stageBox.top + pos.y}px`;
-        area.style.left = `${stageBox.left + pos.x}px`;
-        area.style.width = `${textNode.width()}px`;
-        area.style.height = `${textNode.height()}px`;
-        area.style.fontSize = `${textNode.fontSize()}px`;
-
-        area.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                const updatedTexts = texts.map(text => {
-                    if (text.id === textId) {
-                        return { ...text, text: area.value };
-                    }
-                    return text;
-                });
-                setTexts(updatedTexts);
-                document.body.removeChild(area);
-            }
-        });
-        area.focus();
-    };
-
     const handleTextSelect = textId => {
         setSelectedTextId(textId);
+        const selectedText = texts.find(text => text.id === textId);
+        setEditedText(selectedText ? selectedText.text : '');
         const textNode = stageRef.current.findOne(`#text-${textId}`);
         if (textNode) {
             transformerRef.current.nodes([textNode]);
@@ -179,6 +155,23 @@ const MemeEditor = () => {
         const updatedTexts = texts.map(text => {
             if (text.id === selectedTextId) {
                 return { ...text, fontFamily: e.target.value };
+            }
+            return text;
+        });
+        setTexts(updatedTexts);
+    };
+
+    const deleteSelectedText = () => {
+        setTexts(texts.filter(text => text.id !== selectedTextId));
+        setSelectedTextId(null);
+        transformerRef.current.detach();
+        transformerRef.current.getLayer().batchDraw();
+    };
+
+    const handleEditText = () => {
+        const updatedTexts = texts.map(text => {
+            if (text.id === selectedTextId) {
+                return { ...text, text: editedText };
             }
             return text;
         });
@@ -240,12 +233,6 @@ const MemeEditor = () => {
                                             handleTextSelect(text.id)
                                         }
                                         onTap={() => handleTextSelect(text.id)}
-                                        onDblClick={() =>
-                                            handleTextDblClick(text.id)
-                                        }
-                                        onDblTap={() =>
-                                            handleTextDblClick(text.id)
-                                        }
                                     />
                                 ))}
                                 {lines.map((line, i) => (
@@ -263,23 +250,46 @@ const MemeEditor = () => {
                             </Layer>
                         </Stage>
                     </div>
-                    <div className="flex items-center justify-center space-x-2 mt-4">
-                        <button
-                            onClick={() => updateTextStyle('normal')}
-                            className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
-                            Normal
-                        </button>
-                        <button
-                            onClick={() => updateTextStyle('bold')}
-                            className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
-                            Bold
-                        </button>
-                        <button
-                            onClick={() => updateTextStyle('italic')}
-                            className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover
-                            ">
-                            Italic
-                        </button>
+                    <div className="flex flex-col">
+                        <div className="flex items-center justify-center space-x-2 mt-4">
+                            <button
+                                onClick={() => updateTextStyle('normal')}
+                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
+                                Normal
+                            </button>
+                            <button
+                                onClick={() => updateTextStyle('bold')}
+                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
+                                Bold
+                            </button>
+                            <button
+                                onClick={() => updateTextStyle('italic')}
+                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
+                                Italic
+                            </button>
+                        </div>
+                        {selectedTextId && (
+                            <div className="flex flex-col items-center mt-4 space-y-2">
+                                <input
+                                    type="text"
+                                    value={editedText}
+                                    onChange={handleEditedTextChange}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700"
+                                />
+                                <div className="flex space-x-2">
+                                    <button
+                                        onClick={handleEditText}
+                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+                                        Edit Text
+                                    </button>
+                                    <button
+                                        onClick={deleteSelectedText}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-800">
+                                        Delete Text
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="p-4 rounded-lg editor-controls flex-1">
@@ -293,8 +303,7 @@ const MemeEditor = () => {
                     <div className="flex space-x-2 mb-2 mt-2">
                         <button
                             onClick={() => fileInputRef.current.click()}
-                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover
-                            ">
+                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
                             Upload Image
                         </button>
                         <button
