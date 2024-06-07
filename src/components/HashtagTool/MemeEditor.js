@@ -12,6 +12,7 @@ const MemeEditor = () => {
     const [currentFont, setCurrentFont] = useState('Arial');
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
+
     const [editedText, setEditedText] = useState('');
     const stageRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -81,8 +82,50 @@ const MemeEditor = () => {
             transformer.getLayer().batchDraw();
         }
 
-        const uri = stage.toDataURL({ pixelRatio: 2 });
-        saveAs(uri, 'my-meme.png');
+        const boundingBox = stage.getChildren()[0].getClientRect();
+
+        const scale = stage.scaleX();
+        const width = boundingBox.width * scale;
+        const height = boundingBox.height * scale;
+
+        const x = boundingBox.x * scale;
+        const y = boundingBox.y * scale;
+
+        const pixelRatio = 2;
+        const dataURL = stage.toDataURL({
+            x: boundingBox.x,
+            y: boundingBox.y,
+            width: boundingBox.width,
+            height: boundingBox.height,
+            pixelRatio: pixelRatio,
+        });
+
+        // Create an off-screen canvas to draw the cropped image
+        const offScreenCanvas = document.createElement('canvas');
+        offScreenCanvas.width = width * pixelRatio;
+        offScreenCanvas.height = height * pixelRatio;
+        const ctx = offScreenCanvas.getContext('2d');
+
+        const img = new window.Image();
+        img.onload = () => {
+            ctx.drawImage(
+                img,
+                x * pixelRatio,
+                y * pixelRatio,
+                width * pixelRatio,
+                height * pixelRatio,
+                0,
+                0,
+                width * pixelRatio,
+                height * pixelRatio,
+            );
+
+            // Convert the off-screen canvas to a data URL and download it
+            offScreenCanvas.toBlob(blob => {
+                saveAs(blob, 'my-meme.png');
+            });
+        };
+        img.src = dataURL;
     };
 
     const handleTextChange = e => {
