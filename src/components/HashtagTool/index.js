@@ -343,7 +343,7 @@ export function HashtagTool() {
                 <TrendingSidebar showMemeEditor={showMemeEditor} />
                 {showMemeEditor && (
                     <div className="fixed editor-container inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity overflow-auto">
-                        <div className="bg-white p-6 rounded-md shadow-md relative max-h-full overflow-auto">
+                        <div className="bg-white p-6 rounded-md shadow-md relative max-h-full lg:w-2/3 overflow-auto">
                             <MemeEditor />
                             <button
                                 type="button"

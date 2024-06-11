@@ -3,6 +3,63 @@ import { Stage, Layer, Image, Text, Transformer, Line } from 'react-konva';
 import { saveAs } from 'file-saver';
 import { SketchPicker } from 'react-color';
 import './MemeEditorStyle.css';
+import { uploadToImgur } from '../Post/newPost';
+import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
+
+import { SimplePool, getEventHash, getSignature, nip19 } from 'nostr-tools';
+
+export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
+    if (!imageUrl || !title) {
+        alert('Can not create post without image and title.');
+
+        return;
+    }
+
+    const relays = [
+        'wss://relay.primal.net',
+        'wss://relay.damus.io',
+        'wss://relay.nostr.band',
+        'wss://relay.nostr.bg',
+        'wss://relay.nostrati.com',
+        'wss://nos.lol',
+        'wss://nostr.mom',
+    ];
+    const pool = new SimplePool();
+    const storedData = localStorage.getItem('memestr');
+    if (!storedData) {
+        alert('Login required to upload post.');
+        return;
+    }
+
+    let userPublicKey = JSON.parse(storedData).pubKey;
+    let userPrivateKey = JSON.parse(storedData).privateKey;
+    let sk = nip19.decode(userPrivateKey);
+    let commentEvent = {
+        kind: 1,
+        pubkey: userPublicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [
+            ['d', 'memestr'],
+            ['url', imageUrl],
+            ['p', userPublicKey],
+            ['category', 'memestrrr'],
+        ],
+        content: title + ' ' + imageUrl + ' ' + hashtags.join(' '),
+    };
+
+    commentEvent.id = getEventHash(commentEvent);
+    commentEvent.sig = getSignature(commentEvent, sk.data);
+
+    let p1 = pool.publish(relays, commentEvent);
+    Promise.resolve(p1).then(
+        value => {
+            console.log('Success', value);
+        },
+        reason => {
+            console.error('something went wrong', reason);
+        },
+    );
+};
 
 const MemeEditor = () => {
     const [image, setImage] = useState(null);
@@ -10,6 +67,7 @@ const MemeEditor = () => {
     const [currentText, setCurrentText] = useState('');
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentFont, setCurrentFont] = useState('Arial');
+    const [currentStyle, setCurrentStyle] = useState('normal');
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
 
@@ -18,6 +76,59 @@ const MemeEditor = () => {
     const fileInputRef = useRef(null);
     const transformerRef = useRef(null);
     const [selectedTextId, setSelectedTextId] = useState(null);
+
+    const [title, setTitle] = useState('');
+
+    const [isUploading, setIsUploading] = useState(false);
+    const [showPostDetails, setShowPostDetails] = useState(false);
+    const [showSuccessNotification, setShowSuccessNotification] =
+        useState(false);
+    const MAX_TAGS = 3;
+    let alertTimeout;
+
+    const [hashtags, setHashtags] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    const [showMaxTagsAlert, setShowMaxTagsAlert] = useState(false);
+    const [validation, setValidation] = useState(false);
+
+    const handleKeyDown = event => {
+        if (
+            (event.key === ' ' || event.key === 'Enter') &&
+            event.target.value.trim() !== ''
+        ) {
+            let tag = event.target.value.trim();
+            if (!tag.startsWith('#')) {
+                tag = `#${tag}`;
+            }
+            if (hashtags.length < MAX_TAGS) {
+                setHashtags([...hashtags, tag]);
+                setInputValue('');
+                setShowMaxTagsAlert(false);
+            } else {
+                setShowMaxTagsAlert(true);
+                clearTimeout(alertTimeout);
+                alertTimeout = setTimeout(() => {
+                    setShowMaxTagsAlert(false);
+                }, 3000);
+            }
+            event.preventDefault();
+        }
+    };
+
+    const handleHashtagsChange = event => {
+        setInputValue(event.target.value);
+    };
+
+    const removeTag = index => {
+        // eslint-disable-next-line no-unused-vars
+        const newTags = hashtags.filter((_, i) => i !== index);
+        setHashtags(newTags);
+        setShowMaxTagsAlert(false);
+    };
+
+    const handleShowPostDetails = () => {
+        setShowPostDetails(prevState => !prevState);
+    };
 
     const CANVAS_WIDTH = 400;
     const CANVAS_HEIGHT = 400;
@@ -29,8 +140,9 @@ const MemeEditor = () => {
         'Georgia',
         'Verdana',
         'Comic Sans MS',
-        'Bold',
     ];
+
+    const styles = ['Normal', 'Bold', 'Bolder', 'Italic'];
 
     const addText = () => {
         const newText = {
@@ -39,7 +151,7 @@ const MemeEditor = () => {
             x: 50,
             y: 50,
             fontSize: 24,
-            fontStyle: 'normal',
+            fontStyle: currentStyle,
             fill: currentColor,
             fontFamily: currentFont,
         };
@@ -73,6 +185,41 @@ const MemeEditor = () => {
         reader.readAsDataURL(file);
     };
 
+    const getDataURL = () => {
+        const stage = stageRef.current;
+        const dataURL = stage.toDataURL({ pixelRatio: 2 });
+        return dataURL;
+    };
+
+    const handleUploadToNostr = async () => {
+        const storedData = localStorage.getItem('memestr');
+        if (!storedData) {
+            setValidation(true);
+            setTimeout(() => setValidation(false), 3000);
+            return;
+        }
+        setIsUploading(true);
+        const dataURL = getDataURL();
+        const blob = await fetch(dataURL).then(res => res.blob());
+
+        try {
+            const response = await uploadToImgur(blob);
+            const imageUrl = response.data.link;
+            if (imageUrl) {
+                await sendNewPostEvent(imageUrl, title, hashtags);
+                setShowPostDetails(false);
+                setTitle(' ');
+                setHashtags([]);
+                setInputValue('');
+                setShowSuccessNotification(true);
+                setTimeout(() => setShowSuccessNotification(false), 3000);
+            }
+        } catch (error) {
+            console.error('An error occurred while uploading to Imgur:', error);
+        }
+        setIsUploading(false);
+    };
+
     const handleDownload = () => {
         const stage = stageRef.current;
         const transformer = transformerRef.current;
@@ -83,11 +230,9 @@ const MemeEditor = () => {
         }
 
         const boundingBox = stage.getChildren()[0].getClientRect();
-
         const scale = stage.scaleX();
         const width = boundingBox.width * scale;
         const height = boundingBox.height * scale;
-
         const x = boundingBox.x * scale;
         const y = boundingBox.y * scale;
 
@@ -100,7 +245,6 @@ const MemeEditor = () => {
             pixelRatio: pixelRatio,
         });
 
-        // Create an off-screen canvas to draw the cropped image
         const offScreenCanvas = document.createElement('canvas');
         offScreenCanvas.width = width * pixelRatio;
         offScreenCanvas.height = height * pixelRatio;
@@ -120,7 +264,6 @@ const MemeEditor = () => {
                 height * pixelRatio,
             );
 
-            // Convert the off-screen canvas to a data URL and download it
             offScreenCanvas.toBlob(blob => {
                 saveAs(blob, 'my-meme.png');
             });
@@ -173,9 +316,10 @@ const MemeEditor = () => {
     };
 
     const updateTextStyle = style => {
+        setCurrentStyle(style.target.value);
         const updatedTexts = texts.map(text => {
             if (text.id === selectedTextId) {
-                return { ...text, fontStyle: style };
+                return { ...text, fontStyle: style.target.value };
             }
             return text;
         });
@@ -218,7 +362,10 @@ const MemeEditor = () => {
             }
             return text;
         });
+
         setTexts(updatedTexts);
+        transformerRef.current.detach();
+        transformerRef.current.getLayer().batchDraw();
     };
 
     useEffect(() => {
@@ -253,9 +400,9 @@ const MemeEditor = () => {
                             ref={stageRef}
                             onMouseDown={handleMouseDown}
                             onTouchStart={handleMouseDown}
-                            onMousemove={handleMouseMove}
+                            onMouseMove={handleMouseMove}
                             onTouchMove={handleMouseMove}
-                            onMouseup={handleMouseUp}
+                            onMouseUp={handleMouseUp}
                             onTouchEnd={handleMouseUp}
                             className="border border-gray-300 rounded-lg">
                             <Layer>
@@ -270,129 +417,272 @@ const MemeEditor = () => {
                                         fontSize={text.fontSize}
                                         fontStyle={text.fontStyle}
                                         fill={text.fill}
-                                        fontFamily={text.fontFamily}
                                         draggable
+                                        fontFamily={text.fontFamily}
                                         onClick={() =>
                                             handleTextSelect(text.id)
                                         }
                                         onTap={() => handleTextSelect(text.id)}
+                                        onDragEnd={e => {
+                                            const updatedTexts = texts.map(
+                                                t => {
+                                                    if (t.id === text.id) {
+                                                        return {
+                                                            ...t,
+                                                            x: e.target.x(),
+                                                            y: e.target.y(),
+                                                        };
+                                                    }
+                                                    return t;
+                                                },
+                                            );
+                                            setTexts(updatedTexts);
+                                        }}
+                                        onTransformEnd={e => {
+                                            const node = e.target;
+                                            const updatedTexts = texts.map(
+                                                t => {
+                                                    if (t.id === text.id) {
+                                                        return {
+                                                            ...t,
+                                                            x: node.x(),
+                                                            y: node.y(),
+                                                            fontSize:
+                                                                node.fontSize(),
+                                                            rotation:
+                                                                node.rotation(),
+                                                        };
+                                                    }
+                                                    return t;
+                                                },
+                                            );
+                                            setTexts(updatedTexts);
+                                        }}
                                     />
                                 ))}
-                                {lines.map((line, i) => (
+                                <Transformer ref={transformerRef} />
+                                {lines.map((line, index) => (
                                     <Line
-                                        key={i}
+                                        key={index}
                                         points={line.points}
                                         stroke="black"
                                         strokeWidth={2}
                                         tension={0.5}
                                         lineCap="round"
-                                        lineJoin="round"
+                                        globalCompositeOperation={
+                                            line.tool === 'eraser'
+                                                ? 'destination-out'
+                                                : 'source-over'
+                                        }
                                     />
                                 ))}
-                                <Transformer ref={transformerRef} />
                             </Layer>
                         </Stage>
                     </div>
-                    <div className="flex flex-col">
-                        <div className="flex items-center justify-center space-x-2 mt-4">
-                            <button
-                                onClick={() => updateTextStyle('normal')}
-                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
-                                Normal
-                            </button>
-                            <button
-                                onClick={() => updateTextStyle('bold')}
-                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
-                                Bold
-                            </button>
-                            <button
-                                onClick={() => updateTextStyle('italic')}
-                                className="px-4 py-2 bg-white text-black rounded-lg border border-gray-300 hover:bg-gray-200">
-                                Italic
-                            </button>
-                        </div>
-                        {selectedTextId && (
-                            <div className="flex flex-col items-center mt-4 space-y-2">
-                                <input
-                                    type="text"
-                                    value={editedText}
-                                    onChange={handleEditedTextChange}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700"
-                                />
-                                <div className="flex space-x-2">
-                                    <button
-                                        onClick={handleEditText}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
-                                        Edit Text
-                                    </button>
-                                    <button
-                                        onClick={deleteSelectedText}
-                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-800">
-                                        Delete Text
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <div className="p-4 rounded-lg editor-controls flex-1">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        onChange={handleImageUpload}
-                    />
-                    <div className="flex space-x-2 mb-2 mt-2">
-                        <button
-                            onClick={() => fileInputRef.current.click()}
-                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
+                    <div className="flex mt-4 justify-center gap-2">
+                        <label
+                            htmlFor="fileInput"
+                            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-slate-900 cursor-pointer inline-block">
                             Upload Image
-                        </button>
+                        </label>
                         <button
                             onClick={handleDownload}
-                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
-                            Download Meme
+                            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-900">
+                            Download
+                        </button>
+                        <button
+                            onClick={handleShowPostDetails}
+                            className="px-4 py-2  bg-gray-700 text-white rounded-lg hover:bg-gray-900">
+                            Post Meme
                         </button>
                     </div>
-                    <p className="text-md font-nunito ml-1">Edit your Meme</p>
-                    <div className="flex items-center space-x-2 mt-2">
+                    {showPostDetails && (
+                        <div className="flex flex-col p-4">
+                            <h2 className="text-xl font-nunito font-semibold mb-2">
+                                Post Details
+                            </h2>
+                            <input
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                                placeholder="Title"
+                                className="px-4 py-2 w-full border border-gray-300 rounded-lg"
+                            />
+
+                            <div className="mt-1 flex flex-wrap gap-2">
+                                <div className="flex w-full">
+                                    <div className="bg-white border border-gray-300 rounded-l-md p-2.5 flex items-center">
+                                        <span className="text-indigo-600">
+                                            #
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="hashtags"
+                                        id="hashtags"
+                                        value={inputValue}
+                                        onChange={handleHashtagsChange}
+                                        onKeyDown={handleKeyDown}
+                                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="Add Tags"
+                                    />
+                                </div>
+                                {hashtags.map((tag, index) => (
+                                    <div
+                                        key={tag}
+                                        className="flex items-center text-wrap gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                        {tag}
+                                        <button
+                                            type="button"
+                                            onClick={() => removeTag(index)}
+                                            className="text-blue-500 hover:text-blue-700">
+                                            &times;
+                                        </button>
+                                    </div>
+                                ))}
+                                {showMaxTagsAlert && (
+                                    <div className="fixed top-0 inset-x-0 flex justify-center items-start z-50">
+                                        <div className="mt-2 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut">
+                                            <p>Max allowed tags: 3</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={handleUploadToNostr}
+                                className="px-4 mt-2 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-900"
+                                disabled={isUploading || !title.trim()}>
+                                {isUploading
+                                    ? 'Uploading...'
+                                    : 'Upload to Nostr'}
+                            </button>
+                        </div>
+                    )}
+
+                    {showSuccessNotification && (
+                        <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
+                            <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                                <p className="text-bold text-white px-2">
+                                    Meme Uploaded Successfully
+                                </p>
+                                <CloseIcon
+                                    className="h-6 w-6 mr-2 text-white"
+                                    onClick={() =>
+                                        setShowSuccessNotification(false)
+                                    }
+                                />
+                            </div>
+                        </div>
+                    )}
+                    {validation && (
+                        <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
+                            <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                                <p className="text-bold text-white px-2">
+                                    Login Required to Post
+                                </p>
+                                <CloseIcon
+                                    className="h-6 w-6 mr-2 text-white"
+                                    onClick={() => setValidation(false)}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex-1 p-4">
+                    <h2 className="text-xl font-nunito font-semibold mb-2">
+                        Tools
+                    </h2>
+
+                    <input
+                        id="fileInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }}
+                        ref={fileInputRef}
+                    />
+                    <div className="mt-4">
                         <input
                             type="text"
                             value={currentText}
                             onChange={handleTextChange}
-                            placeholder="Type your text here"
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700"
+                            placeholder="Enter text"
+                            className="px-4 py-2 w-full border border-gray-300 rounded-lg"
                         />
                         <button
                             onClick={addText}
-                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
+                            className="px-4 py-2 mt-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
                             Add Text
                         </button>
                     </div>
-                    <div className="flex flex-col space-y-2 mt-2">
-                        <label className="text-md font-nunito ml-1">
-                            Font Family
-                        </label>
-                        <select
-                            value={currentFont}
-                            onChange={handleFontChange}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700">
-                            {fonts.map(font => (
-                                <option key={font} value={font}>
-                                    {font}
-                                </option>
-                            ))}
-                        </select>
+
+                    <div className="mt-4">
+                        <h2 className="text-xl font-nunito font-semibold mb-2">
+                            Selected Text
+                        </h2>
+                        <input
+                            type="text"
+                            value={editedText}
+                            onChange={handleEditedTextChange}
+                            placeholder="Edit selected text"
+                            className="px-4 py-2 w-full border border-gray-300 rounded-lg"
+                        />
+                        <div className="flex flex-row gap-2">
+                            <button
+                                onClick={handleEditText}
+                                className="px-4 py-2 mt-2  bg-slate-700 text-white rounded-lg hover:bg-slate-900">
+                                Save Text
+                            </button>
+                            <button
+                                onClick={deleteSelectedText}
+                                className="px-4 py-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
+                                Remove Text
+                            </button>
+                        </div>
                     </div>
-                    <div className="mb-12 md:mt-4 md:mb-0">
-                        <label className="text-md font-nunito ml-1">
-                            Text Color
-                        </label>
+
+                    <div className="mt-4">
+                        <h2 className="text-xl font-nunito font-semibold mb-2">
+                            Font and Color
+                        </h2>
+                        <div className="flex flex-row space-x-4">
+                            <div className="flex-1">
+                                <h3 className="text-md font-nunito mb-1">
+                                    Font Family
+                                </h3>
+                                <select
+                                    value={currentFont}
+                                    onChange={handleFontChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    {fonts.map(font => (
+                                        <option key={font} value={font}>
+                                            {font}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex-1 ">
+                                <h3 className="text-md font-nunito mb-1">
+                                    Font Style
+                                </h3>
+                                <select
+                                    value={currentStyle}
+                                    onChange={updateTextStyle}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    {styles.map(style => (
+                                        <option key={style} value={style}>
+                                            {style}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
                         <SketchPicker
                             color={currentColor}
-                            onChangeComplete={handleColorChange}
-                            className="mt-2"
+                            onChange={handleColorChange}
+                            className="mt-4 mb-12 md:mt-4 md:mb-0"
                         />
                     </div>
                 </div>
