@@ -2,8 +2,10 @@ import './index.css';
 import { getUserDetailsFromPublicKey } from '../Profile';
 import React, { useEffect, useState } from 'react';
 import pic from '../Comments/profile.jpeg';
+import { useNavigate } from 'react-router-dom';
 
 function Comments({ reply, autoExpand = false }) {
+    const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
     const [username, setUsername] = useState('Unknown');
     const [name, setName] = useState('Anonymous');
@@ -19,7 +21,10 @@ function Comments({ reply, autoExpand = false }) {
                 return (
                     <strong
                         key={index}
-                        className="profile-mention text-purple-500">
+                        className="profile-mention text-purple-500 cursor-pointer"
+                        onClick={() =>
+                            navigate(`/userprofile/${commentatorPubKey}`)
+                        }>
                         @{displayName}
                     </strong>
                 );
@@ -55,17 +60,25 @@ function Comments({ reply, autoExpand = false }) {
     };
 
     return (
-        <div>
-            <div className="comment-container">
+        <>
+            <div className={'comment-container'}>
                 <img className="profile1" src={picture} alt="Profile" />
                 <div className="comment-content">
-                    <div className="flex flex-row w-full">
-                        <span className="username-comment">{username}</span>
-                        <span className="name-comment text-gray-400">
+                    <div className={'flex flex-col w-full'}>
+                        <span
+                            className={'username-comment cursor-pointer'}
+                            onClick={() =>
+                                navigate(`/userprofile/${commentatorPubKey}`)
+                            }>
+                            {username}
+                        </span>
+                        <span className={'name-comment text-gray-400'}>
                             @{name}
                         </span>
+                        <p className="comment">
+                            {processContent(reply.content)}
+                        </p>
                     </div>
-                    <p className="comment">{processContent(reply.content)}</p>
                 </div>
             </div>
             {reply.children && reply.children.length > 0 && (
@@ -88,7 +101,7 @@ function Comments({ reply, autoExpand = false }) {
                     )}
                 </>
             )}
-        </div>
+        </>
     );
 }
 

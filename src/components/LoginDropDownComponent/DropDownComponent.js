@@ -7,6 +7,7 @@ import { generateNewKeys } from '../Login';
 import LoginModal from './LoginModal';
 import { ReactComponent as LoginIcon } from '../../Icons/LoginSvg.svg';
 import { ReactComponent as Profile } from '../../Icons/ProfileLogo.svg';
+import pic from '../LoginDropDownComponent/default_profile.jpg';
 import { useAuth } from '../../AuthContext';
 import { ReactComponent as Logout } from '../../Icons/LogoutSvg.svg';
 import { ReactComponent as ProfileCircle } from '../../Icons/ProfileCircle.svg';
@@ -144,6 +145,12 @@ function DropdownComponent() {
                         }>
                         {!userDetails || userDetails.picture === undefined ? (
                             <Profile />
+                        ) : userDetails.picture === undefined ? (
+                            <img
+                                src={pic}
+                                alt="Default Profile"
+                                className="w-10 h-10 rounded-full"
+                            />
                         ) : (
                             <img
                                 src={userDetails.picture}
@@ -156,8 +163,14 @@ function DropdownComponent() {
 
                 <div className="md:hidden">
                     <Menu.Button>
-                        {!userDetails || userDetails.picture === undefined ? (
+                        {!userDetails ? (
                             <ProfileCircle />
+                        ) : userDetails.picture === undefined ? (
+                            <img
+                                src={pic}
+                                alt="Default Profile"
+                                className="w-8 h-8 rounded-full"
+                            />
                         ) : (
                             <img
                                 src={userDetails.picture}
