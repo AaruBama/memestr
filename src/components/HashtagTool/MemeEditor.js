@@ -508,9 +508,9 @@ const MemeEditor = () => {
                                 className="px-4 py-2 w-full border border-gray-300 rounded-lg"
                             />
 
-                            <div className="mt-1 flex flex-wrap gap-2">
+                            <div className="mt-2 flex flex-wrap gap-2">
                                 <div className="flex w-full">
-                                    <div className="bg-white border border-gray-300 rounded-l-md p-2.5 flex items-center">
+                                    <div className="bg-white border border-gray-300 rounded-l-md p-2 flex items-center">
                                         <span className="text-indigo-600">
                                             #
                                         </span>
@@ -522,14 +522,14 @@ const MemeEditor = () => {
                                         value={inputValue}
                                         onChange={handleHashtagsChange}
                                         onKeyDown={handleKeyDown}
-                                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-r-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
                                         placeholder="Add Tags"
                                     />
                                 </div>
                                 {hashtags.map((tag, index) => (
                                     <div
                                         key={tag}
-                                        className="flex items-center text-wrap gap-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                        className="flex items-center text-wrap gap-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                                         {tag}
                                         <button
                                             type="button"
@@ -648,7 +648,7 @@ const MemeEditor = () => {
                         </h2>
                         <div className="flex flex-row space-x-4">
                             <div className="flex-1">
-                                <h3 className="text-md font-nunito mb-1">
+                                <h3 className="text-md font-nunito mb-2">
                                     Font Family
                                 </h3>
                                 <select
@@ -663,7 +663,7 @@ const MemeEditor = () => {
                                 </select>
                             </div>
                             <div className="flex-1 ">
-                                <h3 className="text-md font-nunito mb-1">
+                                <h3 className="text-md font-nunito mb-2">
                                     Font Style
                                 </h3>
                                 <select

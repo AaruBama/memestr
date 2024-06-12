@@ -4,7 +4,8 @@ import { ReactComponent as HomeSvg } from '../../Icons/HomeMobile.svg';
 import { ReactComponent as SearchSvg } from '../../Icons/SearchIconBlack.svg';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
 import { ReactComponent as PlusSvg } from '../../Icons/PlusArrow.svg';
-import { ReactComponent as EditSvg } from '../../Icons/Edit.svg';
+import { ReactComponent as NotificationSvg } from '../../Icons/Notification.svg';
+
 import PostUpload from '../Post/newPost';
 
 import './profile.css';
@@ -64,12 +65,8 @@ const FooterBar = () => {
                         onClose={closePostModal}
                     />
                 )}
-                <button
-                    className={`flex flex-col items-center text-center py-3 px-6 ${
-                        isActive('/meme-editor') ? activeStyle : ''
-                    }`}
-                    onClick={() => navigate('/meme-editor')}>
-                    <EditSvg className="w-6 h-6 text-bold" />
+                <button className="flex flex-col items-center text-center py-3 px-6 ">
+                    <NotificationSvg className="" />
                 </button>
                 <button className="flex flex-col items-center text-center p-1 px-6">
                     <DropdownComponent />
