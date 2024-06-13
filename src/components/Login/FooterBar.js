@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as HomeSvg } from '../../Icons/HomeMobile.svg';
 import { ReactComponent as SearchSvg } from '../../Icons/SearchIconBlack.svg';
-import { ReactComponent as MessageSvg } from '../../Icons/Notification.svg';
 import DropdownComponent from '../LoginDropDownComponent/DropDownComponent';
 import { ReactComponent as PlusSvg } from '../../Icons/PlusArrow.svg';
+import { ReactComponent as NotificationSvg } from '../../Icons/Notification.svg';
+
 import PostUpload from '../Post/newPost';
+
 import './profile.css';
 
 const FooterBar = () => {
@@ -15,7 +17,7 @@ const FooterBar = () => {
 
     const navigate = useNavigate();
 
-    const activeStyle = 'font-bold underline  border-t-2 border-black';
+    const activeStyle = 'font-bold underline border-t-2 border-black';
 
     function showNewPostModal() {
         setNewPostModal(true);
@@ -30,7 +32,7 @@ const FooterBar = () => {
             <div className="flex w-full justify-around items-center">
                 <button
                     onClick={() => navigate('/')}
-                    className={`flex flex-col items-center text-center py-3  px-6 ${
+                    className={`flex flex-col items-center text-center py-3 px-6 ${
                         isActive('/') ? activeStyle : ''
                     }`}>
                     <HomeSvg
@@ -63,8 +65,8 @@ const FooterBar = () => {
                         onClose={closePostModal}
                     />
                 )}
-                <button className="flex flex-col items-center text-center p-1 px-6">
-                    <MessageSvg />
+                <button className="flex flex-col items-center text-center py-3 px-6 ">
+                    <NotificationSvg className="" />
                 </button>
                 <button className="flex flex-col items-center text-center p-1 px-6">
                     <DropdownComponent />

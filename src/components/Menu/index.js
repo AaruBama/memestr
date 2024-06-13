@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ReactComponent as HomeSvg } from '../../Icons/HomeSvg.svg';
 import { ReactComponent as NatureSvg } from '../../Icons/NatureSvg.svg';
 import { ReactComponent as FoodSvg } from '../../Icons/FoodSvg.svg';
@@ -9,10 +9,12 @@ import { ReactComponent as HamBurger } from '../../Icons/HamburgerIcon.svg';
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
+    const navigate = useNavigate();
 
     const closeSidebar = () => {
         setIsNavOpen(false);
     };
+
     const handleLinkClick = () => {
         closeSidebar();
     };
@@ -40,11 +42,10 @@ export default function Header() {
                 className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity ${
                     isNavOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 }`}
-                // style={{ zIndex: 1000 }}
                 onClick={closeSidebar}></div>
 
             <div
-                className={`fixed  inset-y-0 left-0 transform w-full max-w-xs bg-white p-6 overflow-y-auto transition-transform duration-300  ${
+                className={`fixed inset-y-0 left-0 transform w-full max-w-xs bg-white p-6 overflow-y-auto transition-transform duration-300 ${
                     isNavOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
                 <div className="flex justify-between items-center z-49">
@@ -95,8 +96,12 @@ export default function Header() {
                 <div className="absolute bottom-0 left-0 w-full px-6 pb-6">
                     <button
                         type="button"
-                        className="w-full py-3 text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-4 font-medium rounded-full text-md px-5 py-2.5 me-2 mb-2 flex items-center justify-center">
-                        Get Started
+                        className="w-full py-3 text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-4 font-medium rounded-full text-md px-5 me-2 mb-8 flex items-center justify-center"
+                        onClick={() => {
+                            closeSidebar();
+                            navigate('/meme-editor');
+                        }}>
+                        Make a Meme
                     </button>
                 </div>
             </div>
