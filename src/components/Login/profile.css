@@ -86,7 +86,7 @@
 }
 
 .footer-bar {
-  z-index: 9999;
+  z-index: 999;
 }
 @media (max-width: 320px) {
   .footer-bar button {

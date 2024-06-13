@@ -1,0 +1,8 @@
+.trending-container {
+  position: sticky;
+  z-index: 9999;
+}
+
+.editor-container {
+  z-index: 9999;
+}

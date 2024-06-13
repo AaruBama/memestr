@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as SearchSVG } from '../../Icons/SearchIconBlack.svg';
+import './MemeEditorStyle.css';
 
-function TrendingSidebar() {
+function TrendingSidebar({ showMemeEditor }) {
     const [searchQuery, setSearchQuery] = useState('');
     const suggestions = [
         'meme',
@@ -69,7 +70,10 @@ function TrendingSidebar() {
     };
 
     return (
-        <aside className="hidden lg:block w-96 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 z-50 ">
+        <aside
+            className={`hidden lg:block w-96 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 ${
+                showMemeEditor ? 'z-50' : 'z-50'
+            }`}>
             <form
                 onSubmit={handleSearchSubmit}
                 className="hidden md:flex items-center w-80 px-2 ">

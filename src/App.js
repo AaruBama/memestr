@@ -6,6 +6,7 @@ import FooterBar from './components/Login/FooterBar.js';
 import { AuthProvider } from './AuthContext';
 import MobileSearchPage from './components/Login/MobileSearchPage.js';
 import React from 'react';
+import MemeEditor from './components/HashtagTool/MemeEditor.js';
 import {
     HashRouter as Router,
     Routes,
@@ -37,7 +38,10 @@ function App() {
 
     function ConditionalHeader() {
         let location = useLocation();
-        if (location.pathname !== '/search') {
+        if (
+            location.pathname !== '/search' &&
+            location.pathname !== '/meme-editor'
+        ) {
             return <HeaderBar />;
         }
         return null;
@@ -63,8 +67,8 @@ function App() {
                             path="/search/:searchQuery"
                             element={<SearchRouteWrapper />}
                         />
-
                         <Route path="/search" element={<MobileSearchPage />} />
+                        <Route path="/meme-editor" element={<MemeEditor />} />
                     </Routes>
                 </HashTagToolProvider>
 
