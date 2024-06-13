@@ -137,16 +137,64 @@ function Post() {
         return rootReplies;
     };
 
+    const renderReplies = replies => {
+        return replies.map(reply => <Comments key={reply.id} reply={reply} />);
+    };
+
     const renderComments = comments => {
-        return comments.map(comment => (
-            <Comments key={comment.id} reply={comment} />
+        return comments.map(({ rootMessage, replies }) => (
+            <CommentWithReplies
+                key={rootMessage.id}
+                rootMessage={rootMessage}
+                replies={replies}
+            />
         ));
+    };
+
+    const CommentWithReplies = ({ rootMessage, replies }) => {
+        const [showReplies, setShowReplies] = useState(false);
+
+        const toggleReplies = () => {
+            setShowReplies(prevState => !prevState);
+        };
+
+        return (
+            <div key={rootMessage.id}>
+                <Comments reply={rootMessage} />
+                <div className="ml-16 mb-2">
+                    {replies.length > 0 && (
+                        <div
+                            onClick={toggleReplies}
+                            className="cursor-pointer text-blue-700 font-nunito text-normal ">
+                            {showReplies ? 'Hide Replies' : 'View Replies'}
+                        </div>
+                    )}
+                    {showReplies && renderReplies(replies)}
+                </div>
+            </div>
+        );
     };
 
     useEffect(() => {
         setIsLoading(true);
         setRepliesLoading(true); // Start loading replies
 
+        const flattenReplies = (replies, allReplies = []) => {
+            replies.forEach(reply => {
+                allReplies.push(reply);
+                if (reply.children.length > 0) {
+                    flattenReplies(reply.children, allReplies);
+                }
+            });
+            return allReplies;
+        };
+
+        const mapRootToReplies = rootReplies => {
+            return rootReplies.map(rootReply => ({
+                rootMessage: rootReply,
+                replies: flattenReplies(rootReply.children, []),
+            }));
+        };
         const fetchData = async () => {
             // Fetch comments
             const relayPool = new SimplePool();
@@ -193,8 +241,8 @@ function Post() {
                 parsed: nip10.parse(reply),
             }));
             const replyTree = buildReplyTree(parsedReplies);
-            console.log(replyTree);
-            setReplies(replyTree);
+            const flat = mapRootToReplies(replyTree);
+            setReplies(flat);
             setRepliesLoading(false);
         };
 

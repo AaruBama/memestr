@@ -4,12 +4,11 @@ import React, { useEffect, useState } from 'react';
 import pic from '../Comments/profile.jpeg';
 import { useNavigate } from 'react-router-dom';
 
-function Comments({ reply, autoExpand = false }) {
+function Comments({ reply }) {
     const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
     const [username, setUsername] = useState('Unknown');
     const [name, setName] = useState('Anonymous');
-    const [showReplies, setShowReplies] = useState(autoExpand);
 
     const commentatorPubKey = reply.pubkey;
 
@@ -54,25 +53,20 @@ function Comments({ reply, autoExpand = false }) {
 
         fetchUserDetails();
     }, [commentatorPubKey]);
-
-    const handleViewRepliesClick = () => {
-        setShowReplies(!showReplies);
-    };
-
     return (
         <>
-            <div className={'comment-container'}>
+            <div className="comment-container">
                 <img className="profile1" src={picture} alt="Profile" />
                 <div className="comment-content">
-                    <div className={'flex flex-col w-full'}>
+                    <div className="flex flex-col w-full">
                         <span
-                            className={'username-comment cursor-pointer'}
+                            className="username-comment cursor-pointer"
                             onClick={() =>
                                 navigate(`/userprofile/${commentatorPubKey}`)
                             }>
                             {username}
                         </span>
-                        <span className={'name-comment text-gray-400'}>
+                        <span className="name-comment text-gray-400">
                             @{name}
                         </span>
                         <p className="comment">
@@ -81,26 +75,6 @@ function Comments({ reply, autoExpand = false }) {
                     </div>
                 </div>
             </div>
-            {reply.children && reply.children.length > 0 && (
-                <>
-                    <button
-                        className="view-replies-button"
-                        onClick={handleViewRepliesClick}>
-                        {showReplies ? 'Hide Replies' : 'View Replies'}
-                    </button>
-                    {showReplies && (
-                        <div className="nested-comments">
-                            {reply.children.map((childReply, index) => (
-                                <Comments
-                                    key={index}
-                                    reply={childReply}
-                                    autoExpand={showReplies}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </>
-            )}
         </>
     );
 }
