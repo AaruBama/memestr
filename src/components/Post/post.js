@@ -15,7 +15,14 @@ import {
     convertHashtagsToLinks,
     renderContent,
 } from '../Posts';
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import {
+    getEventHash,
+    getSignature,
+    nip19,
+    SimplePool,
+    nip10,
+} from 'nostr-tools';
+// import { parse } from './nip10Parser';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
@@ -110,10 +117,84 @@ function Post() {
 
     const [repliesLoading, setRepliesLoading] = useState(true);
 
+    const buildReplyTree = replies => {
+        const rootReplies = [];
+        const repliesById = {};
+
+        replies.forEach(reply => {
+            repliesById[reply.id] = { ...reply, children: [] };
+        });
+
+        replies.forEach(reply => {
+            const parentId = reply.parsed.reply?.id;
+            if (parentId && repliesById[parentId]) {
+                repliesById[parentId].children.push(repliesById[reply.id]);
+            } else {
+                rootReplies.push(repliesById[reply.id]);
+            }
+        });
+
+        return rootReplies;
+    };
+
+    const renderReplies = replies => {
+        return replies.map(reply => <Comments key={reply.id} reply={reply} />);
+    };
+
+    const renderComments = comments => {
+        return comments.map(({ rootMessage, replies }) => (
+            <CommentWithReplies
+                key={rootMessage.id}
+                rootMessage={rootMessage}
+                replies={replies}
+            />
+        ));
+    };
+
+    const CommentWithReplies = ({ rootMessage, replies }) => {
+        const [showReplies, setShowReplies] = useState(false);
+
+        const toggleReplies = () => {
+            setShowReplies(prevState => !prevState);
+        };
+
+        return (
+            <div key={rootMessage.id}>
+                <Comments reply={rootMessage} />
+                <div className="ml-16 mb-2">
+                    {replies.length > 0 && (
+                        <div
+                            onClick={toggleReplies}
+                            className="cursor-pointer text-blue-700 font-nunito text-normal ">
+                            {showReplies ? 'Hide Replies' : 'View Replies'}
+                        </div>
+                    )}
+                    {showReplies && renderReplies(replies)}
+                </div>
+            </div>
+        );
+    };
+
     useEffect(() => {
         setIsLoading(true);
         setRepliesLoading(true); // Start loading replies
 
+        const flattenReplies = (replies, allReplies = []) => {
+            replies.forEach(reply => {
+                allReplies.push(reply);
+                if (reply.children.length > 0) {
+                    flattenReplies(reply.children, allReplies);
+                }
+            });
+            return allReplies;
+        };
+
+        const mapRootToReplies = rootReplies => {
+            return rootReplies.map(rootReply => ({
+                rootMessage: rootReply,
+                replies: flattenReplies(rootReply.children, []),
+            }));
+        };
         const fetchData = async () => {
             // Fetch comments
             const relayPool = new SimplePool();
@@ -128,12 +209,12 @@ function Post() {
                 '#e': [postId],
             };
             let replies1 = await relayPool.list(relays, [filters]);
+
             console.log('replies is ', replies1);
             for (let i = 0; i < replies1.length; i++) {
                 let event = replies1[i];
                 let references = parseReferences(event);
                 let simpleAugmentedContent = event.content;
-
                 for (let j = 0; j < references.length; j++) {
                     let { text, profile } = references[j];
                     if (profile) {
@@ -152,15 +233,19 @@ function Post() {
                     }
                 }
 
-                replies1[i].content = simpleAugmentedContent; // Update the content with replaced references
+                replies1[i].content = simpleAugmentedContent;
             }
-
-            setReplies(replies1);
-            setRepliesLoading(false); // Replies loaded, set loading to false
             relayPool.close(relays);
+            const parsedReplies = replies1.map(reply => ({
+                ...reply,
+                parsed: nip10.parse(reply),
+            }));
+            const replyTree = buildReplyTree(parsedReplies);
+            const flat = mapRootToReplies(replyTree);
+            setReplies(flat);
+            setRepliesLoading(false);
         };
 
-        // Fetch comments and post data
         Promise.all([getPostFromId(postId), fetchData()]).finally(() => {
             setIsLoading(false);
         });
@@ -188,7 +273,7 @@ function Post() {
             pubkey: uesrPublicKey,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-                ['e', postId],
+                ['e', postId, ' ', 'root'],
                 ['p', uesrPublicKey],
                 ['alt', 'reply'],
             ],
@@ -387,12 +472,7 @@ function Post() {
                             ) : (
                                 <div className="flex justify-center lg:mr-60">
                                     <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
-                                        {replies.map((object, index) => (
-                                            <Comments
-                                                key={index}
-                                                reply={object}
-                                            />
-                                        ))}
+                                        {renderComments(replies)}
                                     </div>
                                 </div>
                             )}

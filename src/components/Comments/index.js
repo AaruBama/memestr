@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import pic from '../Comments/profile.jpeg';
 import { useNavigate } from 'react-router-dom';
 
-function Comments(props) {
+function Comments({ reply }) {
     const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
-    const [username, setUsername] = useState(null);
+    const [username, setUsername] = useState('Unknown');
     const [name, setName] = useState('Anonymous');
-    let comment = props.reply;
-    const commentatorPubKey = comment.pubkey;
+
+    const commentatorPubKey = reply.pubkey;
 
     function processContent(content) {
         const parts = content.split(/(@@[^@]+@@)/);
@@ -33,44 +33,49 @@ function Comments(props) {
     }
 
     useEffect(() => {
-        let a = getUserDetailsFromPublicKey(commentatorPubKey);
-        a.then(value => {
-            if (value && value.picture) {
-                setPicture(value.picture);
-                setUsername(value.display_name);
-                setName(value.name);
-            } else {
-                setPicture(pic);
-                setUsername('Unknown');
-                setName('Anonymous');
+        const fetchUserDetails = async () => {
+            try {
+                const userDetails =
+                    await getUserDetailsFromPublicKey(commentatorPubKey);
+                if (userDetails) {
+                    setPicture(userDetails.picture || pic);
+                    setUsername(
+                        userDetails.display_name ||
+                            userDetails.name ||
+                            'Unknown',
+                    );
+                    setName(userDetails.name || 'Anonymous');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
             }
-        }).catch(error => {
-            console.error('Error fetching user details:', error);
-            setPicture(pic);
-            setUsername('Unknown');
-            setName('Anonymous');
-        });
-    }, [commentatorPubKey]);
+        };
 
+        fetchUserDetails();
+    }, [commentatorPubKey]);
     return (
-        <div className={'comment-container'}>
-            <img className="profile1" src={picture} alt="Profile" />
-            <div>
-                <div className={'flex flex-row w-full'}>
-                    <span
-                        className={'username-comment cursor-pointer'}
-                        onClick={() =>
-                            navigate(`/userprofile/${commentatorPubKey}`)
-                        }>
-                        {username}
-                    </span>
-                    <span className={'name-comment text-gray-400'}>
-                        @{name}
-                    </span>
+        <>
+            <div className="comment-container">
+                <img className="profile1" src={picture} alt="Profile" />
+                <div className="comment-content">
+                    <div className="flex flex-col w-full">
+                        <span
+                            className="username-comment cursor-pointer"
+                            onClick={() =>
+                                navigate(`/userprofile/${commentatorPubKey}`)
+                            }>
+                            {username}
+                        </span>
+                        <span className="name-comment text-gray-400">
+                            @{name}
+                        </span>
+                        <p className="comment">
+                            {processContent(reply.content)}
+                        </p>
+                    </div>
                 </div>
-                <p className={'comment'}>{processContent(comment.content)}</p>
             </div>
-        </div>
+        </>
     );
 }
 

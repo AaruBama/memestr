@@ -143,7 +143,6 @@ function DropdownComponent() {
                                 ? 'inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-teal-500 p-2 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hidden md:inline-flex'
                                 : 'inline-flex items-center justify-center rounded-full bg-white hidden p-1 md:inline-flex'
                         }>
-
                         {!userDetails || userDetails.picture === undefined ? (
                             <Profile />
                         ) : userDetails.picture === undefined ? (
