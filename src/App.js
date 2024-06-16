@@ -36,6 +36,21 @@ function App() {
         '/photography': ['photography'],
     };
 
+    React.useEffect(() => {
+        var _mtm = (window._mtm = window._mtm || []);
+        _mtm.push({
+            'mtm.startTime': new Date().getTime(),
+            event: 'mtm.Start',
+        });
+        var d = document,
+            g = d.createElement('script'),
+            s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src =
+            'https://cdn.matomo.cloud/memestrapp.matomo.cloud/container_6nxjmRiN.js';
+        s.parentNode.insertBefore(g, s);
+    }, []);
+
     function ConditionalHeader() {
         let location = useLocation();
         if (
