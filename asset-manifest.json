@@ -1,7 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.26389ab8.css",
-    "main.js": "/static/js/main.3187c70c.js",
+    "main.css": "/static/css/main.dca69e4b.css",
+    "main.js": "/static/js/main.18f36c41.js",
+    "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
     "static/media/Profile.svg": "/static/media/Profile.be7881726ada434d72d55c590cf6b9fd.svg",
@@ -16,13 +17,13 @@
     "static/media/PetSvg.svg": "/static/media/PetSvg.a2354648bc526ca2bb0332f8368924f1.svg",
     "static/media/CloseIcon.svg": "/static/media/CloseIcon.3af71f7cee6db7358d5f0a52fb88a40b.svg",
     "static/media/CopyLinkSvg.svg": "/static/media/CopyLinkSvg.c9520dbc999cf6eea4f4e7601776d515.svg",
+    "static/media/ShareButtonSvg.svg": "/static/media/ShareButtonSvg.4c0789cf8f5c47404c948207eb2c8f72.svg",
     "static/media/ProfileLogo.svg": "/static/media/ProfileLogo.2a75c1cbb26462a5712f70cf9909118c.svg",
     "static/media/playButton.svg": "/static/media/playButton.283a649c7486d30f0b1a2210e2336b2c.svg",
     "static/media/FoodSvg.svg": "/static/media/FoodSvg.567a5f86eb498682ace69afae6affb79.svg",
     "static/media/HomeSvg.svg": "/static/media/HomeSvg.95250e8cb6a2c5f8ffd41a82eb5a84bb.svg",
     "static/media/NatureSvg.svg": "/static/media/NatureSvg.66473c93a4fbb1499ffbd856f7ab49d2.svg",
     "static/media/PhotographySvg.svg": "/static/media/PhotographySvg.357b408a26cfbcf3f8ae7c931ca8dd01.svg",
-    "static/media/ShareButtonSvg.svg": "/static/media/ShareButtonSvg.b71984ebcf9fcb7386b4f4339d9c1fd7.svg",
     "static/media/uploadNewPost.svg": "/static/media/uploadNewPost.cde5b6adbd7dbd0393f99872965d8156.svg",
     "static/media/Copy.svg": "/static/media/Copy.a0828285f013c4120c669afccd48f692.svg",
     "static/media/UploadSvg.svg": "/static/media/UploadSvg.cf19c8def5b75fc166ecf2b7183b54f1.svg",
@@ -42,7 +43,7 @@
     "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.26389ab8.css",
-    "static/js/main.3187c70c.js"
+    "static/css/main.dca69e4b.css",
+    "static/js/main.18f36c41.js"
   ]
 }
