@@ -34,6 +34,7 @@ function App() {
         '/nature': ['nature', 'flowers', 'sky', 'sea'],
         '/food': ['food'],
         '/photography': ['photography'],
+        '/vehicles': ['cars', 'motorcycle', 'car', 'motorcycles'],
     };
 
     React.useEffect(() => {
@@ -107,6 +108,15 @@ function App() {
                         <Route
                             exact
                             path="/photography"
+                            element={<HashtagTool />}
+                        />
+                    </Routes>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/vehicles']}>
+                    <Routes>
+                        <Route
+                            exact
+                            path="/vehicles"
                             element={<HashtagTool />}
                         />
                     </Routes>
