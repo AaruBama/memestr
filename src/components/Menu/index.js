@@ -6,6 +6,9 @@ import { ReactComponent as FoodSvg } from '../../Icons/FoodSvg.svg';
 import { ReactComponent as PhotographySvg } from '../../Icons/PhotographySvg.svg';
 import { ReactComponent as PetsSvg } from '../../Icons/PetSvg.svg';
 import { ReactComponent as HamBurger } from '../../Icons/HamburgerIcon.svg';
+import { ReactComponent as LoveSvg } from '../../Icons/heart.svg';
+import { ReactComponent as BitcoinSvg } from '../../Icons/Bitcoin.svg';
+import { ReactComponent as VehiclesSvg } from '../../Icons/Vehicles.svg';
 
 export default function Header() {
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -91,6 +94,27 @@ export default function Header() {
                         className="flex items-center px-4 py-2 mt-5 text-gray-700 hover:bg-gray-100 rounded-md">
                         <PhotographySvg />
                         <span className="ml-3">Photography</span>
+                    </Link>
+                    <Link
+                        to="/vehicles"
+                        onClick={handleLinkClick}
+                        className="flex items-center px-4 py-2 mt-5 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <VehiclesSvg />
+                        <span className="ml-3">Vehicles</span>
+                    </Link>
+                    <Link
+                        to="/crypto"
+                        onClick={handleLinkClick}
+                        className="flex items-center px-4 py-2 mt-5 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <BitcoinSvg />
+                        <span className="ml-3">Crypto</span>
+                    </Link>
+                    <Link
+                        to="/relationship"
+                        onClick={handleLinkClick}
+                        className="flex items-center px-4 py-2 mt-5 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <LoveSvg />
+                        <span className="ml-3">Love & Relationships</span>
                     </Link>
                 </nav>
                 <div className="absolute bottom-0 left-0 w-full px-6 pb-6">
