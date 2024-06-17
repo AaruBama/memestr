@@ -35,6 +35,15 @@ function App() {
         '/food': ['food'],
         '/photography': ['photography'],
         '/vehicles': ['cars', 'motorcycle', 'car', 'motorcycles'],
+        '/crypto': [
+            'crypto',
+            'bitcoin',
+            'btc',
+            'ethereum',
+            'cryptocurrency',
+            'blockchain',
+            'nft',
+        ],
     };
 
     React.useEffect(() => {
@@ -119,6 +128,11 @@ function App() {
                             path="/vehicles"
                             element={<HashtagTool />}
                         />
+                    </Routes>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/crypto']}>
+                    <Routes>
+                        <Route exact path="/crypto" element={<HashtagTool />} />
                     </Routes>
                 </HashTagToolProvider>
                 <FooterBar />

@@ -6,6 +6,7 @@ import { ReactComponent as FoodSvg } from '../../Icons/FoodSvg.svg';
 import { ReactComponent as PhotographySvg } from '../../Icons/PhotographySvg.svg';
 import { ReactComponent as VehiclesSvg } from '../../Icons/Vehicles.svg';
 import { ReactComponent as PetsSvg } from '../../Icons/PetSvg.svg';
+import { ReactComponent as BitcoinSvg } from '../../Icons/Bitcoin.svg';
 import './MemeEditorStyle.css';
 
 function Sidebar({ setShowMemeEditor }) {
@@ -42,6 +43,10 @@ function Sidebar({ setShowMemeEditor }) {
                 <NavLink to="/vehicles" className={getNavLinkClass}>
                     <VehiclesSvg />
                     <span className="ml-3">Vehicles</span>
+                </NavLink>
+                <NavLink to="/crypto" className={getNavLinkClass}>
+                    <BitcoinSvg />
+                    <span className="ml-3">Crypto</span>
                 </NavLink>
             </nav>
             <div className="absolute bottom-0 left-0 w-full px-6 pb-6">
