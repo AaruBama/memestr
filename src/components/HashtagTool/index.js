@@ -158,8 +158,11 @@ export function HashTagToolProvider({ children, filterTags }) {
             'wss://relay.nostr.wirednet.jp/',
         ];
 
-        // For Memes
-        filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
+        if (filterTags) {
+            filters['#t'] = filterTags;
+        } else {
+            filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
+        }
 
         filters['until'] = lastCreatedAt - 5 * 60;
 
@@ -221,41 +224,6 @@ export function useHashTagContext() {
     }
     return context;
 }
-
-// export function HashtagTool() {
-//     const { notes, LoadMoreMedia, isLoading } = useHashTagContext();
-//     const [newPostModal, setNewPostModal] = useState(false);
-
-//     function showNewPostModal() {
-//         setNewPostModal(true);
-//     }
-
-//     function closePostModal() {
-//         setNewPostModal(false);
-//     }
-
-//     return (
-//         <>
-//             {/*<NewPostButton />*/}
-//             <Feed
-//                 notes={notes}
-//                 onLoadMore={LoadMoreMedia}
-//                 isLoading={isLoading}
-//             />
-//             <button
-//                 onClick={() => {
-//                     showNewPostModal();
-//                 }}
-//                 title="Upload"
-//                 className="fixed z-10 bottom-4 right-8 bg-gray-400 w-14 h-14 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-gray-800 hover:drop-shadow-2xl hover:animate-bounce duration-300">
-//                 ➕
-//             </button>
-//             {newPostModal && (
-//                 <PostUpload isOpen={newPostModal} onClose={closePostModal} />
-//             )}
-//         </>
-//     );
-// }
 
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
