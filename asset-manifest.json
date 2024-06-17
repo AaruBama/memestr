@@ -1,10 +1,11 @@
 {
   "files": {
     "main.css": "/static/css/main.dca69e4b.css",
-    "main.js": "/static/js/main.594095a1.js",
+    "main.js": "/static/js/main.59450c43.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
+    "static/media/Vehicles.svg": "/static/media/Vehicles.5a5a3e965305f8521736a3f32c37f4ef.svg",
     "static/media/Profile.svg": "/static/media/Profile.be7881726ada434d72d55c590cf6b9fd.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
     "static/media/QuestionMarkIcon.svg": "/static/media/QuestionMarkIcon.45e2978ea712836b1d24af3f8ef16e31.svg",
@@ -13,6 +14,7 @@
     "index.html": "/index.html",
     "static/media/upwardArrow.svg": "/static/media/upwardArrow.b8edfe2e34596f4361354a484e75f158.svg",
     "static/media/CommentSvg.svg": "/static/media/CommentSvg.62525e8e512723ebaa4dcedc5734340e.svg",
+    "static/media/Bitcoin.svg": "/static/media/Bitcoin.025417c19bdc73fa95c6f09eea6cee17.svg",
     "static/media/LoginSvg.svg": "/static/media/LoginSvg.ccd87df90a971ba0453b4dc11a91e1e7.svg",
     "static/media/PetSvg.svg": "/static/media/PetSvg.a2354648bc526ca2bb0332f8368924f1.svg",
     "static/media/CloseIcon.svg": "/static/media/CloseIcon.3af71f7cee6db7358d5f0a52fb88a40b.svg",
@@ -44,6 +46,6 @@
   },
   "entrypoints": [
     "static/css/main.dca69e4b.css",
-    "static/js/main.594095a1.js"
+    "static/js/main.59450c43.js"
   ]
 }
