@@ -35,6 +35,20 @@ function App() {
         '/food': ['food'],
         '/photography': ['photography'],
         '/vehicles': ['cars', 'motorcycle', 'car', 'motorcycles'],
+        '/relationship': [
+            'love',
+            'dating',
+            'relationship',
+            'tinder',
+            'bumble',
+            'romance',
+            'crush',
+            'marriage',
+            'single',
+            'couple',
+            'boyfriend',
+            'girlfriend',
+        ],
         '/crypto': [
             'crypto',
             'bitcoin',
@@ -133,6 +147,15 @@ function App() {
                 <HashTagToolProvider filterTags={pageFilters['/crypto']}>
                     <Routes>
                         <Route exact path="/crypto" element={<HashtagTool />} />
+                    </Routes>
+                </HashTagToolProvider>
+                <HashTagToolProvider filterTags={pageFilters['/relationship']}>
+                    <Routes>
+                        <Route
+                            exact
+                            path="/relationship"
+                            element={<HashtagTool />}
+                        />
                     </Routes>
                 </HashTagToolProvider>
                 <FooterBar />
