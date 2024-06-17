@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5b36f729.css",
-    "main.js": "/static/js/main.a9a4c61b.js",
+    "main.js": "/static/js/main.5f162280.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
@@ -35,6 +35,7 @@
     "static/media/Zap.svg": "/static/media/Zap.2dbf6a9790b21e6397b72097cd31556e.svg",
     "static/media/volumeup.svg": "/static/media/volumeup.d9a6639da0c5750aa9e4ea2046ffb859.svg",
     "static/media/PlusArrow.svg": "/static/media/PlusArrow.203e6eadf9294629ba106a8f03a00c2c.svg",
+    "static/media/heart.svg": "/static/media/heart.76c495cf96d997e521ddadb4bccb6726.svg",
     "static/media/LogoutSvg.svg": "/static/media/LogoutSvg.43fa7eb804a03bb8bc8e26d7272c3e38.svg",
     "static/media/ProfileCircle.svg": "/static/media/ProfileCircle.a4a21174f68d57c6d1c02cb13b7b8bb0.svg",
     "static/media/LikeSvg.svg": "/static/media/LikeSvg.aa629c435b86f40ef8bf4dc3b9297f5d.svg",
@@ -46,6 +47,6 @@
   },
   "entrypoints": [
     "static/css/main.5b36f729.css",
-    "static/js/main.a9a4c61b.js"
+    "static/js/main.5f162280.js"
   ]
 }
