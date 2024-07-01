@@ -148,6 +148,7 @@ const MemeEditor = () => {
         'Georgia',
         'Verdana',
         'Comic Sans MS',
+        'Impact',
     ];
 
     const styles = ['Normal', 'Bold', 'Bolder', 'Italic'];

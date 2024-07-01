@@ -1,5 +1,7 @@
-import React from 'react';
-import { SketchPicker } from 'react-color'; // Import SketchPicker from react-color
+import React, { useEffect, useRef, useState } from 'react';
+import { SketchPicker } from 'react-color';
+import { ReactComponent as GearIcon } from '../../Icons/Bitcoin.svg';
+// Import SketchPicker from react-color
 
 const ToolsSection = ({
     currentText,
@@ -20,6 +22,44 @@ const ToolsSection = ({
     fileInputRef,
     handleImageUpload,
 }) => {
+    const [showPanel, setShowPanel] = useState(false);
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    const panelRef = useRef(null);
+    const buttonRef = useRef(null);
+    const colorPickerRef = useRef(null);
+
+    const togglePanel = () => {
+        setShowPanel(!showPanel);
+    };
+
+    const toggleColorPicker = () => {
+        setShowColorPicker(!showColorPicker);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = event => {
+            if (
+                panelRef.current &&
+                !panelRef.current.contains(event.target) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target)
+            ) {
+                setShowPanel(false);
+            }
+            if (
+                colorPickerRef.current &&
+                !colorPickerRef.current.contains(event.target)
+            ) {
+                setShowColorPicker(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="flex-1 p-4">
             <input
@@ -45,71 +85,90 @@ const ToolsSection = ({
                 </button>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 relative">
                 <h2 className="text-xl font-nunito font-semibold mb-2">
                     Selected Text
                 </h2>
-                <input
-                    type="text"
-                    value={editedText}
-                    onChange={handleEditedTextChange}
-                    placeholder="Edit selected text"
-                    className="px-4 py-2 w-full border border-gray-300 rounded-lg"
-                />
-                <div className="flex flex-row gap-2">
+                <div className="flex items-center border border-gray-300">
+                    <input
+                        type="text"
+                        value={editedText}
+                        onChange={handleEditedTextChange}
+                        placeholder="Edit selected text"
+                        className="px-2 py-2 w-full "
+                    />
                     <button
-                        onClick={handleEditText}
-                        className="px-4 py-2 mt-2  bg-slate-700 text-white rounded-lg hover:bg-slate-900">
-                        Save Text
-                    </button>
+                        className="w-10 h-10"
+                        style={{ backgroundColor: currentColor }}
+                        onClick={toggleColorPicker}></button>
                     <button
-                        onClick={deleteSelectedText}
-                        className="px-4 py-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
-                        Remove Text
+                        ref={buttonRef}
+                        className="ml-2 p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        onClick={togglePanel}>
+                        <GearIcon className="w-5 h-5 text-gray-600" />
                     </button>
                 </div>
+                {showPanel && (
+                    <div
+                        ref={panelRef}
+                        className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-4">
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Font Family:
+                                </label>
+                                <select
+                                    value={currentFont}
+                                    onChange={handleFontChange}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded-md">
+                                    {fonts.map((font, index) => (
+                                        <option key={index} value={font}>
+                                            {font}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Font Style:
+                                </label>
+                                <select
+                                    value={currentStyle}
+                                    onChange={updateTextStyle}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded-md">
+                                    {styles.map((style, index) => (
+                                        <option key={index} value={style}>
+                                            {style}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showColorPicker && (
+                    <div
+                        ref={colorPickerRef}
+                        className="absolute right-0 mt-2 z-10">
+                        <SketchPicker
+                            color={currentColor}
+                            onChangeComplete={handleColorChange}
+                        />
+                    </div>
+                )}
             </div>
 
-            <div className="mt-4">
-                <h2 className="text-xl font-nunito font-semibold mb-2">
-                    Font and Color
-                </h2>
-                <div className="flex flex-row space-x-4">
-                    <div className="flex-1">
-                        <h3 className="text-md font-nunito mb-2">
-                            Font Family
-                        </h3>
-                        <select
-                            value={currentFont}
-                            onChange={handleFontChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                            {fonts.map(font => (
-                                <option key={font} value={font}>
-                                    {font}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex-1 ">
-                        <h3 className="text-md font-nunito mb-2">Font Style</h3>
-                        <select
-                            value={currentStyle}
-                            onChange={updateTextStyle}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                            {styles.map(style => (
-                                <option key={style} value={style}>
-                                    {style}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <SketchPicker
-                    color={currentColor}
-                    onChange={handleColorChange}
-                    className="mt-4 mb-12 md:mt-4 md:mb-0"
-                />
+            <div className="flex flex-row gap-2">
+                <button
+                    onClick={handleEditText}
+                    className="px-4 py-2 mt-2  bg-slate-700 text-white rounded-lg hover:bg-slate-900">
+                    Save Text
+                </button>
+                <button
+                    onClick={deleteSelectedText}
+                    className="px-4 py-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
+                    Remove Text
+                </button>
             </div>
         </div>
     );
