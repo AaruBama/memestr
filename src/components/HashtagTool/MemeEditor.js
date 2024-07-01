@@ -1,12 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createContext } from 'react';
 import { Stage, Layer, Image, Text, Transformer, Line } from 'react-konva';
 import { saveAs } from 'file-saver';
-import { SketchPicker } from 'react-color';
 import './MemeEditorStyle.css';
 import { uploadToImgur } from '../Post/newPost';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
 import { SimplePool, getEventHash, getSignature, nip19 } from 'nostr-tools';
+import Tools from '../MakeMeme/Tools';
+import Templates from '../MakeMeme/Templates';
+import Tabs from '../MakeMeme/Tabs';
 
 export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
     if (!imageUrl || !title) {
@@ -61,15 +63,24 @@ export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
     );
 };
 
+export const TemplateContext = createContext();
+
 const MemeEditor = () => {
+    const CANVAS_WIDTH = 400;
+    const CANVAS_HEIGHT = 400;
+
     const [image, setImage] = useState(null);
     const [texts, setTexts] = useState([]);
+    const [templates, setTemplates] = useState([]);
     const [currentText, setCurrentText] = useState('');
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentFont, setCurrentFont] = useState('Arial');
     const [currentStyle, setCurrentStyle] = useState('normal');
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
+
+    const [canvasWidth, setCanvasWidth] = useState(CANVAS_WIDTH);
+    const [canvasHeight, setCanvasHeight] = useState(CANVAS_HEIGHT);
 
     const [editedText, setEditedText] = useState('');
     const stageRef = useRef(null);
@@ -130,9 +141,6 @@ const MemeEditor = () => {
         setShowPostDetails(prevState => !prevState);
     };
 
-    const CANVAS_WIDTH = 400;
-    const CANVAS_HEIGHT = 400;
-
     const fonts = [
         'Arial',
         'Times New Roman',
@@ -154,6 +162,7 @@ const MemeEditor = () => {
             fontStyle: currentStyle,
             fill: currentColor,
             fontFamily: currentFont,
+            width: 200,
         };
         setTexts([...texts, newText]);
         setCurrentText('');
@@ -185,10 +194,125 @@ const MemeEditor = () => {
         reader.readAsDataURL(file);
     };
 
+    const handleTemplateImageSelect = imageUrl => {
+        const img = new window.Image();
+        img.src = imageUrl;
+        img.crossOrigin = 'Anonymous'; // This is important for loading images from different origins
+
+        img.onload = () => {
+            const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
+            const imgRatio = img.width / img.height;
+
+            if (imgRatio > canvasRatio) {
+                img.width = CANVAS_WIDTH;
+                img.height = CANVAS_WIDTH / imgRatio;
+            } else {
+                img.height = CANVAS_HEIGHT;
+                img.width = CANVAS_HEIGHT * imgRatio;
+            }
+
+            setImage(img);
+        };
+    };
+
     const getDataURL = () => {
         const stage = stageRef.current;
         const dataURL = stage.toDataURL({ pixelRatio: 2 });
         return dataURL;
+    };
+
+    // const handleUploadToNostr = async () => {
+    //     const storedData = localStorage.getItem('memestr');
+    //     if (!storedData) {
+    //         setValidation(true);
+    //         setTimeout(() => setValidation(false), 3000);
+    //         return;
+    //     }
+    //     setIsUploading(true);
+    //     const dataURL = getDataURL();
+    //     const blob = await fetch(dataURL).then(res => res.blob());
+    //
+    //     try {
+    //         const response = await uploadToImgur(blob);
+    //         const imageUrl = response.data.link;
+    //         if (imageUrl) {
+    //             await sendNewPostEvent(imageUrl, title, hashtags);
+    //             setShowPostDetails(false);
+    //             setTitle(' ');
+    //             setHashtags([]);
+    //             setInputValue('');
+    //             setShowSuccessNotification(true);
+    //             setTimeout(() => setShowSuccessNotification(false), 3000);
+    //         }
+    //     } catch (error) {
+    //         console.error('An error occurred while uploading to Imgur:', error);
+    //     }
+    //     setIsUploading(false);
+    // };
+
+    // const handleDownload = () => {
+    //     const stage = stageRef.current;
+    //     const transformer = transformerRef.current;
+    //
+    //     if (transformer) {
+    //         transformer.detach();
+    //         transformer.getLayer().batchDraw();
+    //     }
+    //
+    //     const boundingBox = stage.getChildren()[0].getClientRect();
+    //     const scale = stage.scaleX();
+    //     const width = boundingBox.width * scale;
+    //     const height = boundingBox.height * scale;
+    //     const x = boundingBox.x * scale;
+    //     const y = boundingBox.y * scale;
+    //
+    //     const pixelRatio = 2;
+    //     const dataURL = stage.toDataURL({
+    //         x: boundingBox.x,
+    //         y: boundingBox.y,
+    //         width: boundingBox.width,
+    //         height: boundingBox.height,
+    //         pixelRatio: pixelRatio,
+    //     });
+    //
+    //     const offScreenCanvas = document.createElement('canvas');
+    //     offScreenCanvas.width = width * pixelRatio;
+    //     offScreenCanvas.height = height * pixelRatio;
+    //     const ctx = offScreenCanvas.getContext('2d');
+    //
+    //     const img = new window.Image();
+    //     img.onload = () => {
+    //         ctx.drawImage(
+    //             img,
+    //             x * pixelRatio,
+    //             y * pixelRatio,
+    //             width * pixelRatio,
+    //             height * pixelRatio,
+    //             0,
+    //             0,
+    //             width * pixelRatio,
+    //             height * pixelRatio,
+    //         );
+    //
+    //         offScreenCanvas.toBlob(blob => {
+    //             saveAs(blob, 'my-meme.png');
+    //         });
+    //     };
+    //     img.src = dataURL;
+    // };
+
+    const addWatermark = (canvas, text, fontSize, padding) => {
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(text, width - padding, height - padding);
+
+        return canvas;
     };
 
     const handleUploadToNostr = async () => {
@@ -200,20 +324,46 @@ const MemeEditor = () => {
         }
         setIsUploading(true);
         const dataURL = getDataURL();
-        const blob = await fetch(dataURL).then(res => res.blob());
 
         try {
-            const response = await uploadToImgur(blob);
-            const imageUrl = response.data.link;
-            if (imageUrl) {
-                await sendNewPostEvent(imageUrl, title, hashtags);
-                setShowPostDetails(false);
-                setTitle(' ');
-                setHashtags([]);
-                setInputValue('');
-                setShowSuccessNotification(true);
-                setTimeout(() => setShowSuccessNotification(false), 3000);
-            }
+            // Add the watermark to the canvas
+            const canvas = document.createElement('canvas');
+            const img = new window.Image();
+            img.src = dataURL;
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                const watermarkText = 'memestr.app';
+                const watermarkFontSize = 20;
+                const watermarkPadding = 10;
+
+                const canvasWithWatermark = addWatermark(
+                    canvas,
+                    watermarkText,
+                    watermarkFontSize,
+                    watermarkPadding,
+                );
+
+                canvasWithWatermark.toBlob(async watermarkedBlob => {
+                    const response = await uploadToImgur(watermarkedBlob);
+                    const imageUrl = response.data.link;
+                    if (imageUrl) {
+                        await sendNewPostEvent(imageUrl, title, hashtags);
+                        setShowPostDetails(false);
+                        setTitle(' ');
+                        setHashtags([]);
+                        setInputValue('');
+                        setShowSuccessNotification(true);
+                        setTimeout(
+                            () => setShowSuccessNotification(false),
+                            3000,
+                        );
+                    }
+                });
+            };
         } catch (error) {
             console.error('An error occurred while uploading to Imgur:', error);
         }
@@ -262,6 +412,21 @@ const MemeEditor = () => {
                 0,
                 width * pixelRatio,
                 height * pixelRatio,
+            );
+
+            // Add the watermark
+            const watermarkText = 'memestr.app';
+            const watermarkFontSize = 20;
+            const watermarkPadding = 10;
+
+            ctx.font = `${watermarkFontSize}px Arial`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(
+                watermarkText,
+                offScreenCanvas.width - watermarkPadding,
+                offScreenCanvas.height - watermarkPadding,
             );
 
             offScreenCanvas.toBlob(blob => {
@@ -386,6 +551,47 @@ const MemeEditor = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const fetchImages = async () => {
+            if (templates.length === 0) {
+                try {
+                    console.log('Calling API');
+                    const response = await fetch(
+                        'https://6sz2qdcmae.execute-api.us-east-1.amazonaws.com/prod/',
+                    );
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch images');
+                    }
+                    const data = await response.json();
+                    console.log('data: ', data);
+                    setTemplates(data);
+                } catch (error) {
+                    console.error('Error fetching images:', error);
+                }
+            }
+        };
+
+        fetchImages();
+    }, [templates.length]);
+
+    useEffect(() => {
+        if (image) {
+            const imgRatio = image.width / image.height;
+            const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
+
+            if (imgRatio > canvasRatio) {
+                setCanvasWidth(CANVAS_WIDTH);
+                setCanvasHeight(CANVAS_WIDTH / imgRatio);
+            } else {
+                setCanvasHeight(CANVAS_HEIGHT);
+                setCanvasWidth(CANVAS_HEIGHT * imgRatio);
+            }
+        }
+    }, [image]);
+
+    const contextValue = { templates, handleTemplateImageSelect };
+    console.log('Rendering ParentComponent, images:', contextValue);
+
     return (
         <>
             <h1 className="mt-2 text-3xl font-nunito font-bold text-center">
@@ -395,8 +601,8 @@ const MemeEditor = () => {
                 <div className="p-4 rounded-lg flex-1">
                     <div style={{ marginTop: '10px' }}>
                         <Stage
-                            width={CANVAS_WIDTH}
-                            height={CANVAS_HEIGHT}
+                            width={canvasWidth}
+                            height={canvasHeight}
                             ref={stageRef}
                             onMouseDown={handleMouseDown}
                             onTouchStart={handleMouseDown}
@@ -419,48 +625,61 @@ const MemeEditor = () => {
                                         fill={text.fill}
                                         draggable
                                         fontFamily={text.fontFamily}
+                                        width={text.width}
+                                        wrap="word"
                                         onClick={() =>
                                             handleTextSelect(text.id)
                                         }
                                         onTap={() => handleTextSelect(text.id)}
                                         onDragEnd={e => {
-                                            const updatedTexts = texts.map(
-                                                t => {
-                                                    if (t.id === text.id) {
-                                                        return {
-                                                            ...t,
-                                                            x: e.target.x(),
-                                                            y: e.target.y(),
-                                                        };
-                                                    }
-                                                    return t;
-                                                },
+                                            const node = e.target;
+                                            const updatedTexts = texts.map(t =>
+                                                t.id === text.id
+                                                    ? {
+                                                          ...t,
+                                                          x: node.x(),
+                                                          y: node.y(),
+                                                      }
+                                                    : t,
                                             );
                                             setTexts(updatedTexts);
                                         }}
-                                        onTransformEnd={e => {
+                                        onTransform={e => {
                                             const node = e.target;
-                                            const updatedTexts = texts.map(
-                                                t => {
-                                                    if (t.id === text.id) {
-                                                        return {
-                                                            ...t,
-                                                            x: node.x(),
-                                                            y: node.y(),
-                                                            fontSize:
-                                                                node.fontSize(),
-                                                            rotation:
-                                                                node.rotation(),
-                                                        };
-                                                    }
-                                                    return t;
-                                                },
+                                            const scaleX = node.scaleX();
+                                            const width = Math.max(
+                                                node.width() * scaleX,
+                                                20,
+                                            );
+                                            node.setAttrs({
+                                                width: width,
+                                                scaleX: 1,
+                                            });
+                                            const updatedTexts = texts.map(t =>
+                                                t.id === text.id
+                                                    ? {
+                                                          ...t,
+                                                          x: node.x(),
+                                                          y: node.y(),
+                                                          fontSize:
+                                                              node.fontSize(),
+                                                          width: width,
+                                                      }
+                                                    : t,
                                             );
                                             setTexts(updatedTexts);
                                         }}
                                     />
                                 ))}
-                                <Transformer ref={transformerRef} />
+                                <Transformer
+                                    ref={transformerRef}
+                                    boundBoxFunc={(oldBox, newBox) => {
+                                        if (newBox.width < 20) {
+                                            return oldBox;
+                                        }
+                                        return newBox;
+                                    }}
+                                />
                                 {lines.map((line, index) => (
                                     <Line
                                         key={index}
@@ -589,103 +808,38 @@ const MemeEditor = () => {
                     )}
                 </div>
 
-                <div className="flex-1 p-4">
-                    <h2 className="text-xl font-nunito font-semibold mb-2">
-                        Tools
-                    </h2>
-
-                    <input
-                        id="fileInput"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        style={{ display: 'none' }}
-                        ref={fileInputRef}
-                    />
-                    <div className="mt-4">
-                        <input
-                            type="text"
-                            value={currentText}
-                            onChange={handleTextChange}
-                            placeholder="Enter text"
-                            className="px-4 py-2 w-full border border-gray-300 rounded-lg"
-                        />
-                        <button
-                            onClick={addText}
-                            className="px-4 py-2 mt-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
-                            Add Text
-                        </button>
-                    </div>
-
-                    <div className="mt-4">
-                        <h2 className="text-xl font-nunito font-semibold mb-2">
-                            Selected Text
-                        </h2>
-                        <input
-                            type="text"
-                            value={editedText}
-                            onChange={handleEditedTextChange}
-                            placeholder="Edit selected text"
-                            className="px-4 py-2 w-full border border-gray-300 rounded-lg"
-                        />
-                        <div className="flex flex-row gap-2">
-                            <button
-                                onClick={handleEditText}
-                                className="px-4 py-2 mt-2  bg-slate-700 text-white rounded-lg hover:bg-slate-900">
-                                Save Text
-                            </button>
-                            <button
-                                onClick={deleteSelectedText}
-                                className="px-4 py-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
-                                Remove Text
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <h2 className="text-xl font-nunito font-semibold mb-2">
-                            Font and Color
-                        </h2>
-                        <div className="flex flex-row space-x-4">
-                            <div className="flex-1">
-                                <h3 className="text-md font-nunito mb-2">
-                                    Font Family
-                                </h3>
-                                <select
-                                    value={currentFont}
-                                    onChange={handleFontChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                                    {fonts.map(font => (
-                                        <option key={font} value={font}>
-                                            {font}
-                                        </option>
-                                    ))}
-                                </select>
+                <TemplateContext.Provider value={contextValue}>
+                    <div className="container mx-auto p-4">
+                        <Tabs>
+                            <div title="Tools">
+                                <Tools
+                                    currentText={currentText}
+                                    handleTextChange={handleTextChange}
+                                    addText={addText}
+                                    editedText={editedText}
+                                    handleEditedTextChange={
+                                        handleEditedTextChange
+                                    }
+                                    handleEditText={handleEditText}
+                                    deleteSelectedText={deleteSelectedText}
+                                    currentFont={currentFont}
+                                    handleFontChange={handleFontChange}
+                                    fonts={fonts}
+                                    currentStyle={currentStyle}
+                                    updateTextStyle={updateTextStyle}
+                                    styles={styles}
+                                    currentColor={currentColor}
+                                    handleColorChange={handleColorChange}
+                                    fileInputRef={fileInputRef}
+                                    handleImageUpload={handleImageUpload}
+                                />
                             </div>
-                            <div className="flex-1 ">
-                                <h3 className="text-md font-nunito mb-2">
-                                    Font Style
-                                </h3>
-                                <select
-                                    value={currentStyle}
-                                    onChange={updateTextStyle}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                                    {styles.map(style => (
-                                        <option key={style} value={style}>
-                                            {style}
-                                        </option>
-                                    ))}
-                                </select>
+                            <div title="Popular Memes">
+                                <Templates />
                             </div>
-                        </div>
-
-                        <SketchPicker
-                            color={currentColor}
-                            onChange={handleColorChange}
-                            className="mt-4 mb-12 md:mt-4 md:mb-0"
-                        />
+                        </Tabs>
                     </div>
-                </div>
+                </TemplateContext.Provider>
             </div>
         </>
     );
