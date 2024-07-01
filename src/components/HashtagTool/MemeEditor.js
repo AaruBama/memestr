@@ -74,10 +74,13 @@ const MemeEditor = () => {
     const [templates, setTemplates] = useState([]);
     const [currentText, setCurrentText] = useState('');
     const [currentColor, setCurrentColor] = useState('#000000');
-    const [currentFont, setCurrentFont] = useState('Arial');
+    const [currentFont, setCurrentFont] = useState('Impact');
     const [currentStyle, setCurrentStyle] = useState('normal');
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
+
+    const [currentOutlineColor, setCurrentOutlineColor] = useState('#ffffff');
+    const [currentOutlineWidth, setCurrentOutlineWidth] = useState(1);
 
     const [canvasWidth, setCanvasWidth] = useState(CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(CANVAS_HEIGHT);
@@ -151,7 +154,7 @@ const MemeEditor = () => {
         'Impact',
     ];
 
-    const styles = ['Normal', 'Bold', 'Bolder', 'Italic'];
+    const styles = ['Normal', 'Bold', 'Italic'];
 
     const addText = () => {
         const newText = {
@@ -164,9 +167,22 @@ const MemeEditor = () => {
             fill: currentColor,
             fontFamily: currentFont,
             width: 200,
+            stroke: currentOutlineColor,
+            strokeWidth: currentOutlineWidth,
         };
         setTexts([...texts, newText]);
         setCurrentText('');
+    };
+
+    const handleOutlineColorChange = color => {
+        setCurrentOutlineColor(color.hex);
+        const updatedTexts = texts.map(text => {
+            if (text.id === selectedTextId) {
+                return { ...text, stroke: color.hex };
+            }
+            return text;
+        });
+        setTexts(updatedTexts);
     };
 
     const handleImageUpload = e => {
@@ -438,7 +454,22 @@ const MemeEditor = () => {
     };
 
     const handleTextChange = e => {
-        setCurrentText(e.target.value);
+        const newText = e.target.value;
+        setCurrentText(newText);
+
+        if (texts.length === 0) {
+            // If there's no text on the canvas yet, add a new text object
+            addText(newText);
+        } else {
+            // Update the last added text
+            const updatedTexts = texts.map((text, index) => {
+                if (index === texts.length - 1) {
+                    return { ...text, text: newText };
+                }
+                return text;
+            });
+            setTexts(updatedTexts);
+        }
     };
 
     const handleEditedTextChange = e => {
@@ -624,14 +655,15 @@ const MemeEditor = () => {
                                         fontSize={text.fontSize}
                                         fontStyle={text.fontStyle}
                                         fill={text.fill}
-                                        draggable
                                         fontFamily={text.fontFamily}
                                         width={text.width}
                                         wrap="word"
+                                        stroke={text.stroke}
+                                        strokeWidth={text.strokeWidth}
+                                        draggable
                                         onClick={() =>
                                             handleTextSelect(text.id)
                                         }
-                                        onTap={() => handleTextSelect(text.id)}
                                         onDragEnd={e => {
                                             const node = e.target;
                                             const updatedTexts = texts.map(t =>
@@ -833,6 +865,14 @@ const MemeEditor = () => {
                                     handleColorChange={handleColorChange}
                                     fileInputRef={fileInputRef}
                                     handleImageUpload={handleImageUpload}
+                                    currentOutlineColor={currentOutlineColor}
+                                    handleOutlineColorChange={
+                                        handleOutlineColorChange
+                                    }
+                                    currentOutlineWidth={currentOutlineWidth}
+                                    setCurrentOutlineWidth={
+                                        setCurrentOutlineWidth
+                                    }
                                 />
                             </div>
                             <div title="Popular Memes">

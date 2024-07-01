@@ -6,7 +6,6 @@ import { ReactComponent as GearIcon } from '../../Icons/Bitcoin.svg';
 const ToolsSection = ({
     currentText,
     handleTextChange,
-    addText,
     editedText,
     handleEditedTextChange,
     handleEditText,
@@ -21,7 +20,12 @@ const ToolsSection = ({
     handleColorChange,
     fileInputRef,
     handleImageUpload,
+    currentOutlineColor,
+    handleOutlineColorChange,
+    currentOutlineWidth,
+    setCurrentOutlineWidth,
 }) => {
+    const [showOutlineColorPicker, setShowOutlineColorPicker] = useState(false);
     const [showPanel, setShowPanel] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const panelRef = useRef(null);
@@ -78,11 +82,11 @@ const ToolsSection = ({
                     placeholder="Enter text"
                     className="px-4 py-2 w-full border border-gray-300 rounded-lg"
                 />
-                <button
-                    onClick={addText}
-                    className="px-4 py-2 mt-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">
-                    Add Text
-                </button>
+                {/*<button*/}
+                {/*    onClick={addText}*/}
+                {/*    className="px-4 py-2 mt-2 bg-slate-700 text-white rounded-lg hover:bg-slate-900">*/}
+                {/*    Add Text*/}
+                {/*</button>*/}
             </div>
 
             <div className="mt-4 relative">
@@ -102,12 +106,26 @@ const ToolsSection = ({
                         style={{ backgroundColor: currentColor }}
                         onClick={toggleColorPicker}></button>
                     <button
+                        className="ml-2 w-8 h-8 rounded border-2 border-gray-300"
+                        style={{ backgroundColor: currentOutlineColor }}
+                        onClick={() =>
+                            setShowOutlineColorPicker(!showOutlineColorPicker)
+                        }></button>
+                    <button
                         ref={buttonRef}
                         className="ml-2 p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                         onClick={togglePanel}>
                         <GearIcon className="w-5 h-5 text-gray-600" />
                     </button>
                 </div>
+                {showOutlineColorPicker && (
+                    <div className="absolute right-0 mt-2 z-10">
+                        <SketchPicker
+                            color={currentOutlineColor}
+                            onChangeComplete={handleOutlineColorChange}
+                        />
+                    </div>
+                )}
                 {showPanel && (
                     <div
                         ref={panelRef}
@@ -142,6 +160,23 @@ const ToolsSection = ({
                                         </option>
                                     ))}
                                 </select>
+                                <div className="mb-4 mt-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Outline Width:
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={currentOutlineWidth}
+                                        onChange={e =>
+                                            setCurrentOutlineWidth(
+                                                Number(e.target.value),
+                                            )
+                                        }
+                                        min="0"
+                                        max="20"
+                                        className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
