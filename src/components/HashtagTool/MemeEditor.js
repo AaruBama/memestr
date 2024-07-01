@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, createContext } from 'react';
-import { Stage, Layer, Image, Text, Transformer, Line } from 'react-konva';
+import { Stage, Layer, Image, Text, Transformer } from 'react-konva';
 import { saveAs } from 'file-saver';
 import './MemeEditorStyle.css';
 import { uploadToImgur } from '../Post/newPost';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
 import { SimplePool, getEventHash, getSignature, nip19 } from 'nostr-tools';
-import Tools from '../MakeMeme/Tools';
 import Templates from '../MakeMeme/Templates';
 import Tabs from '../MakeMeme/Tabs';
+import ToolsSection from '../MakeMeme/Tools';
 
 export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
     if (!imageUrl || !title) {
@@ -70,26 +70,34 @@ const MemeEditor = () => {
     const CANVAS_HEIGHT = 400;
 
     const [image, setImage] = useState(null);
-    const [texts, setTexts] = useState([]);
+    const [texts, setTexts] = useState([
+        {
+            id: Date.now(),
+            text: '',
+            x: 50,
+            y: 50,
+            fontSize: 24,
+            fontStyle: 'normal',
+            fontFamily: 'Impact',
+            fill: '#000000',
+            stroke: '#ffffff',
+            strokeWidth: 1,
+            width: 200,
+        },
+    ]);
     const [templates, setTemplates] = useState([]);
-    const [currentText, setCurrentText] = useState('');
-    const [currentColor, setCurrentColor] = useState('#000000');
-    const [currentFont, setCurrentFont] = useState('Impact');
-    const [currentStyle, setCurrentStyle] = useState('normal');
-    const [lines, setLines] = useState([]);
-    const [isDrawing, setIsDrawing] = useState(false);
 
-    const [currentOutlineColor, setCurrentOutlineColor] = useState('#ffffff');
-    const [currentOutlineWidth, setCurrentOutlineWidth] = useState(1);
+    const DEFAULT_COLOR = '#000000';
+    const DEFAULT_FONT = 'Impact';
+    const DEFAULT_OUTLINE_COLOR = '#ffffff';
+    const DEFAULT_OUTLINE_WIDTH = 1;
 
     const [canvasWidth, setCanvasWidth] = useState(CANVAS_WIDTH);
     const [canvasHeight, setCanvasHeight] = useState(CANVAS_HEIGHT);
 
-    const [editedText, setEditedText] = useState('');
     const stageRef = useRef(null);
     const fileInputRef = useRef(null);
     const transformerRef = useRef(null);
-    const [selectedTextId, setSelectedTextId] = useState(null);
 
     const [title, setTitle] = useState('');
 
@@ -158,32 +166,31 @@ const MemeEditor = () => {
 
     const addText = () => {
         const newText = {
-            id: texts.length + 1,
-            text: currentText,
+            id: Date.now(),
+            text: '',
             x: 50,
             y: 50,
             fontSize: 24,
-            fontStyle: currentStyle,
-            fill: currentColor,
-            fontFamily: currentFont,
+            fontStyle: 'normal',
+            fontFamily: DEFAULT_FONT,
+            fill: DEFAULT_COLOR,
+            stroke: DEFAULT_OUTLINE_COLOR,
+            strokeWidth: DEFAULT_OUTLINE_WIDTH,
             width: 200,
-            stroke: currentOutlineColor,
-            strokeWidth: currentOutlineWidth,
         };
         setTexts([...texts, newText]);
-        setCurrentText('');
     };
 
-    const handleOutlineColorChange = color => {
-        setCurrentOutlineColor(color.hex);
-        const updatedTexts = texts.map(text => {
-            if (text.id === selectedTextId) {
-                return { ...text, stroke: color.hex };
-            }
-            return text;
-        });
-        setTexts(updatedTexts);
-    };
+    // const handleOutlineColorChange = color => {
+    //     setCurrentOutlineColor(color.hex);
+    //     const updatedTexts = texts.map(text => {
+    //         if (text.id === selectedTextId) {
+    //             return { ...text, stroke: color.hex };
+    //         }
+    //         return text;
+    //     });
+    //     setTexts(updatedTexts);
+    // };
 
     const handleImageUpload = e => {
         const file = e.target.files[0];
@@ -453,116 +460,67 @@ const MemeEditor = () => {
         img.src = dataURL;
     };
 
-    const handleTextChange = e => {
-        const newText = e.target.value;
-        setCurrentText(newText);
+    // const handleTextChange = e => {
+    //     const newText = e.target.value;
+    //     setCurrentText(newText);
+    //
+    //     if (texts.length === 0) {
+    //         // If there's no text on the canvas yet, add a new text object
+    //         addText(newText);
+    //     } else {
+    //         // Update the last added text
+    //         const updatedTexts = texts.map((text, index) => {
+    //             if (index === texts.length - 1) {
+    //                 return { ...text, text: newText };
+    //             }
+    //             return text;
+    //         });
+    //         setTexts(updatedTexts);
+    //     }
+    // };
 
-        if (texts.length === 0) {
-            // If there's no text on the canvas yet, add a new text object
-            addText(newText);
-        } else {
-            // Update the last added text
-            const updatedTexts = texts.map((text, index) => {
-                if (index === texts.length - 1) {
-                    return { ...text, text: newText };
-                }
-                return text;
-            });
-            setTexts(updatedTexts);
-        }
+    const handleTextChange = (id, newText) => {
+        setTexts(
+            texts.map(text =>
+                text.id === id ? { ...text, text: newText } : text,
+            ),
+        );
     };
 
-    const handleEditedTextChange = e => {
-        setEditedText(e.target.value);
+    const handleDeleteText = id => {
+        setTexts(texts.filter(text => text.id !== id));
     };
 
-    const handleMouseDown = e => {
-        if (!isDrawing) {
-            return;
-        }
-        const { x, y } = e.target.getStage().getPointerPosition();
-        setLines([...lines, { points: [x, y] }]);
+    const handleStyleChange = (id, property, value) => {
+        setTexts(
+            texts.map(text =>
+                text.id === id ? { ...text, [property]: value } : text,
+            ),
+        );
     };
 
-    const handleMouseMove = e => {
-        if (!isDrawing) {
-            return;
-        }
-        const stage = e.target.getStage();
-        const point = stage.getPointerPosition();
-        const lastLine = lines[lines.length - 1];
-        if (lastLine) {
-            lastLine.points = lastLine.points.concat([point.x, point.y]);
-            setLines(lines.slice(0, -1).concat(lastLine));
-        }
+    const handleColorChange = (id, color) => {
+        setTexts(
+            texts.map(text =>
+                text.id === id ? { ...text, fill: color } : text,
+            ),
+        );
     };
 
-    const handleMouseUp = () => {
-        setIsDrawing(false);
+    const handleOutlineColorChange = (id, color) => {
+        setTexts(
+            texts.map(text =>
+                text.id === id ? { ...text, stroke: color } : text,
+            ),
+        );
     };
 
     const handleTextSelect = textId => {
-        setSelectedTextId(textId);
-        const selectedText = texts.find(text => text.id === textId);
-        setEditedText(selectedText ? selectedText.text : '');
         const textNode = stageRef.current.findOne(`#text-${textId}`);
         if (textNode) {
             transformerRef.current.nodes([textNode]);
             transformerRef.current.getLayer().batchDraw();
         }
-    };
-
-    const updateTextStyle = style => {
-        setCurrentStyle(style.target.value);
-        const updatedTexts = texts.map(text => {
-            if (text.id === selectedTextId) {
-                return { ...text, fontStyle: style.target.value };
-            }
-            return text;
-        });
-        setTexts(updatedTexts);
-    };
-
-    const handleColorChange = color => {
-        setCurrentColor(color.hex);
-        const updatedTexts = texts.map(text => {
-            if (text.id === selectedTextId) {
-                return { ...text, fill: color.hex };
-            }
-            return text;
-        });
-        setTexts(updatedTexts);
-    };
-
-    const handleFontChange = e => {
-        setCurrentFont(e.target.value);
-        const updatedTexts = texts.map(text => {
-            if (text.id === selectedTextId) {
-                return { ...text, fontFamily: e.target.value };
-            }
-            return text;
-        });
-        setTexts(updatedTexts);
-    };
-
-    const deleteSelectedText = () => {
-        setTexts(texts.filter(text => text.id !== selectedTextId));
-        setSelectedTextId(null);
-        transformerRef.current.detach();
-        transformerRef.current.getLayer().batchDraw();
-    };
-
-    const handleEditText = () => {
-        const updatedTexts = texts.map(text => {
-            if (text.id === selectedTextId) {
-                return { ...text, text: editedText };
-            }
-            return text;
-        });
-
-        setTexts(updatedTexts);
-        transformerRef.current.detach();
-        transformerRef.current.getLayer().batchDraw();
     };
 
     useEffect(() => {
@@ -631,20 +589,24 @@ const MemeEditor = () => {
             </h1>
             <div className="flex flex-col md:flex-row overflow-auto">
                 <div className="p-4 rounded-lg flex-1">
-                    <div style={{ marginTop: '10px' }}>
+                    <div
+                        style={{
+                            marginTop: '10px',
+                            border: '1px solid grey',
+                            display: 'inline-block',
+                        }}>
                         <Stage
                             width={canvasWidth}
                             height={canvasHeight}
-                            ref={stageRef}
-                            onMouseDown={handleMouseDown}
-                            onTouchStart={handleMouseDown}
-                            onMouseMove={handleMouseMove}
-                            onTouchMove={handleMouseMove}
-                            onMouseUp={handleMouseUp}
-                            onTouchEnd={handleMouseUp}
-                            className="border border-gray-300 rounded-lg">
+                            ref={stageRef}>
                             <Layer>
-                                {image && <Image image={image} />}
+                                {image && (
+                                    <Image
+                                        image={image}
+                                        width={canvasWidth}
+                                        height={canvasHeight}
+                                    />
+                                )}
                                 {texts.map(text => (
                                     <Text
                                         key={text.id}
@@ -654,16 +616,13 @@ const MemeEditor = () => {
                                         y={text.y}
                                         fontSize={text.fontSize}
                                         fontStyle={text.fontStyle}
-                                        fill={text.fill}
                                         fontFamily={text.fontFamily}
+                                        fill={text.fill}
                                         width={text.width}
                                         wrap="word"
                                         stroke={text.stroke}
                                         strokeWidth={text.strokeWidth}
                                         draggable
-                                        onClick={() =>
-                                            handleTextSelect(text.id)
-                                        }
                                         onDragEnd={e => {
                                             const node = e.target;
                                             const updatedTexts = texts.map(t =>
@@ -677,57 +636,12 @@ const MemeEditor = () => {
                                             );
                                             setTexts(updatedTexts);
                                         }}
-                                        onTransform={e => {
-                                            const node = e.target;
-                                            const scaleX = node.scaleX();
-                                            const width = Math.max(
-                                                node.width() * scaleX,
-                                                20,
-                                            );
-                                            node.setAttrs({
-                                                width: width,
-                                                scaleX: 1,
-                                            });
-                                            const updatedTexts = texts.map(t =>
-                                                t.id === text.id
-                                                    ? {
-                                                          ...t,
-                                                          x: node.x(),
-                                                          y: node.y(),
-                                                          fontSize:
-                                                              node.fontSize(),
-                                                          width: width,
-                                                      }
-                                                    : t,
-                                            );
-                                            setTexts(updatedTexts);
-                                        }}
-                                    />
-                                ))}
-                                <Transformer
-                                    ref={transformerRef}
-                                    boundBoxFunc={(oldBox, newBox) => {
-                                        if (newBox.width < 20) {
-                                            return oldBox;
-                                        }
-                                        return newBox;
-                                    }}
-                                />
-                                {lines.map((line, index) => (
-                                    <Line
-                                        key={index}
-                                        points={line.points}
-                                        stroke="black"
-                                        strokeWidth={2}
-                                        tension={0.5}
-                                        lineCap="round"
-                                        globalCompositeOperation={
-                                            line.tool === 'eraser'
-                                                ? 'destination-out'
-                                                : 'source-over'
+                                        onClick={() =>
+                                            handleTextSelect(text.id)
                                         }
                                     />
                                 ))}
+                                <Transformer ref={transformerRef} />
                             </Layer>
                         </Stage>
                     </div>
@@ -740,12 +654,12 @@ const MemeEditor = () => {
                         <button
                             onClick={handleDownload}
                             className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-900">
-                            Download
+                            Save
                         </button>
                         <button
                             onClick={handleShowPostDetails}
                             className="px-4 py-2  bg-gray-700 text-white rounded-lg hover:bg-gray-900">
-                            Post Meme
+                            Post on Nostr.
                         </button>
                     </div>
                     {showPostDetails && (
@@ -845,34 +759,20 @@ const MemeEditor = () => {
                     <div className="container mx-auto p-4">
                         <Tabs>
                             <div title="Tools">
-                                <Tools
-                                    currentText={currentText}
-                                    handleTextChange={handleTextChange}
-                                    addText={addText}
-                                    editedText={editedText}
-                                    handleEditedTextChange={
-                                        handleEditedTextChange
-                                    }
-                                    handleEditText={handleEditText}
-                                    deleteSelectedText={deleteSelectedText}
-                                    currentFont={currentFont}
-                                    handleFontChange={handleFontChange}
-                                    fonts={fonts}
-                                    currentStyle={currentStyle}
-                                    updateTextStyle={updateTextStyle}
-                                    styles={styles}
-                                    currentColor={currentColor}
-                                    handleColorChange={handleColorChange}
-                                    fileInputRef={fileInputRef}
-                                    handleImageUpload={handleImageUpload}
-                                    currentOutlineColor={currentOutlineColor}
-                                    handleOutlineColorChange={
+                                <ToolsSection
+                                    texts={texts}
+                                    onTextChange={handleTextChange}
+                                    onAddText={addText}
+                                    onDeleteText={handleDeleteText}
+                                    onStyleChange={handleStyleChange}
+                                    onColorChange={handleColorChange}
+                                    onOutlineColorChange={
                                         handleOutlineColorChange
                                     }
-                                    currentOutlineWidth={currentOutlineWidth}
-                                    setCurrentOutlineWidth={
-                                        setCurrentOutlineWidth
-                                    }
+                                    fonts={fonts}
+                                    styles={styles}
+                                    fileInputRef={fileInputRef}
+                                    handleImageUpload={handleImageUpload}
                                 />
                             </div>
                             <div title="Popular Memes">
