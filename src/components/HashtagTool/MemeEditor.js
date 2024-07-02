@@ -407,6 +407,10 @@ const MemeEditor = () => {
         const boundingBox = layer.getClientRect();
 
         const pixelRatio = 2;
+        const watermarkText = 'memestr.app';
+        const watermarkFontSize = 15;
+        const watermarkPadding = 7;
+
         const dataURL = stage.toDataURL({
             x: boundingBox.x,
             y: boundingBox.y,
@@ -422,22 +426,37 @@ const MemeEditor = () => {
 
         const img = new window.Image();
         img.onload = () => {
+            // Draw the original image
             ctx.drawImage(img, 0, 0);
 
-            // Add the watermark
-            const watermarkText = 'memestr.app';
-            const watermarkFontSize = 20 * pixelRatio;
-            const watermarkPadding = 10 * pixelRatio;
+            // Set up font for watermark
+            ctx.font = `${watermarkFontSize * pixelRatio}px Arial`;
 
-            ctx.font = `${watermarkFontSize}px Arial`;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            // Measure text
+            const textMetrics = ctx.measureText(watermarkText);
+            const textWidth = textMetrics.width;
+            const textHeight = watermarkFontSize * pixelRatio;
+
+            // Calculate position for watermark (bottom-right corner)
+            const watermarkX =
+                offScreenCanvas.width - watermarkPadding * pixelRatio;
+            const watermarkY =
+                offScreenCanvas.height - watermarkPadding * pixelRatio;
+
+            // Draw background rectangle
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(
+                watermarkX - textWidth - watermarkPadding * pixelRatio,
+                watermarkY - textHeight - watermarkPadding * pixelRatio,
+                textWidth + 2 * watermarkPadding * pixelRatio,
+                textHeight + 2 * watermarkPadding * pixelRatio,
+            );
+
+            // Draw watermark text
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom';
-            ctx.fillText(
-                watermarkText,
-                offScreenCanvas.width - watermarkPadding,
-                offScreenCanvas.height - watermarkPadding,
-            );
+            ctx.fillText(watermarkText, watermarkX, watermarkY);
 
             offScreenCanvas.toBlob(blob => {
                 saveAs(blob, 'my-meme.png');
