@@ -1,10 +1,11 @@
 {
   "files": {
-    "main.css": "/static/css/main.1fc16d87.css",
-    "main.js": "/static/js/main.cfb6e126.js",
+    "main.css": "/static/css/main.c526b899.css",
+    "main.js": "/static/js/main.69b2b394.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
+    "static/media/Setting.svg": "/static/media/Setting.90b0f9a29651156bfcea07caf6809e97.svg",
     "static/media/Vehicles.svg": "/static/media/Vehicles.5a5a3e965305f8521736a3f32c37f4ef.svg",
     "static/media/Profile.svg": "/static/media/Profile.be7881726ada434d72d55c590cf6b9fd.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
@@ -46,7 +47,7 @@
     "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.1fc16d87.css",
-    "static/js/main.cfb6e126.js"
+    "static/css/main.c526b899.css",
+    "static/js/main.69b2b394.js"
   ]
 }
