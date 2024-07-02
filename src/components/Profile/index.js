@@ -8,7 +8,6 @@ export async function getProfileFromPublicKey(pubKey) {
         'wss://relay.snort.social',
         'wss://relay.hllo.live',
     ];
-    console.log('pubkey is ', pubKey);
     const relayPool = new SimplePool();
     const filters = {
         kinds: [0],
@@ -17,7 +16,6 @@ export async function getProfileFromPublicKey(pubKey) {
     let profile = await relayPool.list(relays, [filters]);
     relayPool.close(relays);
 
-    console.log('profile is ', profile);
     return profile[0];
 }
 

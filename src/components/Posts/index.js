@@ -9,7 +9,7 @@ import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg
 import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
 import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
 import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
-import { getCommentCount } from '../HashtagTool';
+// import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
@@ -76,7 +76,6 @@ export function renderContent(imageLink) {
             return <VideoPlayer imageLink={imageLink} />;
         }
     } catch (e) {
-        console.log('Image link is ', imageLink);
         console.log('Something happened here' + e);
     }
 }
@@ -178,7 +177,6 @@ export async function upvotePost(noteId, userPublicKey) {
 }
 
 export const sendNewZaps = async (postId, opPubKey, sats = 11) => {
-    console.log('Sending zaps');
     const pubKey = opPubKey;
     let relays = [
         'wss://relay.damus.io',
@@ -272,7 +270,7 @@ export function getLocalLikeCountForPost(postId) {
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
     const [votesCount, setVotesCount] = useState(0);
-    const [commentCount, setCommentCount] = useState(
+    const commentCount = useState(
         sessionStorage.getItem('cc_' + props.note.id),
     );
     const [fillLike, setFillLike] = useState(false);
@@ -286,24 +284,10 @@ function Posts(props) {
     const [processedValue, setProcessedValue] = useState(null);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { isLoggedIn } = useAuth();
-    const [userPublicKey, setUserPublicKey] = useState(null);
+    const userPublicKey = useState(null);
 
     const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
-
-    useEffect(() => {
-        const storedData = localStorage.getItem('memestr');
-        const userData = storedData ? JSON.parse(storedData) : null;
-        setUserPublicKey(userData?.pubKey);
-
-        if (!isLoggedIn) {
-            setFillLike(false);
-        } else {
-            let usersLikes =
-                JSON.parse(localStorage.getItem('usersLikes')) || {};
-            setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
-        }
-    }, [isLoggedIn, props.note.id, userPublicKey]);
 
     let postCreatedAt = props.note.created_at;
 
@@ -322,43 +306,60 @@ function Posts(props) {
     const handleConfirm = value => {
         const postId = props.note.id;
         let opPubKey = props.note.pubkey;
-        console.log(`Processing value: ${value}`);
 
         sendNewZaps(postId, opPubKey, value);
         setProcessedValue(value);
     };
 
+    // useEffect(() => {
+    //     console.log("UseEffect 1");
+    //     const storedData = localStorage.getItem('memestr');
+    //     const userData = storedData ? JSON.parse(storedData) : null;
+    //     setUserPublicKey(userData?.pubKey);
+    //
+    //     if (!isLoggedIn) {
+    //         setFillLike(false);
+    //     } else {
+    //         let usersLikes =
+    //             JSON.parse(localStorage.getItem('usersLikes')) || {};
+    //         setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
+    //     }
+    // }, [isLoggedIn, props.note.id, userPublicKey]);
+
     useEffect(() => {
+        setVotesCount(props.note.voteCount);
         let { unit, duration } = calculateTimeDifference(postCreatedAt);
         if (duration !== 0) {
             setTimeDifference({ unit: unit, duration: duration });
         }
-    }, [postCreatedAt]);
+    }, [postCreatedAt, props.note.voteCount, props.note.id]);
 
-    useEffect(() => {
-        setVotesCount(props.note.voteCount);
-        (async () => {
-            try {
-                var cc = await getCommentCount(props.note.id);
-                setCommentCount(cc);
-            } catch (error) {
-                console.error('Error fetching comments count:', error);
-            }
-        })();
-    }, [props.note.voteCount, props.note.id]);
-
-    useEffect(() => {
-        const storedData = localStorage.getItem('memestr');
-        const userPublicKey = storedData ? JSON.parse(storedData).pubKey : null;
-
-        if (userPublicKey) {
-            const usersLikes =
-                JSON.parse(localStorage.getItem('usersLikes')) || {};
-            setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
-        } else {
-            setFillLike(false);
-        }
-    }, [props.note.id]);
+    // useEffect(() => {
+    //     console.log("UseEffect 3");
+    //     setVotesCount(props.note.voteCount);
+    //     (async () => {
+    //         try {
+    //             var cc = await getCommentCount(props.note.id);
+    //             setCommentCount(cc);
+    //         } catch (error) {
+    //             console.error('Error fetching comments count:', error);
+    //         }
+    //     })();
+    // }, [props.note.voteCount, props.note.id]);
+    //
+    // useEffect(() => {
+    //     console.log("UseEffect 4");
+    //     const storedData = localStorage.getItem('memestr');
+    //     const userPublicKey = storedData ? JSON.parse(storedData).pubKey : null;
+    //
+    //     if (userPublicKey) {
+    //         const usersLikes =
+    //             JSON.parse(localStorage.getItem('usersLikes')) || {};
+    //         setFillLike(!!usersLikes[userPublicKey]?.[props.note.id]);
+    //     } else {
+    //         setFillLike(false);
+    //     }
+    // }, [props.note.id]);
 
     let title = removeHashtagsAndLinks(props.note.content);
 

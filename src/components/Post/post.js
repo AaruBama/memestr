@@ -210,7 +210,6 @@ function Post() {
             };
             let replies1 = await relayPool.list(relays, [filters]);
 
-            console.log('replies is ', replies1);
             for (let i = 0; i < replies1.length; i++) {
                 let event = replies1[i];
                 let references = parseReferences(event);
@@ -221,7 +220,6 @@ function Post() {
                         let p = await getProfileFromPublicKey(profile.pubkey);
                         let content = JSON.parse(p.content);
                         let displayName = content.display_name;
-                        console.log('name is ', content);
                         let augmentedReference = profile
                             ? `@@${displayName}@@`
                             : ``;
@@ -303,7 +301,6 @@ function Post() {
             },
         ];
         setReplies(replies => [...commentObject, ...replies]);
-        console.log('replies after updation is', replies);
         setComment('');
         // c.map((cc) => {console.log(cc)})
     };
@@ -339,7 +336,6 @@ function Post() {
 
     const handleConfirm = value => {
         // Process the value internally here or update state as needed
-        console.log('value is ', value);
         sendNewZaps(postId, postData['opPubKey'], value);
         setProcessedValue(value);
     };

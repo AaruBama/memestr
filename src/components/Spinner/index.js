@@ -2,7 +2,6 @@ import React from 'react';
 import './index.css';
 
 function Spinner() {
-    console.log('loading spinner');
     return (
         <div
             style={{
