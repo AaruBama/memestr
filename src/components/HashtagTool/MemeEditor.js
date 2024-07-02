@@ -403,12 +403,8 @@ const MemeEditor = () => {
             transformer.getLayer().batchDraw();
         }
 
-        const boundingBox = stage.getChildren()[0].getClientRect();
-        const scale = stage.scaleX();
-        const width = boundingBox.width * scale;
-        const height = boundingBox.height * scale;
-        const x = boundingBox.x * scale;
-        const y = boundingBox.y * scale;
+        const layer = stage.findOne('Layer');
+        const boundingBox = layer.getClientRect();
 
         const pixelRatio = 2;
         const dataURL = stage.toDataURL({
@@ -420,28 +416,18 @@ const MemeEditor = () => {
         });
 
         const offScreenCanvas = document.createElement('canvas');
-        offScreenCanvas.width = width * pixelRatio;
-        offScreenCanvas.height = height * pixelRatio;
+        offScreenCanvas.width = boundingBox.width * pixelRatio;
+        offScreenCanvas.height = boundingBox.height * pixelRatio;
         const ctx = offScreenCanvas.getContext('2d');
 
         const img = new window.Image();
         img.onload = () => {
-            ctx.drawImage(
-                img,
-                x * pixelRatio,
-                y * pixelRatio,
-                width * pixelRatio,
-                height * pixelRatio,
-                0,
-                0,
-                width * pixelRatio,
-                height * pixelRatio,
-            );
+            ctx.drawImage(img, 0, 0);
 
             // Add the watermark
             const watermarkText = 'memestr.app';
-            const watermarkFontSize = 20;
-            const watermarkPadding = 10;
+            const watermarkFontSize = 20 * pixelRatio;
+            const watermarkPadding = 10 * pixelRatio;
 
             ctx.font = `${watermarkFontSize}px Arial`;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
