@@ -79,17 +79,17 @@ const MemeEditor = () => {
             fontSize: 24,
             fontStyle: 'normal',
             fontFamily: 'Impact',
-            fill: '#000000',
-            stroke: '#ffffff',
+            stroke: '#000000',
+            fill: '#ffffff',
             strokeWidth: 1,
             width: 200,
         },
     ]);
     const [templates, setTemplates] = useState([]);
 
-    const DEFAULT_COLOR = '#000000';
+    const DEFAULT_COLOR = '#ffffff';
     const DEFAULT_FONT = 'Impact';
-    const DEFAULT_OUTLINE_COLOR = '#ffffff';
+    const DEFAULT_OUTLINE_COLOR = '#000000';
     const DEFAULT_OUTLINE_WIDTH = 1;
 
     const [canvasWidth, setCanvasWidth] = useState(CANVAS_WIDTH);
@@ -460,25 +460,6 @@ const MemeEditor = () => {
         img.src = dataURL;
     };
 
-    // const handleTextChange = e => {
-    //     const newText = e.target.value;
-    //     setCurrentText(newText);
-    //
-    //     if (texts.length === 0) {
-    //         // If there's no text on the canvas yet, add a new text object
-    //         addText(newText);
-    //     } else {
-    //         // Update the last added text
-    //         const updatedTexts = texts.map((text, index) => {
-    //             if (index === texts.length - 1) {
-    //                 return { ...text, text: newText };
-    //             }
-    //             return text;
-    //         });
-    //         setTexts(updatedTexts);
-    //     }
-    // };
-
     const handleTextChange = (id, newText) => {
         setTexts(
             texts.map(text =>
@@ -545,7 +526,6 @@ const MemeEditor = () => {
         const fetchImages = async () => {
             if (templates.length === 0) {
                 try {
-                    console.log('Calling API');
                     const response = await fetch(
                         'https://6sz2qdcmae.execute-api.us-east-1.amazonaws.com/prod/',
                     );
@@ -553,7 +533,6 @@ const MemeEditor = () => {
                         throw new Error('Failed to fetch images');
                     }
                     const data = await response.json();
-                    console.log('data: ', data);
                     setTemplates(data);
                 } catch (error) {
                     console.error('Error fetching images:', error);
@@ -580,7 +559,6 @@ const MemeEditor = () => {
     }, [image]);
 
     const contextValue = { templates, handleTemplateImageSelect };
-    console.log('Rendering ParentComponent, images:', contextValue);
 
     return (
         <>

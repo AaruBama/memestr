@@ -1,7 +1,6 @@
 import { finishEvent, nip04, nip19, relayInit, SimplePool } from 'nostr-tools';
 
 export async function getUserFromName(term) {
-    console.log('inside user Search');
     const pool = new SimplePool();
 
     // const relay = relayInit('wss://relay.nostr.band/');
@@ -21,7 +20,6 @@ export async function getUserFromName(term) {
 }
 
 export async function sendDM(pubKeys, text) {
-    console.log('Inside the send DM method');
     const storedData = localStorage.getItem('memestr');
     if (!storedData) {
         alert('Login required to upvote.');
@@ -58,8 +56,6 @@ export async function sendDM(pubKeys, text) {
         } else if (window.nostr) {
             signedEvent = await window.nostr.signEvent(event);
         }
-        console.log('Publishing event. should check DMS');
-        let x = await relay.publish(signedEvent);
-        console.log('x is ', x);
+        await relay.publish(signedEvent);
     }
 }

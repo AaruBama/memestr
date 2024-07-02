@@ -91,9 +91,6 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
             content: title + ' ' + link + ' ' + hashtags.join(' '),
         };
 
-        // console.log("event", commentEvent)
-        console.log('Comment Event: ', commentEvent);
-
         commentEvent.id = getEventHash(commentEvent);
         commentEvent.sig = getSignature(commentEvent, sk.data);
         let p1 = pool.publish(relays, commentEvent);
@@ -101,7 +98,6 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
         Promise.resolve(p1).then(
             value => {
                 console.log('Success', value);
-                console.log('link' + link);
                 setPostStage(4);
                 // Call the callback function passed from the parent component
                 if (onUploadSuccess) {

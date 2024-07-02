@@ -5,11 +5,9 @@ const ShareOnWhatsApp = ({ shareUrl }) => {
     // Define the text and URL you want to share
     const shareText = 'Check out this meme:';
     let url = encodeURIComponent(shareUrl);
-    console.log('url is ', url);
 
     // Create the WhatsApp share link
     const whatsappLink = `whatsapp://send?text=${shareText} ${url}`;
-    console.log('share url is ', whatsappLink);
 
     return (
         <div>

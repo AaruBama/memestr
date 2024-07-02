@@ -27,8 +27,6 @@ export async function getCommentCount(id) {
             return parseInt(sessionStorage.getItem('cc_' + id), 10);
         }
 
-        console.log('No records found in local storage. Fetching from relays.');
-
         const relay = relayInit('wss://saltivka.org');
         await relay.connect();
 

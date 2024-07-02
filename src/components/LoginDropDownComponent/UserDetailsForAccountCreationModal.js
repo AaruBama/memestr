@@ -110,7 +110,6 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
             localStorage.setItem('memestr', JSON.stringify(details));
             setIsLoading(false);
             onClose();
-            console.log('Set the default login in local cache.', details);
             setShowPopup(true);
             setTimeout(() => setShowPopup(false), 3000);
         } catch (error) {
