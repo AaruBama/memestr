@@ -239,11 +239,11 @@ const MemeEditor = () => {
         };
     };
 
-    const getDataURL = () => {
-        const stage = stageRef.current;
-        const dataURL = stage.toDataURL({ pixelRatio: 2 });
-        return dataURL;
-    };
+    // const getDataURL = () => {
+    //     const stage = stageRef.current;
+    //     const dataURL = stage.toDataURL({ pixelRatio: 2 });
+    //     return dataURL;
+    // };
 
     // const handleUploadToNostr = async () => {
     //     const storedData = localStorage.getItem('memestr');
@@ -325,19 +325,19 @@ const MemeEditor = () => {
     //     img.src = dataURL;
     // };
 
-    const addWatermark = (canvas, text, fontSize, padding) => {
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(text, width - padding, height - padding);
-
-        return canvas;
-    };
+    // const addWatermark = (canvas, text, fontSize, padding) => {
+    //     const ctx = canvas.getContext('2d');
+    //     const width = canvas.width;
+    //     const height = canvas.height;
+    //
+    //     ctx.font = `${fontSize}px Arial`;
+    //     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    //     ctx.textAlign = 'right';
+    //     ctx.textBaseline = 'bottom';
+    //     ctx.fillText(text, width - padding, height - padding);
+    //
+    //     return canvas;
+    // };
 
     const handleUploadToNostr = async () => {
         const storedData = localStorage.getItem('memestr');
@@ -347,31 +347,65 @@ const MemeEditor = () => {
             return;
         }
         setIsUploading(true);
-        const dataURL = getDataURL();
+
+        const stage = stageRef.current;
+        const transformer = transformerRef.current;
+
+        if (transformer) {
+            transformer.detach();
+            transformer.getLayer().batchDraw();
+        }
+
+        const pixelRatio = 2;
+        const watermarkText = 'memestr.app';
+        const watermarkFontSize = 15;
+        const watermarkPadding = 7;
+
+        const dataURL = stage.toDataURL({
+            pixelRatio: pixelRatio,
+        });
 
         try {
-            // Add the watermark to the canvas
-            const canvas = document.createElement('canvas');
+            const offScreenCanvas = document.createElement('canvas');
+            offScreenCanvas.width = stage.width() * pixelRatio;
+            offScreenCanvas.height = stage.height() * pixelRatio;
+            const ctx = offScreenCanvas.getContext('2d');
+
             const img = new window.Image();
-            img.src = dataURL;
             img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
+                // Draw the original image
                 ctx.drawImage(img, 0, 0);
 
-                const watermarkText = 'memestr.app';
-                const watermarkFontSize = 20;
-                const watermarkPadding = 10;
+                // Set up font for watermark
+                ctx.font = `${watermarkFontSize * pixelRatio}px Arial`;
 
-                const canvasWithWatermark = addWatermark(
-                    canvas,
-                    watermarkText,
-                    watermarkFontSize,
-                    watermarkPadding,
+                // Measure text
+                const textMetrics = ctx.measureText(watermarkText);
+                const textWidth = textMetrics.width;
+                const textHeight = watermarkFontSize * pixelRatio;
+
+                // Calculate position for watermark (bottom-right corner)
+                const watermarkX =
+                    offScreenCanvas.width - watermarkPadding * pixelRatio;
+                const watermarkY =
+                    offScreenCanvas.height - watermarkPadding * pixelRatio;
+
+                // Draw background rectangle
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(
+                    watermarkX - textWidth - watermarkPadding * pixelRatio,
+                    watermarkY - textHeight - watermarkPadding * pixelRatio,
+                    textWidth + 2 * watermarkPadding * pixelRatio,
+                    textHeight + 2 * watermarkPadding * pixelRatio,
                 );
 
-                canvasWithWatermark.toBlob(async watermarkedBlob => {
+                // Draw watermark text
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(watermarkText, watermarkX, watermarkY);
+
+                offScreenCanvas.toBlob(async watermarkedBlob => {
                     const response = await uploadToImgur(watermarkedBlob);
                     const imageUrl = response.data.link;
                     if (imageUrl) {
@@ -388,6 +422,7 @@ const MemeEditor = () => {
                     }
                 });
             };
+            img.src = dataURL;
         } catch (error) {
             console.error('An error occurred while uploading to Imgur:', error);
         }
@@ -403,25 +438,17 @@ const MemeEditor = () => {
             transformer.getLayer().batchDraw();
         }
 
-        const layer = stage.findOne('Layer');
-        const boundingBox = layer.getClientRect();
-
         const pixelRatio = 2;
         const watermarkText = 'memestr.app';
         const watermarkFontSize = 15;
         const watermarkPadding = 7;
 
         const dataURL = stage.toDataURL({
-            x: boundingBox.x,
-            y: boundingBox.y,
-            width: boundingBox.width,
-            height: boundingBox.height,
             pixelRatio: pixelRatio,
         });
-
         const offScreenCanvas = document.createElement('canvas');
-        offScreenCanvas.width = boundingBox.width * pixelRatio;
-        offScreenCanvas.height = boundingBox.height * pixelRatio;
+        offScreenCanvas.width = stage.width() * pixelRatio;
+        offScreenCanvas.height = stage.height() * pixelRatio;
         const ctx = offScreenCanvas.getContext('2d');
 
         const img = new window.Image();
