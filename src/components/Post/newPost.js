@@ -1,9 +1,10 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import { Dialog, Transition } from '@headlessui/react';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { ReactComponent as UpwardArrow } from '../../Icons/upwardArrow.svg';
 import { ReactComponent as UploadNew } from '../../Icons/uploadNewPost.svg';
+import { getRelayPool } from '../../services/RelayService';
 
 export const uploadToImgur = async media => {
     const apiUrl = 'https://api.imgur.com/3/upload';
@@ -69,7 +70,7 @@ const PostUpload = ({ isOpen, onClose, onUploadSuccess }) => {
             alert('Image could not be uploaded. Please try again.');
         }
         let relays = ['wss://relay.damus.io'];
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         const storedData = localStorage.getItem('memestr');
         if (!storedData) {
             alert('Login required to Upload Post.');

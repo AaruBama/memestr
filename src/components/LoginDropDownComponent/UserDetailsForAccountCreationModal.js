@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import UploadAndDisplayImage from './UploadUserPicture';
 import { getProfileFromPublicKey } from '../Profile';
 import { ReactComponent as TickIcon } from '../../Icons/RoundTick.svg';
+import { getRelayPool } from '../../services/RelayService';
 
 function InputField({ label, placeholder, value, onChange }) {
     return (
@@ -71,7 +72,7 @@ function UserDetailsForAccountCreation({ isOpen, onClose, sk, pk }) {
             'wss://relay.snort.social',
             'wss://relay.hllo.live',
         ];
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         const encodedSk = sk;
         sk = nip19.decode(sk);
         pk = nip19.decode(pk);

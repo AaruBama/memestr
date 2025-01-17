@@ -1,5 +1,5 @@
 import './App.css';
-import { HashTagToolProvider } from './components/HashtagTool';
+import { HashTagToolProvider } from './context/HashtagContext';
 import PostViewTool from './components/Post/post.js';
 import HeaderBar from './components/Login';
 import FooterBar from './components/Login/FooterBar.js';
@@ -29,7 +29,7 @@ function SearchRouteWrapper() {
 
 function App() {
     const pageFilters = {
-        '/': null,
+        '/': ['memes', 'meme', 'funny', 'memestr'],
         '/pets': ['pets', 'dogs', 'cats'],
         '/nature': ['nature', 'flowers', 'sky', 'sea'],
         '/food': ['food'],
@@ -60,21 +60,6 @@ function App() {
         ],
     };
 
-    React.useEffect(() => {
-        var _mtm = (window._mtm = window._mtm || []);
-        _mtm.push({
-            'mtm.startTime': new Date().getTime(),
-            event: 'mtm.Start',
-        });
-        var d = document,
-            g = d.createElement('script'),
-            s = d.getElementsByTagName('script')[0];
-        g.async = true;
-        g.src =
-            'https://cdn.matomo.cloud/memestrapp.matomo.cloud/container_6nxjmRiN.js';
-        s.parentNode.insertBefore(g, s);
-    }, []);
-
     function ConditionalHeader() {
         let location = useLocation();
         if (
@@ -90,74 +75,92 @@ function App() {
         <AuthProvider>
             <Router>
                 <ConditionalHeader />
-                <HashTagToolProvider filterTags={pageFilters['/']}>
-                    <Routes>
-                        <Route exact path="/" element={<HashtagTool />} />
-                        <Route
-                            path="/post/:postId"
-                            element={<PostViewTool />}
-                        />
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route
-                            path="/userprofile/:pubKey"
-                            element={<UserProfilePage />}
-                        />
-                        <Route
-                            path="/search/:searchQuery"
-                            element={<SearchRouteWrapper />}
-                        />
-                        <Route path="/search" element={<MobileSearchPage />} />
-                        <Route path="/meme-editor" element={<MemeEditor />} />
-                    </Routes>
-                </HashTagToolProvider>
-
-                <HashTagToolProvider filterTags={pageFilters['/pets']}>
-                    <Routes>
-                        <Route exact path="/pets" element={<HashtagTool />} />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/nature']}>
-                    <Routes>
-                        <Route exact path="/nature" element={<HashtagTool />} />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/food']}>
-                    <Routes>
-                        <Route exact path="/food" element={<HashtagTool />} />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/photography']}>
-                    <Routes>
-                        <Route
-                            exact
-                            path="/photography"
-                            element={<HashtagTool />}
-                        />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/vehicles']}>
-                    <Routes>
-                        <Route
-                            exact
-                            path="/vehicles"
-                            element={<HashtagTool />}
-                        />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/crypto']}>
-                    <Routes>
-                        <Route exact path="/crypto" element={<HashtagTool />} />
-                    </Routes>
-                </HashTagToolProvider>
-                <HashTagToolProvider filterTags={pageFilters['/relationship']}>
-                    <Routes>
-                        <Route
-                            exact
-                            path="/relationship"
-                            element={<HashtagTool />}
-                        />
-                    </Routes>
-                </HashTagToolProvider>
+                <Routes>
+                    <Route
+                        exact
+                        path="/"
+                        element={
+                            <HashTagToolProvider filterTags={pageFilters['/']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route path="/post/:postId" element={<PostViewTool />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route
+                        path="/userprofile/:pubKey"
+                        element={<UserProfilePage />}
+                    />
+                    <Route
+                        path="/search/:searchQuery"
+                        element={<SearchRouteWrapper />}
+                    />
+                    <Route path="/search" element={<MobileSearchPage />} />
+                    <Route path="/meme-editor" element={<MemeEditor />} />
+                    <Route
+                        path="/pets"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/pets']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/nature"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/nature']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/food"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/food']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/photography"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/photography']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/vehicles"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/vehicles']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/crypto"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/crypto']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/relationship"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/relationship']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                </Routes>
                 <FooterBar />
             </Router>
         </AuthProvider>

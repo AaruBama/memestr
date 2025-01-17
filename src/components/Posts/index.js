@@ -1,4 +1,4 @@
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
+import { getRelayPool } from '../../services/RelayService';
 const MAX_POSTS = 200;
 
 export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
@@ -164,7 +165,7 @@ export async function upvotePost(noteId, userPublicKey) {
         } else {
             throw new Error('No authentication method available');
         }
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
         await pool.publish(relays, upvoteEvent);
         manageLikedPosts(noteId, userPublicKey, true);
@@ -206,7 +207,7 @@ export const saveComment = (postId, comment) => {
         'wss://nos.lol',
         'wss://nostr.bitcoiner.social',
     ];
-    const pool = new SimplePool();
+    const pool = getRelayPool();
     const storedData = localStorage.getItem('memestr');
     if (!storedData) {
         alert('Login required to comment.');

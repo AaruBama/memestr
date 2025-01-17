@@ -1,5 +1,6 @@
-import { getPublicKey, SimplePool } from 'nostr-tools';
+import { getPublicKey } from 'nostr-tools';
 import { nip19 } from 'nostr-tools';
+import { getRelayPool } from '../../services/RelayService';
 
 export async function getProfileFromPublicKey(pubKey) {
     let relays = [
@@ -8,7 +9,7 @@ export async function getProfileFromPublicKey(pubKey) {
         'wss://relay.snort.social',
         'wss://relay.hllo.live',
     ];
-    const relayPool = new SimplePool();
+    const relayPool = getRelayPool();
     const filters = {
         kinds: [0],
         authors: [pubKey],
@@ -36,7 +37,7 @@ export const getUserDetailsFromPublicKey = async pubKey => {
         'wss://purplepag.es',
         'wss://relay.damus.io',
     ];
-    const relayPool = new SimplePool();
+    const relayPool = getRelayPool();
     const filters = {
         kinds: [0],
         authors: [pubKey],
@@ -48,7 +49,6 @@ export const getUserDetailsFromPublicKey = async pubKey => {
         content = JSON.parse(content);
         return content;
     }
-    relayPool.close(relays);
 };
 
 export default getUserDetailsFromPrivateKey;
