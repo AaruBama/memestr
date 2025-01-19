@@ -78,6 +78,36 @@ export function HashtagTool() {
         });
     }
 
+    const LoadingSpinner = ({ isVisible }) => {
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-opacity-50 p-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
+            </div>
+        );
+    };
+
+    const Notification = ({ isVisible, message, onClose }) => {
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
+                <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                    <p className="text-bold text-white px-2">{message}</p>
+                    <CloseIcon
+                        className="h-6 w-6 mr-2 text-white"
+                        onClick={onClose}
+                    />
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
             <div className="flex flex-col md:flex-row min-h-screen">
@@ -93,11 +123,7 @@ export function HashtagTool() {
                         isLoading={isLoading || loadingMorePosts}
                     />
 
-                    {loadingMorePosts && (
-                        <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-opacity-50 p-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
-                        </div>
-                    )}
+                    <LoadingSpinner isVisible={loadingMorePosts} />
 
                     <button
                         onClick={showNewPostModal}
@@ -115,21 +141,11 @@ export function HashtagTool() {
                         />
                     )}
 
-                    {showSuccessNotification && (
-                        <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
-                            <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
-                                <p className="text-bold text-white px-2">
-                                    Post Uploaded Successfully
-                                </p>
-                                <CloseIcon
-                                    className="h-6 w-6 mr-2 text-white"
-                                    onClick={() =>
-                                        setShowSuccessNotification(false)
-                                    }
-                                />
-                            </div>
-                        </div>
-                    )}
+                    <Notification
+                        isVisible={showSuccessNotification}
+                        message="Post Uploaded Successfully"
+                        onClose={() => setShowSuccessNotification(false)}
+                    />
                 </main>
                 <TrendingSidebar showMemeEditor={showMemeEditor} />
                 {showMemeEditor && (

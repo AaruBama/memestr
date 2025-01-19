@@ -1,6 +1,6 @@
 // HashTagContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { fetchNotes, getVotes } from '../services/RelayService';
+import { fetchNotesWithProfiles, getVotes } from '../services/RelayService';
 
 const notesCache = {};
 
@@ -11,6 +11,7 @@ export const HashTagToolProvider = ({
     const [notes, setNotes] = useState([]);
     const [lastCreatedAt, setLastCreatedAt] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [scrollPosition, setScrollPosition] = useState(0);
 
     useEffect(() => {
         const loadNotes = async () => {
@@ -24,8 +25,10 @@ export const HashTagToolProvider = ({
                 return;
             }
             console.log('load notes with filter tags', filterTags);
-            const filters = { limit: 30, '#t': filterTags };
-            const notes = await fetchNotes(filters);
+            const filters = { limit: 3, '#t': filterTags };
+            // const notes = await fetchNotes(filters);
+            const notes = await fetchNotesWithProfiles(filters);
+            console.log('notes with profiles are ', notes);
 
             const filteredNotes = notes.filter(note =>
                 /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
@@ -58,7 +61,7 @@ export const HashTagToolProvider = ({
             '#t': filterTags,
             until: lastCreatedAt - 5 * 60,
         };
-        const notes = await fetchNotes(filters);
+        const notes = await fetchNotesWithProfiles(filters);
 
         const filteredNotes = notes.filter(note =>
             /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
@@ -90,8 +93,10 @@ export const HashTagToolProvider = ({
         <HashTagContext.Provider
             value={{
                 notes,
+                scrollPosition,
+                setScrollPosition,
                 isLoading,
-                LoadMoreMedia: () => LoadMoreMedia(),
+                LoadMoreMedia: LoadMoreMedia,
                 filterTags,
             }}>
             {children}

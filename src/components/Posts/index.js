@@ -270,6 +270,7 @@ export function getLocalLikeCountForPost(postId) {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
+    console.log("note's profile received: ", props.note.profile);
     const [votesCount, setVotesCount] = useState(0);
     const commentCount = useState(
         sessionStorage.getItem('cc_' + props.note.id),
@@ -418,11 +419,69 @@ function Posts(props) {
         navigate(`/search/${suggestions}`);
     };
 
+    const UserProfileSection = ({ profile, size = 'md', className = '' }) => {
+        // Define size configurations
+        const sizeMap = {
+            xs: 'w-8 h-8',
+            sm: 'w-10 h-10',
+            md: 'w-12 h-12',
+            lg: 'w-16 h-16',
+            xl: 'w-20 h-20',
+        };
+
+        // Extract picture from profile or use default
+        const profilePicture =
+            profile?.picture ||
+            'https://default-avatar-url.com/placeholder.png';
+
+        return (
+            <div className="flex items-start space-2 mt-2">
+                <div
+                    className={`
+          ${sizeMap[size]}
+          rounded-full
+          overflow-hidden
+          border-2
+          border-gray-200
+          flex-shrink-0
+          ${className}
+        `}>
+                    <img
+                        src={profilePicture}
+                        alt={profile?.name || 'User Profile'}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+
+                {profile?.name && (
+                    <div className="flex flex-col ml-1">
+                        <h3 className="font-semibold text-gray-800">
+                            {profile.name}
+                        </h3>
+                        {profile.nip05 && (
+                            <p className="text-xs text-gray-500">
+                                {profile.nip05}
+                            </p>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
             <div className="flex flex-col items-center">
-                <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
+                <div className="flex flex-col w-full overflow-hidden max-w-md">
+                    {/* Add user picture before or alongside other content */}
+                    <UserProfileSection
+                        profile={props.note.profile}
+                        size="md" // Configurable size
+                        className="self-start mb-2 ml-1" // Optional additional styling
+                    />
+                </div>
+                <div className="bg-white  overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
@@ -517,7 +576,7 @@ function Posts(props) {
                         </div>
                     </div>
 
-                    <div className="border-t border-grey-100 rounded-b-md "></div>
+                    <div className="border-t border-grey-200 border-2 rounded-b-md "></div>
                 </div>
             </div>
 

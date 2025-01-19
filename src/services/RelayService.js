@@ -1,7 +1,7 @@
 // RelayService.js
 import { SimplePool } from 'nostr-tools';
 
-const RELAYS = [
+export const RELAYS = [
     'wss://relay.primal.net',
     'wss://relay.damus.io',
     'wss://relay.nostr.band',
@@ -50,4 +50,44 @@ export const fetchNotes = async filters => {
     const relayPool = getRelayPool();
     const notes = await relayPool.list(RELAYS, [filters]);
     return notes;
+};
+
+export const fetchNotesWithProfiles = async filters => {
+    const relayPool = getRelayPool();
+
+    // Fetch notes first
+    const notes = await relayPool.list(RELAYS, [filters]);
+
+    // Extract unique public keys from notes
+    const pubKeys = [...new Set(notes.map(note => note.pubkey))];
+
+    // Construct profile filters
+    const profileFilters = {
+        kinds: [0], // Kind 0 is user profile in Nostr
+        authors: pubKeys,
+    };
+
+    // Fetch profiles in a single query
+    const profiles = await relayPool.list(RELAYS, [profileFilters]);
+
+    // Create a map of pubkey to profile for efficient lookup
+    const profileMap = profiles.reduce((acc, profile) => {
+        try {
+            const parsedContent = JSON.parse(profile.content);
+            acc[profile.pubkey] = {
+                ...parsedContent,
+                pubkey: profile.pubkey,
+            };
+        } catch (error) {
+            console.error('Profile parsing error', error);
+        }
+        return acc;
+    }, {});
+
+    const notesWithProfiles = notes.map(note => ({
+        ...note,
+        profile: profileMap[note.pubkey] || null,
+    }));
+
+    return notesWithProfiles;
 };
