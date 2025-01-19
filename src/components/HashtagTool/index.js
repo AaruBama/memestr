@@ -128,7 +128,7 @@ export function HashtagTool() {
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        style={{ zIndex: 999 }}
+                        style={{ zIndex: 50 }}
                         className="hidden md:block fixed bottom-4 right-8  bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
                         <UploadSvg className="m-auto h-6 w-6" />
                     </button>

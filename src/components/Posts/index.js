@@ -8,13 +8,13 @@ import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
 import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
 import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
-import { ReactComponent as NoUserImage } from '../../Icons/noImageUser.svg';
 import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 // import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { getRelayPool } from '../../services/RelayService';
+import { UserProfileSection } from '../Profile/UserProfileSection';
 const MAX_POSTS = 200;
 
 export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
@@ -420,54 +420,6 @@ function Posts(props) {
         navigate(`/search/${suggestions}`);
     };
 
-    const UserProfileSection = ({ profile, size = 'md', className = '' }) => {
-        // Define size configurations
-        const sizeMap = {
-            xs: 'w-8 h-8',
-            sm: 'w-10 h-10',
-            md: 'w-12 h-12',
-            lg: 'w-16 h-16',
-            xl: 'w-20 h-20',
-        };
-
-        // Extract picture from profile or use default
-        const profilePicture = profile?.picture || NoUserImage;
-
-        return (
-            <div className="flex items-start space-2 mt-2">
-                <div
-                    className={`
-          ${sizeMap[size]}
-          rounded-full
-          overflow-hidden
-          border-2
-          border-gray-200
-          flex-shrink-0
-          ${className}
-        `}>
-                    <img
-                        src={profilePicture}
-                        alt={profile?.name || 'User Profile'}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-
-                {profile?.name && (
-                    <div className="flex flex-col ml-1">
-                        <h3 className="font-semibold text-gray-800">
-                            {profile.name}
-                        </h3>
-                        {profile.nip05 && (
-                            <p className="text-xs text-gray-500">
-                                {profile.nip05}
-                            </p>
-                        )}
-                    </div>
-                )}
-            </div>
-        );
-    };
-
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
@@ -477,10 +429,10 @@ function Posts(props) {
                     <UserProfileSection
                         profile={props.note.profile}
                         size="md" // Configurable size
-                        className="self-start mb-2 ml-1" // Optional additional styling
+                        className="mb-2 ml-1" // Optional additional styling
                     />
                 </div>
-                <div className="bg-white  overflow-hidden rounded-sm w-full max-w-md">
+                <div className="bg-white overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
