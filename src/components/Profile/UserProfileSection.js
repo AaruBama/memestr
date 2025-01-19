@@ -39,7 +39,7 @@ export const UserProfileSection = ({
     const profilePicture = profile?.picture || NoUserImage;
 
     return (
-        <div className="flex items-start space-2 mt-2">
+        <div className="flex items-start space-2 pt-2 border-b rounded-lg bg-white ">
             <div className="flex grow">
                 <div
                     className={`

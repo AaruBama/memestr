@@ -115,7 +115,7 @@ export function HashtagTool() {
                     showMemeEditor={showMemeEditor}
                     setShowMemeEditor={setShowMemeEditor}
                 />
-                <main className="flex-1 overflow-y-auto">
+                <main className="flex-1 overflow-y-auto bg-gray-50">
                     {isLoading && <Spinner />}
                     <Feed
                         notes={notes}

@@ -34,7 +34,7 @@ function Feed(props) {
     const loadMoreRef = useIntersectionObserver(props.onLoadMore);
     const triggerPoint = Math.max(0, props.notes.length - 10);
     return (
-        <div className="feed-container bg-white mt-12 mx-auto max-w-xl">
+        <div className="feed-container pt-8 mx-auto max-w-xl">
             {props.notes.map((note, index) => (
                 <div key={note.id}>
                     <Posts note={note} />
