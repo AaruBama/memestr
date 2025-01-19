@@ -471,7 +471,7 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col items-cente mt-2">
+            <div className="flex flex-col items-center mt-2">
                 <div className="flex flex-col w-full overflow-hidden max-w-md">
                     {/* Add user picture before or alongside other content */}
                     <UserProfileSection
