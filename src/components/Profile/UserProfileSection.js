@@ -2,6 +2,7 @@ import React from 'react';
 import { ReactComponent as NoUserImage } from '../../Icons/noImageUser.svg';
 import FollowButton from './FollowButton';
 import MoreOptionsMenu from '../Post/MoreOptionsMenu';
+import { useNavigate } from 'react-router-dom';
 
 export const UserProfileSection = ({
     profile,
@@ -16,6 +17,7 @@ export const UserProfileSection = ({
         lg: 'w-16 h-16',
         xl: 'w-20 h-20',
     };
+    const navigate = useNavigate();
 
     const moreOptionsItems = [
         { label: 'View Profile', value: 'profile' },
@@ -47,8 +49,10 @@ export const UserProfileSection = ({
           border-2
           border-gray-200
           flex-shrink-0
+          cursor-pointer
           ${className}
-        `}>
+        `}
+                    onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
                     <img
                         src={profilePicture}
                         alt={profile?.name || 'User Profile'}
@@ -57,7 +61,11 @@ export const UserProfileSection = ({
                 </div>
 
                 {profile?.name && (
-                    <div className="flex flex-col ml-1">
+                    <div
+                        className="flex flex-col ml-1 cursor-pointer"
+                        onClick={() =>
+                            navigate(`/userprofile/${profile.pubkey}`)
+                        }>
                         <h3 className="font-semibold text-gray-800">
                             {profile.name}
                         </h3>
