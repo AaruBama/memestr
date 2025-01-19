@@ -8,6 +8,7 @@ import { ShareModal } from '../Share/modal';
 import { ReactComponent as ShareButtonSvg } from '../../Icons/ShareButtonSvg.svg';
 import { ReactComponent as LikeSvg } from '../../Icons/LikeSvg.svg';
 import { ReactComponent as ZapSvg } from '../../Icons/Zap.svg';
+import { ReactComponent as NoUserImage } from '../../Icons/noImageUser.svg';
 import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 // import { getCommentCount } from '../HashtagTool';
 import { useAuth } from '../../AuthContext';
@@ -430,9 +431,7 @@ function Posts(props) {
         };
 
         // Extract picture from profile or use default
-        const profilePicture =
-            profile?.picture ||
-            'https://default-avatar-url.com/placeholder.png';
+        const profilePicture = profile?.picture || NoUserImage;
 
         return (
             <div className="flex items-start space-2 mt-2">
@@ -472,7 +471,7 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-cente mt-2">
                 <div className="flex flex-col w-full overflow-hidden max-w-md">
                     {/* Add user picture before or alongside other content */}
                     <UserProfileSection
