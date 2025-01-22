@@ -271,7 +271,6 @@ export function getLocalLikeCountForPost(postId) {
 
 function Posts(props) {
     const mediaLinks = extractLinksFromText(props.note.content);
-    console.log("note's profile received: ", props.note.profile);
     const [votesCount, setVotesCount] = useState(0);
     const commentCount = useState(
         sessionStorage.getItem('cc_' + props.note.id),
