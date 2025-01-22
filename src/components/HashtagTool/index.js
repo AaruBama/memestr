@@ -49,7 +49,7 @@ export function useResetScrollOnFilterChange(filterTags) {
 
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
-    console.log('notes are ', notes, ' with filter tags ', filterTags);
+    // console.log('notes are ', notes, ' with filter tags ', filterTags);
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
     const [showMemeEditor, setShowMemeEditor] = useState(false);
