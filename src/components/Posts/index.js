@@ -1,4 +1,4 @@
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import { fetchInvoice, getProfileMetadata, getZapEndpoint } from '../ZapHelper';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,8 @@ import { ReactComponent as CommentSvg } from '../../Icons/CommentSvg.svg';
 import { useAuth } from '../../AuthContext';
 import { VideoPlayer } from '../../helpers/videoPlayer';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
+import { getRelayPool } from '../../services/RelayService';
+import { UserProfileSection } from '../Profile/UserProfileSection';
 const MAX_POSTS = 200;
 
 export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
@@ -164,7 +166,7 @@ export async function upvotePost(noteId, userPublicKey) {
         } else {
             throw new Error('No authentication method available');
         }
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         let relays = ['wss://relay.damus.io', 'wss://relay.primal.net'];
         await pool.publish(relays, upvoteEvent);
         manageLikedPosts(noteId, userPublicKey, true);
@@ -206,7 +208,7 @@ export const saveComment = (postId, comment) => {
         'wss://nos.lol',
         'wss://nostr.bitcoiner.social',
     ];
-    const pool = new SimplePool();
+    const pool = getRelayPool();
     const storedData = localStorage.getItem('memestr');
     if (!storedData) {
         alert('Login required to comment.');
@@ -393,7 +395,7 @@ function Posts(props) {
         }
     }
 
-    let truncatedTitle = truncateTitle(title, 100);
+    let truncatedTitle = truncateTitle(title, 300);
     let hashtags = extractHashtags(title);
     let titleWithoutTagsOrLinks = removeHashtags(truncatedTitle);
 
@@ -420,19 +422,27 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col items-center">
-                <div className="bg-white mt-4  overflow-hidden rounded-sm w-full max-w-md">
+            <div className="flex flex-col items-center mt-4">
+                <div className="flex flex-col w-full border-t-2 border-x-2 rounded-t-md border-gray-100 overflow-hidden max-w-md">
+                    {/* Add user picture before or alongside other content */}
+                    <UserProfileSection
+                        profile={props.note.profile}
+                        size="md" // Configurable size
+                        className="mb-2 ml-1" // Optional additional styling
+                    />
+                </div>
+                <div className="bg-white overflow-hidden rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
-                        <div className="border-x border-t border-grey-100 p-2">
+                        <div className="border-x border-grey-100 p-2">
                             <h3 className="font-nunito font-semibold text-gray-700">
                                 {titleWithoutTagsOrLinks}
                             </h3>
                         </div>
                     )}
 
-                    <div className="h-max lg: bg-gray-200 border border-gray-300">
+                    <div className="h-max lg: bg-gray-200 border-y border-gray-300">
                         {renderContent(imageLink)}
                     </div>
 
@@ -516,7 +526,7 @@ function Posts(props) {
                         </div>
                     </div>
 
-                    <div className="border-t border-grey-100 rounded-b-md "></div>
+                    <div className="border-t border-grey-200 border-2 rounded-b-md "></div>
                 </div>
             </div>
 

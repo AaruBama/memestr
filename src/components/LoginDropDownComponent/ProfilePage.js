@@ -7,8 +7,9 @@ import { useAuth } from '../../AuthContext';
 import { getProfileFromPublicKey } from '../Profile';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { LoadingScreen } from './UserDetailsForAccountCreationModal';
-import { getEventHash, getSignature, nip19, SimplePool } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import { uploadToImgur } from '../Post/newPost';
+import { getRelayPool } from '../../services/RelayService';
 function ProfilePage() {
     const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
@@ -110,7 +111,7 @@ function ProfilePage() {
             'wss://relay.snort.social',
             'wss://relay.hllo.live',
         ];
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         const storedData = localStorage.getItem('memestr');
         if (storedData) {
             const publicKey = JSON.parse(storedData).pubKey;

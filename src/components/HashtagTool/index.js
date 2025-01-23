@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { relayInit, SimplePool } from 'nostr-tools';
+import React, { useEffect, useState } from 'react';
+import { relayInit } from 'nostr-tools';
 import Feed from '../Feed';
 import PostUpload from '../Post/newPost';
 import Spinner from '../Spinner';
@@ -8,18 +8,7 @@ import Sidebar from './SideBar';
 import MemeEditor from './MemeEditor';
 import { ReactComponent as UploadSvg } from '../../Icons/UploadSvg.svg';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
-
-const HashTagContext = React.createContext();
-
-const relays = [
-    'wss://relay.primal.net',
-    'wss://relay.damus.io',
-    'wss://relay.nostr.band',
-    'wss://relay.nostr.bg',
-    'wss://relay.nostrati.com',
-    'wss://nos.lol',
-    'wss://nostr.mom',
-];
+import { useHashTagContext } from '../../context/HashtagContext';
 
 export async function getCommentCount(id) {
     try {
@@ -50,160 +39,6 @@ export async function getCommentCount(id) {
     }
 }
 
-// Create a provider component to wrap your application
-export function HashTagToolProvider({ children, filterTags }) {
-    const [notes, setNotes] = useState([]);
-    const [lastCreatedAt, setLastCreatedAt] = useState();
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const containsJpgOrMp4Link = text => {
-        const linkRegex = /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi;
-        return linkRegex.test(text);
-    };
-
-    async function getVotes(postIds) {
-        const voteFilters = {
-            kinds: [7],
-            '#e': postIds,
-        };
-        const relayPool = new SimplePool();
-        let votes = await relayPool.list(relays, [voteFilters]);
-        const groupedByPostId = {};
-
-        for (const vote of votes) {
-            const voteTags = vote.tags;
-            for (const tag of voteTags) {
-                if (tag[0] === 'e') {
-                    if (groupedByPostId[tag[1]]) {
-                        groupedByPostId[tag[1]] += 1;
-                    } else {
-                        groupedByPostId[tag[1]] = 1;
-                    }
-                }
-            }
-        }
-        return groupedByPostId;
-    }
-
-    useEffect(() => {
-        const LoadMedia = async () => {
-            // Fetch notes and update the context state
-            // ...
-            setIsLoading(true);
-            const relayPool = new SimplePool();
-            const filters = {
-                limit: 30,
-            };
-
-            // For Memes
-            if (filterTags) {
-                filters['#t'] = filterTags;
-            } else {
-                filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
-            }
-
-            const relay = relayInit('wss://relay.damus.io');
-            await relay.connect();
-            let notes = await relay.list([filters]);
-            // let notes = await relayPool.list(relays, [filters]);
-            notes = notes.filter(note => {
-                return containsJpgOrMp4Link(note.content);
-            });
-            // GET VOTES COMBINED
-            let createdAt = [];
-            let postIds = [];
-            notes.forEach(function (note) {
-                var id = note.id;
-                createdAt.push(note.created_at);
-                postIds.push(id);
-            });
-            createdAt.sort(function (a, b) {
-                return a - b;
-            });
-
-            let groupedByPostId = await getVotes(postIds);
-
-            // for (const id of postIds) {
-            //     getCommentCount(id);
-            // }
-
-            for (const note of notes) {
-                note['voteCount'] = groupedByPostId[note.id] || 0;
-            }
-            setNotes(notes);
-            setIsLoading(false);
-            setLastCreatedAt(createdAt[0]);
-            relayPool.close(relays);
-        };
-
-        LoadMedia();
-    }, [filterTags]);
-
-    const LoadMoreMedia = async () => {
-        // Fetch more notes with offset and update the context state
-        // ...
-        // setIsLoading(true);
-        const relayPool = new SimplePool();
-        const filters = {
-            limit: 25,
-        };
-
-        const relays = [
-            'wss://relay.damus.io/',
-            'wss://offchain.pub/',
-            'wss://nos.lol/',
-            'wss://relay.nostr.wirednet.jp/',
-        ];
-
-        if (filterTags) {
-            filters['#t'] = filterTags;
-        } else {
-            filters['#t'] = ['memes', 'meme', 'funny', 'memestr'];
-        }
-
-        filters['until'] = lastCreatedAt - 5 * 60;
-
-        let newNotes = await relayPool.list(relays, [filters]);
-        newNotes = newNotes.filter(note => {
-            return containsJpgOrMp4Link(note.content);
-        });
-
-        let createdAt = [];
-        let postIds = [];
-        newNotes.forEach(function (note) {
-            var id = note.id;
-            createdAt.push(note.created_at);
-            postIds.push(id);
-        });
-        createdAt.sort(function (a, b) {
-            return a - b;
-        });
-        let groupedByPostId = await getVotes(postIds);
-        for (const note of newNotes) {
-            note['voteCount'] = groupedByPostId[note.id] || 0;
-        }
-        setNotes(notes => [...notes, ...newNotes]);
-        setLastCreatedAt(createdAt[0]);
-        // setIsLoading(false);
-        relayPool.close(relays);
-    };
-
-    const contextValue = {
-        notes,
-        scrollPosition,
-        setScrollPosition,
-        LoadMoreMedia,
-        isLoading,
-        filterTags,
-    };
-
-    return (
-        <HashTagContext.Provider value={contextValue}>
-            {children}
-        </HashTagContext.Provider>
-    );
-}
 export function useResetScrollOnFilterChange(filterTags) {
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -212,19 +47,9 @@ export function useResetScrollOnFilterChange(filterTags) {
     }, [filterTags]);
 }
 
-// Custom hook to access the context
-export function useHashTagContext() {
-    const context = useContext(HashTagContext);
-    if (!context) {
-        throw new Error(
-            'useHashTagContext must be used within a HashTagToolProvider',
-        );
-    }
-    return context;
-}
-
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
+    // console.log('notes are ', notes, ' with filter tags ', filterTags);
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
     const [showMemeEditor, setShowMemeEditor] = useState(false);
@@ -253,6 +78,36 @@ export function HashtagTool() {
         });
     }
 
+    const LoadingSpinner = ({ isVisible }) => {
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-opacity-50 p-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
+            </div>
+        );
+    };
+
+    const Notification = ({ isVisible, message, onClose }) => {
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
+                <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
+                    <p className="text-bold text-white px-2">{message}</p>
+                    <CloseIcon
+                        className="h-6 w-6 mr-2 text-white"
+                        onClick={onClose}
+                    />
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
             <div className="flex flex-col md:flex-row min-h-screen">
@@ -260,7 +115,7 @@ export function HashtagTool() {
                     showMemeEditor={showMemeEditor}
                     setShowMemeEditor={setShowMemeEditor}
                 />
-                <main className="flex-1 overflow-y-auto">
+                <main className="flex-1 overflow-y-auto bg-gray-50">
                     {isLoading && <Spinner />}
                     <Feed
                         notes={notes}
@@ -268,16 +123,12 @@ export function HashtagTool() {
                         isLoading={isLoading || loadingMorePosts}
                     />
 
-                    {loadingMorePosts && (
-                        <div className="fixed bottom-0 left-0 w-full flex items-center justify-center bg-opacity-50 p-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
-                        </div>
-                    )}
+                    <LoadingSpinner isVisible={loadingMorePosts} />
 
                     <button
                         onClick={showNewPostModal}
                         title="Upload"
-                        style={{ zIndex: 999 }}
+                        style={{ zIndex: 50 }}
                         className="hidden md:block fixed bottom-4 right-8  bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-white drop-shadow-lg hover:drop-shadow-2xl">
                         <UploadSvg className="m-auto h-6 w-6" />
                     </button>
@@ -290,21 +141,11 @@ export function HashtagTool() {
                         />
                     )}
 
-                    {showSuccessNotification && (
-                        <div className="fixed top-0 inset-x-0 flex justify-center items-start notification z-50">
-                            <div className="mt-12 p-4 bg-black text-white rounded-lg shadow-lg transition-transform transform-gpu animate-slideInSlideOut flex items-center">
-                                <p className="text-bold text-white px-2">
-                                    Post Uploaded Successfully
-                                </p>
-                                <CloseIcon
-                                    className="h-6 w-6 mr-2 text-white"
-                                    onClick={() =>
-                                        setShowSuccessNotification(false)
-                                    }
-                                />
-                            </div>
-                        </div>
-                    )}
+                    <Notification
+                        isVisible={showSuccessNotification}
+                        message="Post Uploaded Successfully"
+                        onClose={() => setShowSuccessNotification(false)}
+                    />
                 </main>
                 <TrendingSidebar showMemeEditor={showMemeEditor} />
                 {showMemeEditor && (

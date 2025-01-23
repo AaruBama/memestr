@@ -1,7 +1,8 @@
-import { finishEvent, nip04, nip19, relayInit, SimplePool } from 'nostr-tools';
+import { finishEvent, nip04, nip19, relayInit } from 'nostr-tools';
+import { getRelayPool } from '../services/RelayService';
 
 export async function getUserFromName(term) {
-    const pool = new SimplePool();
+    const pool = getRelayPool();
 
     // const relay = relayInit('wss://relay.nostr.band/');
     let relays = ['wss://relay.nostr.band/', 'wss://saltivka.org'];

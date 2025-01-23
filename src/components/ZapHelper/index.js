@@ -1,4 +1,5 @@
-import { nip19, nip57, finishEvent, SimplePool } from 'nostr-tools';
+import { nip19, nip57, finishEvent } from 'nostr-tools';
+import { getRelayPool } from '../../services/RelayService';
 
 export const decodeNpub = npub => nip19.decode(npub).data;
 
@@ -11,7 +12,7 @@ export const getProfileMetadata = async authorId => {
         return cachedProfileMetadata[authorId];
     }
 
-    const pool = new SimplePool();
+    const pool = getRelayPool();
     const relays = [
         'wss://relay.nostr.band',
         'wss://purplepag.es',
@@ -107,7 +108,7 @@ export const isNipO7ExtAvailable = () => {
 };
 
 export const listenForZapReceipt = ({ relays, invoice }) => {
-    const pool = new SimplePool();
+    const pool = getRelayPool();
     const normalizedRelays = Array.from(
         new Set([...relays, 'wss://relay.nostr.band']),
     );

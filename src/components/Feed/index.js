@@ -2,22 +2,29 @@ import Posts from '../Posts';
 import './index.css';
 import React, { useEffect, useRef } from 'react';
 
-function useIntersectionObserver(loadMore) {
+function useIntersectionObserver(loadMore, options = {}) {
     const targetRef = useRef(null);
 
     useEffect(() => {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    loadMore();
-                }
-            });
-        });
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        loadMore();
+                    }
+                });
+            },
+            {
+                root: options.root || null, // Default to viewport
+                rootMargin: options.rootMargin || '0px', // Default margin
+                threshold: options.threshold || 1.0, // Fully visible by default
+            },
+        );
 
         const currentTarget = targetRef.current;
 
         if (currentTarget) {
-            observer.observe(targetRef.current);
+            observer.observe(currentTarget);
         }
 
         return () => {
@@ -25,16 +32,29 @@ function useIntersectionObserver(loadMore) {
                 observer.unobserve(currentTarget);
             }
         };
-    }, [loadMore]);
+    }, [loadMore, options]);
 
     return targetRef;
 }
-
+//eslint
 function Feed(props) {
-    const loadMoreRef = useIntersectionObserver(props.onLoadMore);
+    const loadMoreRef = useIntersectionObserver(
+        () => {
+            if (!props.isLoading) {
+                props.onLoadMore();
+            }
+        },
+        {
+            root: null, // Use the viewport
+            rootMargin: '200px', // Trigger 200px before the target element is in view
+            threshold: 0.1, // Trigger when 10% of the element is visible
+        },
+    );
+
     const triggerPoint = Math.max(0, props.notes.length - 10);
+
     return (
-        <div className="feed-container bg-white mt-12 mx-auto max-w-xl">
+        <div className="feed-container pt-8 mx-auto max-w-xl">
             {props.notes.map((note, index) => (
                 <div key={note.id}>
                     <Posts note={note} />

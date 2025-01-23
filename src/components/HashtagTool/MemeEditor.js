@@ -5,10 +5,11 @@ import './MemeEditorStyle.css';
 import { uploadToImgur } from '../Post/newPost';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 
-import { SimplePool, getEventHash, getSignature, nip19 } from 'nostr-tools';
+import { getEventHash, getSignature, nip19 } from 'nostr-tools';
 import Templates from '../MakeMeme/Templates';
 import Tabs from '../MakeMeme/Tabs';
 import ToolsSection from '../MakeMeme/Tools';
+import { getRelayPool } from '../../services/RelayService';
 
 export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
     if (!imageUrl || !title) {
@@ -26,7 +27,7 @@ export const sendNewPostEvent = async (imageUrl, title, hashtags) => {
         'wss://nos.lol',
         'wss://nostr.mom',
     ];
-    const pool = new SimplePool();
+    const pool = getRelayPool();
     const storedData = localStorage.getItem('memestr');
     if (!storedData) {
         alert('Login required to upload post.');

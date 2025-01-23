@@ -15,13 +15,7 @@ import {
     convertHashtagsToLinks,
     renderContent,
 } from '../Posts';
-import {
-    getEventHash,
-    getSignature,
-    nip19,
-    SimplePool,
-    nip10,
-} from 'nostr-tools';
+import { getEventHash, getSignature, nip19, nip10 } from 'nostr-tools';
 // import { parse } from './nip10Parser';
 import Comments from '../Comments';
 import ZapModal from '../ZapHelper/ZapModal';
@@ -33,6 +27,7 @@ import CommentSpinner from '../Spinner/CommentSpinner';
 import Sidebar from '../HashtagTool/SideBar';
 import { useAuth } from '../../AuthContext';
 import { getProfileFromPublicKey } from '../Profile';
+import { getRelayPool } from '../../services/RelayService';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
@@ -72,7 +67,7 @@ function Post() {
 
     async function getPostFromId(postId, retries = 3) {
         setProfileLoading(true);
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         let relays = [
             'wss://relay.damus.io',
             'wss://relay.primal.net',
@@ -197,7 +192,7 @@ function Post() {
         };
         const fetchData = async () => {
             // Fetch comments
-            const relayPool = new SimplePool();
+            const relayPool = getRelayPool();
             const relays = [
                 'wss://relay.damus.io',
                 'wss://relay.primal.net',
@@ -255,7 +250,7 @@ function Post() {
             'wss://relay.primal.net',
             'wss://nos.lol',
         ];
-        const pool = new SimplePool();
+        const pool = getRelayPool();
         const storedData = localStorage.getItem('memestr');
         if (!storedData) {
             alert('Login required to comment.');
