@@ -3,6 +3,7 @@ import { ReactComponent as NoUserImage } from '../../Icons/noImageUser.svg';
 import FollowButton from './FollowButton';
 import MoreOptionsMenu from '../Post/MoreOptionsMenu';
 import { useNavigate } from 'react-router-dom';
+import { usePageContext } from '../../context/PageContext';
 
 export const UserProfileSection = ({
     profile,
@@ -18,6 +19,7 @@ export const UserProfileSection = ({
         xl: 'w-20 h-20',
     };
     const navigate = useNavigate();
+    const isHomePage = usePageContext();
 
     const moreOptionsItems = [
         { label: 'View Profile', value: 'profile' },
@@ -77,16 +79,18 @@ export const UserProfileSection = ({
                     </div>
                 )}
             </div>
-            <div className="flex items-center space-x-2 justify-end ml-auto">
-                <FollowButton
-                    initialFollowState={false}
-                    onFollowToggle={handleFollowToggle}
-                />
-                <MoreOptionsMenu
-                    options={moreOptionsItems}
-                    onOptionSelect={handleMoreOptionsSelect}
-                />
-            </div>
+            {isHomePage && (
+                <div className="flex items-center space-x-2 justify-end ml-auto">
+                    <FollowButton
+                        initialFollowState={false}
+                        onFollowToggle={handleFollowToggle}
+                    />
+                    <MoreOptionsMenu
+                        options={moreOptionsItems}
+                        onOptionSelect={handleMoreOptionsSelect}
+                    />
+                </div>
+            )}
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import Posts from '../Posts';
 import './index.css';
 import React, { useEffect, useRef } from 'react';
+import { PageContext } from '../../context/PageContext';
 
 function useIntersectionObserver(loadMore, options = {}) {
     const targetRef = useRef(null);
@@ -54,14 +55,19 @@ function Feed(props) {
     const triggerPoint = Math.max(0, props.notes.length - 10);
 
     return (
-        <div className="feed-container pt-8 mx-auto max-w-xl">
-            {props.notes.map((note, index) => (
-                <div key={note.id}>
-                    <Posts note={note} />
-                    {index === triggerPoint && <div ref={loadMoreRef} />}
-                </div>
-            ))}
-        </div>
+        <PageContext.Provider value={props.isHomePage}>
+            <div className="feed-container pt-8 mx-auto max-w-xl">
+                {props.notes.length > 0 &&
+                    props.notes.map((note, index) => (
+                        <div key={note.id}>
+                            <Posts note={note} />
+                            {index === triggerPoint && (
+                                <div ref={loadMoreRef} />
+                            )}
+                        </div>
+                    ))}
+            </div>
+        </PageContext.Provider>
     );
 }
 

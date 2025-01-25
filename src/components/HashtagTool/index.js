@@ -118,6 +118,7 @@ export function HashtagTool() {
                 <main className="flex-1 overflow-y-auto bg-gray-50">
                     {isLoading && <Spinner />}
                     <Feed
+                        isHomePage={true}
                         notes={notes}
                         onLoadMore={handleLoadMore}
                         isLoading={isLoading || loadingMorePosts}
