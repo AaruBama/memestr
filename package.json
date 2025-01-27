@@ -5,6 +5,8 @@
   "private": true,
   "dependencies": {
     "@headlessui/react": "^1.7.17",
+    "@nostr-dev-kit/ndk": "^2.11.0",
+    "@nostr-dev-kit/ndk-cache-dexie": "^2.5.9",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

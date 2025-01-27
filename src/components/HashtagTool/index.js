@@ -49,7 +49,6 @@ export function useResetScrollOnFilterChange(filterTags) {
 
 export function HashtagTool() {
     const { notes, LoadMoreMedia, isLoading, filterTags } = useHashTagContext();
-    // console.log('notes are ', notes, ' with filter tags ', filterTags);
     const [newPostModal, setNewPostModal] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
     const [showMemeEditor, setShowMemeEditor] = useState(false);
@@ -118,6 +117,7 @@ export function HashtagTool() {
                 <main className="flex-1 overflow-y-auto bg-gray-50">
                     {isLoading && <Spinner />}
                     <Feed
+                        isHomePage={true}
                         notes={notes}
                         onLoadMore={handleLoadMore}
                         isLoading={isLoading || loadingMorePosts}

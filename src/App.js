@@ -16,7 +16,7 @@ import {
 } from 'react-router-dom';
 import HashtagTool from './components/HashtagTool';
 import ProfilePage from './components/LoginDropDownComponent/ProfilePage.js';
-import UserProfilePage from './components/LoginDropDownComponent/UserProfilePage.js';
+import UserProfilePage from './components/Profile/UserProfilePage.js';
 
 function SearchRouteWrapper() {
     let { searchQuery } = useParams();

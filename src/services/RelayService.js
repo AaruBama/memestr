@@ -1,5 +1,8 @@
 // RelayService.js
 import { SimplePool } from 'nostr-tools';
+import NDK, { NDKEvent, profileFromEvent } from '@nostr-dev-kit/ndk';
+import NDKCacheAdapterDexie from '@nostr-dev-kit/ndk-cache-dexie';
+import { getProfilesFromPubkeys } from '../helpers/Profile/profileHelper';
 
 export const RELAYS = [
     'wss://relay.primal.net',
@@ -11,10 +14,22 @@ export const RELAYS = [
 ];
 
 let relayPool = null;
+export let ndk = null;
+export const getNdk = () => {
+    if (!ndk) {
+        const dexieAdapter = new NDKCacheAdapterDexie({
+            dbName: 'memestr-local',
+        });
+        ndk = new NDK({
+            cacheAdapter: dexieAdapter,
+            explicitRelayUrls: RELAYS,
+        });
+    }
+    return ndk;
+};
 
 export const getRelayPool = () => {
     if (!relayPool) {
-        console.log('Relay pool not found, starting relay Pool.');
         relayPool = new SimplePool();
     }
     return relayPool;
@@ -62,28 +77,20 @@ export const fetchNotesWithProfiles = async filters => {
     const pubKeys = [...new Set(notes.map(note => note.pubkey))];
 
     // Construct profile filters
-    const profileFilters = {
-        kinds: [0], // Kind 0 is user profile in Nostr
-        authors: pubKeys,
-    };
-
-    // Fetch profiles in a single query
-    const profiles = await relayPool.list(RELAYS, [profileFilters]);
-
-    // Create a map of pubkey to profile for efficient lookup
-    const profileMap = profiles.reduce((acc, profile) => {
+    const profiles = await getProfilesFromPubkeys(pubKeys);
+    const profileMap = {};
+    for (const profile of profiles) {
         try {
-            const parsedContent = JSON.parse(profile.content);
-            acc[profile.pubkey] = {
-                ...parsedContent,
+            const ndkEvent = new NDKEvent(ndk, profile);
+            const ndkProfile = await profileFromEvent(ndkEvent);
+            profileMap[profile.pubkey] = {
+                ...ndkProfile,
                 pubkey: profile.pubkey,
             };
         } catch (error) {
             console.error('Profile parsing error', error);
         }
-        return acc;
-    }, {});
-
+    }
     const notesWithProfiles = notes.map(note => ({
         ...note,
         profile: profileMap[note.pubkey] || null,
