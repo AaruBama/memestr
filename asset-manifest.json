@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.7bd3df4d.css",
-    "main.js": "/static/js/main.fd8a314f.js",
+    "main.css": "/static/css/main.ca4ec838.css",
+    "main.js": "/static/js/main.e6d4587f.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
@@ -47,7 +47,7 @@
     "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.7bd3df4d.css",
-    "static/js/main.fd8a314f.js"
+    "static/css/main.ca4ec838.css",
+    "static/js/main.e6d4587f.js"
   ]
 }
