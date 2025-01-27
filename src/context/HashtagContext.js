@@ -23,13 +23,16 @@ export const HashTagToolProvider = ({
                 setIsLoading(false);
                 return;
             }
-            const filters = { limit: 50, '#t': memoizedFilterTags };
+            const filters = { limit: 10, '#t': memoizedFilterTags };
             // const notes = await fetchNotes(filters);
-            const notes = await fetchNotesWithProfiles(filters);
+            const allNotes = await fetchNotesWithProfiles(filters);
 
-            const filteredNotes = notes.filter(note =>
+            console.log('notes on homepage are ', allNotes);
+
+            const filteredNotes = allNotes.filter(note =>
                 /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
             );
+            console.log('filtered notes on homepage are ', filteredNotes);
 
             const postIds = filteredNotes.map(note => note.id);
             const votes = await getVotes(postIds);
@@ -39,6 +42,7 @@ export const HashTagToolProvider = ({
             });
             notesCache[memoizedFilterTags] = filteredNotes;
             setNotes(filteredNotes);
+
             setLastCreatedAt(
                 filteredNotes[filteredNotes.length - 1]?.created_at || null,
             );

@@ -36,9 +36,8 @@ export const UserProfileSection = ({
         // Handle menu item selection
         console.log('Selected option:', option);
     };
-
     // Extract picture from profile or use default
-    const profilePicture = profile?.picture || NoUserImage;
+    const profilePicture = profile?.image || NoUserImage;
 
     return (
         <div className="flex items-start space-2 pt-2 border-b rounded-lg bg-white ">

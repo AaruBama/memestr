@@ -5,8 +5,13 @@ import TrendingSidebar from '../HashtagTool/TrendingSideBar';
 import { ReactComponent as ProfileIcon } from '../../Icons/Profile.svg';
 import { getProfileFromPublicKey } from './index';
 import { LoadingScreen } from '../LoginDropDownComponent/UserDetailsForAccountCreationModal';
-import { fetchNotesWithProfiles, getVotes } from '../../services/RelayService';
+import {
+    fetchNotesWithProfiles,
+    getNdk,
+    getVotes,
+} from '../../services/RelayService';
 import Feed from '../Feed';
+import { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 // import Spinner from '../Spinner';
 
 function UserProfilePage() {
@@ -30,10 +35,7 @@ function UserProfilePage() {
         const fetchUserDetails = async () => {
             try {
                 const profile = await getProfileFromPublicKey(pubKey);
-                const content = profile.content;
-                const details = JSON.parse(content);
-                setUserDetails(details);
-                console.log(details);
+                setUserDetails(profile);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching user details:', error);
@@ -42,25 +44,46 @@ function UserProfilePage() {
 
         const fetchUserNotes = async () => {
             try {
+                const ndk = getNdk();
                 const filters = { kinds: [1], authors: [pubKey] };
-                const notes = await fetchNotesWithProfiles(filters);
-                const filteredNotes = notes.filter(note =>
-                    /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(
-                        note.content,
-                    ),
-                );
+                const subscription = new NDKSubscription(ndk, filters);
+                const receivedEvents = [];
 
+                subscription.on('event', event => {
+                    receivedEvents.push(event);
+                });
+
+                await ndk.cacheAdapter.query(subscription);
+
+                let filteredNotes = [];
+                if (receivedEvents.length > 10) {
+                    console.log('Using events from Cache');
+                    filteredNotes = receivedEvents;
+                } else {
+                    console.log('Fallback to fetching notes with profiles');
+                    const notes = await fetchNotesWithProfiles(filters);
+                    filteredNotes = notes.filter(note =>
+                        /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(
+                            note.content,
+                        ),
+                    );
+                }
+
+                /*
+                TODO: uncouple the vote fetch logic.
+                 */
                 const postIds = filteredNotes.map(note => note.id);
                 const votes = await getVotes(postIds);
 
-                filteredNotes.forEach(note => {
+                for (const note of filteredNotes) {
                     note.voteCount = votes[note.id] || 0;
-                });
+                    const ndkEvent = new NDKEvent(ndk, note);
+                    await ndk.cacheAdapter.setEvent(ndkEvent, [filters]);
+                    note.profile = userDetails;
+                }
 
-                // notesCache[memoizedFilterTags] = filteredNotes;
                 setNotes(filteredNotes);
                 setLoadingPosts(false);
-                // setNotes(notes);
             } catch (error) {
                 console.error('Error fetching user notes:', error);
             }
@@ -68,7 +91,7 @@ function UserProfilePage() {
 
         fetchUserDetails();
         fetchUserNotes();
-    }, [pubKey]);
+    }, [pubKey, userDetails]);
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen">
@@ -93,7 +116,7 @@ function UserProfilePage() {
                             <div
                                 className="flex items-center justify-center bg-gray-50 rounded-full border-gray-100 w-28 h-28 cursor-pointer overflow-hidden"
                                 style={{
-                                    backgroundImage: `url(${userDetails.picture})`,
+                                    backgroundImage: `url(${userDetails.image})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
