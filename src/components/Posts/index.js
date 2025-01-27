@@ -423,7 +423,7 @@ function Posts(props) {
     return (
         <>
             <div className="flex flex-col items-center mt-4">
-                <div className="flex flex-col w-full border-t-2 border-x-2 rounded-t-md border-gray-100 overflow-hidden max-w-md">
+                <div className="flex flex-col w-full border-t-2 border-x-2 rounded-t-md border-gray-100 max-w-md">
                     {/* Add user picture before or alongside other content */}
                     <UserProfileSection
                         profile={props.note.profile}
@@ -431,7 +431,7 @@ function Posts(props) {
                         className="mb-2 ml-1" // Optional additional styling
                     />
                 </div>
-                <div className="bg-white overflow-hidden rounded-sm w-full max-w-md">
+                <div className="bg-white rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (

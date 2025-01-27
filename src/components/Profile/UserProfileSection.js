@@ -23,7 +23,7 @@ export const UserProfileSection = ({
 
     const moreOptionsItems = [
         { label: 'View Profile', value: 'profile' },
-        { label: 'Block User', value: 'block' },
+        { label: 'Report User', value: 'block' },
         { label: 'Report', value: 'report' },
     ];
 
@@ -44,15 +44,15 @@ export const UserProfileSection = ({
             <div className="flex grow">
                 <div
                     className={`
-          ${sizeMap[size]}
-          rounded-full
-          overflow-hidden
-          border-2
-          border-gray-200
-          flex-shrink-0
-          cursor-pointer
-          ${className}
-        `}
+                      ${sizeMap[size]}
+                      rounded-full
+                      overflow-hidden
+                      border-2
+                      border-gray-200
+                      flex-shrink-0
+                      cursor-pointer
+                      ${className}
+                    `}
                     onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
                     <img
                         src={profilePicture}

@@ -118,7 +118,7 @@ function UserProfilePage() {
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                 }}>
-                                {!userDetails.picture && (
+                                {!userDetails.image && (
                                     <ProfileIcon className="w-24 h-24" />
                                 )}
                             </div>

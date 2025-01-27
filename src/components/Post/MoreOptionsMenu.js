@@ -34,13 +34,13 @@ const MoreOptionsMenu = ({ options = [], onOptionSelect }) => {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-yellow-300 border rounded-lg shadow-lg z-auto">
+                <div className="absolute right-0 mt-2 w-48 bg-gray-200 border rounded-lg shadow-lg">
                     <ul>
                         {options.map((option, index) => (
                             <li
                                 key={index}
                                 onClick={() => handleOptionSelect(option)}
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                className="px-4 py-2 text-16/[20]  hover:bg-gray-100 rounded cursor-pointer duration-200">
                                 {option.label}
                             </li>
                         ))}

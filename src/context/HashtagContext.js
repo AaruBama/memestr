@@ -23,7 +23,7 @@ export const HashTagToolProvider = ({
                 setIsLoading(false);
                 return;
             }
-            const filters = { limit: 10, '#t': memoizedFilterTags };
+            const filters = { limit: 50, '#t': memoizedFilterTags };
             // const notes = await fetchNotes(filters);
             const allNotes = await fetchNotesWithProfiles(filters);
             const filteredNotes = allNotes.filter(note =>
@@ -60,7 +60,7 @@ export const HashTagToolProvider = ({
 
         inProgressRequests.add(lastCreatedAt);
         const filters = {
-            limit: 20,
+            limit: 50,
             '#t': filterTags,
             until: lastCreatedAt - 5 * 60, // Fetch notes before this time
         };
