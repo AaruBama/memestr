@@ -95,6 +95,5 @@ export const fetchNotesWithProfiles = async filters => {
         ...note,
         profile: profileMap[note.pubkey] || null,
     }));
-
     return notesWithProfiles;
 };

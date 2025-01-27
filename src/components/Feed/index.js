@@ -1,4 +1,4 @@
-import Posts from '../Posts';
+import Posts, { extractLinksFromText } from '../Posts';
 import './index.css';
 import React, { useEffect, useRef } from 'react';
 import { PageContext } from '../../context/PageContext';
@@ -57,8 +57,11 @@ function Feed(props) {
     return (
         <PageContext.Provider value={props.isHomePage}>
             <div className="feed-container pt-8 mx-auto max-w-xl">
-                {props.notes.length > 0 &&
-                    props.notes.map((note, index) => (
+                {props.notes
+                    .filter(
+                        note => extractLinksFromText(note.content).length > 0,
+                    ) // Filter before mapping
+                    .map((note, index) => (
                         <div key={note.id}>
                             <Posts note={note} />
                             {index === triggerPoint && (

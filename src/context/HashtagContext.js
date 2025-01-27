@@ -23,13 +23,24 @@ export const HashTagToolProvider = ({
                 setIsLoading(false);
                 return;
             }
-            const filters = { limit: 50, '#t': memoizedFilterTags };
+            const filters = { limit: 10, '#t': memoizedFilterTags };
             // const notes = await fetchNotes(filters);
+            console.log('Fetching notes with profiles');
             const allNotes = await fetchNotesWithProfiles(filters);
-            const filteredNotes = allNotes.filter(note =>
-                /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
+            console.log('All notes', allNotes);
+            let filteredNotes = allNotes
+                .map(note => ({ ...note })) // Create new plain objects
+                .filter(note =>
+                    /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(
+                        note.content,
+                    ),
+                );
+
+            filteredNotes = filteredNotes.sort(
+                (a, b) => b.created_at - a.created_at,
             );
 
+            console.log('All Filtered notes', filteredNotes);
             const postIds = filteredNotes.map(note => note.id);
             const votes = await getVotes(postIds);
 
@@ -68,8 +79,11 @@ export const HashTagToolProvider = ({
         const notes = await fetchNotesWithProfiles(filters);
 
         // Filter for valid media content
-        const filteredNotes = notes.filter(note =>
+        let filteredNotes = notes.filter(note =>
             /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
+        );
+        filteredNotes = filteredNotes.sort(
+            (a, b) => b.created_at - a.created_at,
         );
 
         // Fetch vote counts

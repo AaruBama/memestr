@@ -1,5 +1,6 @@
 import React from 'react';
-import { ReactComponent as NoUserImage } from '../../Icons/noImageUser.svg';
+import pic from '../LoginDropDownComponent/default_profile.jpg';
+
 import FollowButton from './FollowButton';
 import MoreOptionsMenu from '../Post/MoreOptionsMenu';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +38,8 @@ export const UserProfileSection = ({
         console.log('Selected option:', option);
     };
     // Extract picture from profile or use default
-    const profilePicture = profile?.image || NoUserImage;
+    const profilePicture = profile?.image || pic;
+    const profileName = profile?.name || 'Anonymous';
 
     return (
         <div className="flex items-start space-2 pt-2 border-b rounded-lg bg-white ">
@@ -56,27 +58,21 @@ export const UserProfileSection = ({
                     onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
                     <img
                         src={profilePicture}
-                        alt={profile?.name || 'User Profile'}
+                        alt={profileName || 'User Profile'}
                         className="w-full h-full object-cover"
                     />
                 </div>
 
-                {profile?.name && (
-                    <div
-                        className="flex flex-col ml-1 cursor-pointer"
-                        onClick={() =>
-                            navigate(`/userprofile/${profile.pubkey}`)
-                        }>
-                        <h3 className="font-semibold text-gray-800">
-                            {profile.name}
-                        </h3>
-                        {profile.nip05 && (
-                            <p className="text-xs text-gray-500">
-                                {profile.nip05}
-                            </p>
-                        )}
-                    </div>
-                )}
+                <div
+                    className="flex flex-col ml-1 cursor-pointer"
+                    onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
+                    <h3 className="font-semibold text-gray-800">
+                        {profileName}
+                    </h3>
+                    {profile?.nip05 && (
+                        <p className="text-xs text-gray-500">{profile.nip05}</p>
+                    )}
+                </div>
             </div>
             {isHomePage && (
                 <div className="flex items-center space-x-2 justify-end ml-auto">
