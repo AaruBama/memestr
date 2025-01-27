@@ -24,10 +24,8 @@ export const HashTagToolProvider = ({
                 return;
             }
             const filters = { limit: 10, '#t': memoizedFilterTags };
-            // const notes = await fetchNotes(filters);
-            console.log('Fetching notes with profiles');
+
             const allNotes = await fetchNotesWithProfiles(filters);
-            console.log('All notes', allNotes);
             let filteredNotes = allNotes
                 .map(note => ({ ...note })) // Create new plain objects
                 .filter(note =>
@@ -40,7 +38,6 @@ export const HashTagToolProvider = ({
                 (a, b) => b.created_at - a.created_at,
             );
 
-            console.log('All Filtered notes', filteredNotes);
             const postIds = filteredNotes.map(note => note.id);
             const votes = await getVotes(postIds);
 
