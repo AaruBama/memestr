@@ -39,7 +39,7 @@ export const UserProfileSection = ({
     };
     // Extract picture from profile or use default
     const profilePicture = profile?.image || pic;
-    const profileName = profile?.name || 'Anonymous';
+    const profileName = profile?.name || profile?.displayName || 'Anonymous';
 
     return (
         <div className="flex items-start space-2 pt-2 border-b rounded-lg bg-white ">

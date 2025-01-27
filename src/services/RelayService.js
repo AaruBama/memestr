@@ -81,6 +81,11 @@ export const fetchNotesWithProfiles = async filters => {
     const profileMap = {};
     for (const profile of profiles) {
         try {
+            // Hack to not override profiles
+            if (profileMap[profile.pubkey]) {
+                // console.log("existing profile found ", profileMap[profile.pubkey]);
+                continue;
+            }
             const ndkEvent = new NDKEvent(ndk, profile);
             const ndkProfile = await profileFromEvent(ndkEvent);
             profileMap[profile.pubkey] = {

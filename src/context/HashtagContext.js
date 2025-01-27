@@ -13,6 +13,28 @@ export const HashTagToolProvider = ({
     const [isLoading, setIsLoading] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
     const memoizedFilterTags = React.useMemo(() => filterTags, [filterTags]);
+
+    async function makeNotesUsable(filters) {
+        const allNotes = await fetchNotesWithProfiles(filters);
+        let filteredNotes = allNotes
+            .map(note => ({ ...note })) // Create new plain objects
+            .filter(note =>
+                /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
+            );
+
+        filteredNotes = filteredNotes.sort(
+            (a, b) => b.created_at - a.created_at,
+        );
+
+        const postIds = filteredNotes.map(note => note.id);
+        const votes = await getVotes(postIds);
+
+        filteredNotes.forEach(note => {
+            note.voteCount = votes[note.id] || 0;
+        });
+        return filteredNotes;
+    }
+
     useEffect(() => {
         const loadNotes = async () => {
             setNotes([]);
@@ -25,25 +47,7 @@ export const HashTagToolProvider = ({
             }
             const filters = { limit: 10, '#t': memoizedFilterTags };
 
-            const allNotes = await fetchNotesWithProfiles(filters);
-            let filteredNotes = allNotes
-                .map(note => ({ ...note })) // Create new plain objects
-                .filter(note =>
-                    /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(
-                        note.content,
-                    ),
-                );
-
-            filteredNotes = filteredNotes.sort(
-                (a, b) => b.created_at - a.created_at,
-            );
-
-            const postIds = filteredNotes.map(note => note.id);
-            const votes = await getVotes(postIds);
-
-            filteredNotes.forEach(note => {
-                note.voteCount = votes[note.id] || 0;
-            });
+            let filteredNotes = await makeNotesUsable(filters);
             notesCache[memoizedFilterTags] = filteredNotes;
             setNotes(filteredNotes);
 
@@ -73,12 +77,14 @@ export const HashTagToolProvider = ({
             until: lastCreatedAt - 5 * 60, // Fetch notes before this time
         };
 
-        const notes = await fetchNotesWithProfiles(filters);
+        const allNotes = await fetchNotesWithProfiles(filters);
 
         // Filter for valid media content
-        let filteredNotes = notes.filter(note =>
-            /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
-        );
+        let filteredNotes = allNotes
+            .map(note => ({ ...note })) // Create new plain objects
+            .filter(note =>
+                /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
+            );
         filteredNotes = filteredNotes.sort(
             (a, b) => b.created_at - a.created_at,
         );
