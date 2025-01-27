@@ -26,13 +26,9 @@ export const HashTagToolProvider = ({
             const filters = { limit: 10, '#t': memoizedFilterTags };
             // const notes = await fetchNotes(filters);
             const allNotes = await fetchNotesWithProfiles(filters);
-
-            console.log('notes on homepage are ', allNotes);
-
             const filteredNotes = allNotes.filter(note =>
                 /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
             );
-            console.log('filtered notes on homepage are ', filteredNotes);
 
             const postIds = filteredNotes.map(note => note.id);
             const votes = await getVotes(postIds);
@@ -54,18 +50,14 @@ export const HashTagToolProvider = ({
 
     const inProgressRequests = new Set();
     const LoadMoreMedia = async () => {
-        const randi = Math.floor(Math.random() * 20) + 1;
-        // return;
         if (!lastCreatedAt) {
             console.log('!!!!!!!!!!NO LAST CREATED!!!!!!!!');
             return;
         }
         if (inProgressRequests.has(lastCreatedAt)) {
-            console.log('!!!!!!!!!!ALREADY IN PROGRESS!!!!!!!!');
             return;
         }
 
-        console.log('Fetching more notes', randi);
         inProgressRequests.add(lastCreatedAt);
         const filters = {
             limit: 20,
@@ -107,7 +99,6 @@ export const HashTagToolProvider = ({
         }
         inProgressRequests.delete(lastCreatedAt); // Allow new requests for this trigger point
         setIsLoading(false);
-        console.log('Finishing LoadMore with ', randi);
     };
 
     return (

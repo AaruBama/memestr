@@ -30,7 +30,6 @@ export const getNdk = () => {
 
 export const getRelayPool = () => {
     if (!relayPool) {
-        console.log('Relay pool not found, starting relay Pool.');
         relayPool = new SimplePool();
     }
     return relayPool;

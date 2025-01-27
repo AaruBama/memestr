@@ -57,10 +57,8 @@ function UserProfilePage() {
 
                 let filteredNotes = [];
                 if (receivedEvents.length > 10) {
-                    console.log('Using events from Cache');
                     filteredNotes = receivedEvents;
                 } else {
-                    console.log('Fallback to fetching notes with profiles');
                     const notes = await fetchNotesWithProfiles(filters);
                     filteredNotes = notes.filter(note =>
                         /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(
