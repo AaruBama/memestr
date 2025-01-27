@@ -88,6 +88,7 @@ export const fetchNotesWithProfiles = async filters => {
             }
             const ndkEvent = new NDKEvent(ndk, profile);
             const ndkProfile = await profileFromEvent(ndkEvent);
+            ndk.cacheAdapter.saveProfile(profile.pubkey, ndkProfile);
             profileMap[profile.pubkey] = {
                 ...ndkProfile,
                 pubkey: profile.pubkey,

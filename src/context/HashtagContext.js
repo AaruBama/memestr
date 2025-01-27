@@ -14,47 +14,56 @@ export const HashTagToolProvider = ({
     const [scrollPosition, setScrollPosition] = useState(0);
     const memoizedFilterTags = React.useMemo(() => filterTags, [filterTags]);
 
-    async function makeNotesUsable(filters) {
-        const allNotes = await fetchNotesWithProfiles(filters);
-        let filteredNotes = allNotes
-            .map(note => ({ ...note })) // Create new plain objects
+    async function processAndSortNotes(rawNotes) {
+        return rawNotes
+            .map(note => ({ ...note }))
             .filter(note =>
                 /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
-            );
+            )
+            .sort((a, b) => b.created_at - a.created_at);
+    }
 
-        filteredNotes = filteredNotes.sort(
-            (a, b) => b.created_at - a.created_at,
-        );
-
-        const postIds = filteredNotes.map(note => note.id);
+    async function updateNotesWithVotes(notesToUpdate) {
+        const postIds = notesToUpdate.map(note => note.id);
         const votes = await getVotes(postIds);
-
-        filteredNotes.forEach(note => {
-            note.voteCount = votes[note.id] || 0;
-        });
-        return filteredNotes;
+        return notesToUpdate.map(note => ({
+            ...note,
+            voteCount: votes[note.id] || 0,
+        }));
     }
 
     useEffect(() => {
         const loadNotes = async () => {
             setNotes([]);
             setIsLoading(true);
+
             if (notesCache[memoizedFilterTags]) {
-                // Use cached notes
+                // Show cached notes immediately
                 setNotes(notesCache[memoizedFilterTags]);
                 setIsLoading(false);
+                // Update votes in background
+                const updatedNotes = await updateNotesWithVotes(
+                    notesCache[memoizedFilterTags],
+                );
+                setNotes(updatedNotes);
                 return;
             }
+
             const filters = { limit: 10, '#t': memoizedFilterTags };
+            const rawNotes = await fetchNotesWithProfiles(filters);
+            const filteredNotes = await processAndSortNotes(rawNotes);
 
-            let filteredNotes = await makeNotesUsable(filters);
-            notesCache[memoizedFilterTags] = filteredNotes;
+            // Show notes first
             setNotes(filteredNotes);
-
             setLastCreatedAt(
                 filteredNotes[filteredNotes.length - 1]?.created_at || null,
             );
             setIsLoading(false);
+
+            // Then update with votes
+            const notesWithVotes = await updateNotesWithVotes(filteredNotes);
+            notesCache[memoizedFilterTags] = notesWithVotes;
+            setNotes(notesWithVotes);
         };
 
         loadNotes();
@@ -62,60 +71,51 @@ export const HashTagToolProvider = ({
 
     const inProgressRequests = new Set();
     const LoadMoreMedia = async () => {
-        if (!lastCreatedAt) {
-            console.log('!!!!!!!!!!NO LAST CREATED!!!!!!!!');
-            return;
-        }
-        if (inProgressRequests.has(lastCreatedAt)) {
+        if (!lastCreatedAt || inProgressRequests.has(lastCreatedAt)) {
             return;
         }
 
         inProgressRequests.add(lastCreatedAt);
-        const filters = {
-            limit: 50,
-            '#t': filterTags,
-            until: lastCreatedAt - 5 * 60, // Fetch notes before this time
-        };
+        // setIsLoading(true);
 
-        const allNotes = await fetchNotesWithProfiles(filters);
+        try {
+            const filters = {
+                limit: 50,
+                '#t': filterTags,
+                until: lastCreatedAt - 5 * 60,
+            };
 
-        // Filter for valid media content
-        let filteredNotes = allNotes
-            .map(note => ({ ...note })) // Create new plain objects
-            .filter(note =>
-                /(https?:\/\/[^\s]+(\.jpg|\.mp4|\.gif))/gi.test(note.content),
+            const rawNotes = await fetchNotesWithProfiles(filters);
+            const newNotes = await processAndSortNotes(rawNotes);
+
+            // Add new notes immediately
+            setNotes(prev => {
+                const existingIds = new Set(prev.map(n => n.id));
+                const deduped = newNotes.filter(n => !existingIds.has(n.id));
+                return [...prev, ...deduped];
+            });
+
+            // Update with votes in background
+            const votedNotes = await updateNotesWithVotes(newNotes);
+            setNotes(prev => {
+                const prevMap = new Map(prev.map(n => [n.id, n]));
+                votedNotes.forEach(n => prevMap.set(n.id, n));
+                return Array.from(prevMap.values()).sort(
+                    (a, b) => b.created_at - a.created_at,
+                );
+            });
+
+            // Update pagination cursor
+            const oldestNote = votedNotes.reduce(
+                (oldest, current) =>
+                    current.created_at < oldest.created_at ? current : oldest,
+                { created_at: Infinity },
             );
-        filteredNotes = filteredNotes.sort(
-            (a, b) => b.created_at - a.created_at,
-        );
-
-        // Fetch vote counts
-        const postIds = filteredNotes.map(note => note.id);
-        const votes = await getVotes(postIds);
-
-        filteredNotes.forEach(note => {
-            note.voteCount = votes[note.id] || 0;
-        });
-
-        setNotes(prevNotes => {
-            const existingIds = prevNotes.map(note => note.id);
-            const deduplicatedNotes = filteredNotes.filter(
-                note => !existingIds.includes(note.id),
-            );
-            return [...prevNotes, ...deduplicatedNotes];
-        });
-
-        const createdAt = filteredNotes
-            .map(note => note.created_at)
-            .sort((a, b) => a - b);
-
-        if (createdAt.length > 0) {
-            setLastCreatedAt(createdAt[0]);
-        } else {
-            setLastCreatedAt(lastCreatedAt - 10000); // Fallback to avoid repeated fetch
+            setLastCreatedAt(oldestNote.created_at || lastCreatedAt - 10000);
+        } finally {
+            inProgressRequests.delete(lastCreatedAt);
+            setIsLoading(false);
         }
-        inProgressRequests.delete(lastCreatedAt); // Allow new requests for this trigger point
-        setIsLoading(false);
     };
 
     return (
@@ -125,7 +125,7 @@ export const HashTagToolProvider = ({
                 scrollPosition,
                 setScrollPosition,
                 isLoading,
-                LoadMoreMedia: LoadMoreMedia,
+                LoadMoreMedia,
                 filterTags,
             }}>
             {children}
@@ -135,12 +135,4 @@ export const HashTagToolProvider = ({
 
 const HashTagContext = createContext();
 
-export const useHashTagContext = () => {
-    const context = useContext(HashTagContext);
-    if (!context) {
-        throw new Error(
-            'useHashTagContext must be used within a HashTagToolProvider',
-        );
-    }
-    return context;
-};
+export const useHashTagContext = () => useContext(HashTagContext);
