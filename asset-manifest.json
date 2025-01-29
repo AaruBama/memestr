@@ -1,17 +1,21 @@
 {
   "files": {
-    "main.css": "/static/css/main.b574afc2.css",
-    "main.js": "/static/js/main.b07f866d.js",
+    "main.css": "/static/css/main.dc119390.css",
+    "main.js": "/static/js/main.7c3c48f9.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
+    "static/media/Art.svg": "/static/media/Art.37a6ceb11884c3da795eeee762e9d947.svg",
+    "static/media/News.svg": "/static/media/News.fc5e07c6a1a3b2ec7ae3f59ef540f15c.svg",
     "static/media/Setting.svg": "/static/media/Setting.90b0f9a29651156bfcea07caf6809e97.svg",
+    "static/media/Sports.svg": "/static/media/Sports.911e035d170305fc3ffa21313363092a.svg",
     "static/media/Vehicles.svg": "/static/media/Vehicles.5a5a3e965305f8521736a3f32c37f4ef.svg",
     "static/media/Profile.svg": "/static/media/Profile.be7881726ada434d72d55c590cf6b9fd.svg",
     "static/media/HomeMobile.svg": "/static/media/HomeMobile.1cca745904960ff873314582adeffc41.svg",
     "static/media/QuestionMarkIcon.svg": "/static/media/QuestionMarkIcon.45e2978ea712836b1d24af3f8ef16e31.svg",
     "static/media/VolumeDown.svg": "/static/media/VolumeDown.a48258a7204b48573798f3a750f93f1d.svg",
     "static/media/ExtentionLogin.svg": "/static/media/ExtentionLogin.5ea5f9fe75803ebaa1d02fb8be8e3e93.svg",
+    "static/media/Gaming.svg": "/static/media/Gaming.adf225988adbb85b00e42aa66ae59dd2.svg",
     "static/media/upwardArrow.svg": "/static/media/upwardArrow.b8edfe2e34596f4361354a484e75f158.svg",
     "static/media/CommentSvg.svg": "/static/media/CommentSvg.62525e8e512723ebaa4dcedc5734340e.svg",
     "static/media/Bitcoin.svg": "/static/media/Bitcoin.025417c19bdc73fa95c6f09eea6cee17.svg",
@@ -48,7 +52,7 @@
     "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.b574afc2.css",
-    "static/js/main.b07f866d.js"
+    "static/css/main.dc119390.css",
+    "static/js/main.7c3c48f9.js"
   ]
 }
