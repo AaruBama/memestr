@@ -121,6 +121,7 @@ export function HashtagTool() {
                         notes={notes}
                         onLoadMore={handleLoadMore}
                         isLoading={isLoading || loadingMorePosts}
+                        className={'pt-12'}
                     />
 
                     <LoadingSpinner isVisible={loadingMorePosts} />

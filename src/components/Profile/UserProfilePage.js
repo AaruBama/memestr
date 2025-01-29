@@ -172,7 +172,7 @@ function UserProfilePage() {
                         </div>
 
                         {/* Divider and Tabs */}
-                        <div className="tabs-section border-b border-gray-300 mb-6">
+                        <div className="tabs-section border-b border-gray-300">
                             <ul className="flex justify-around">
                                 <li
                                     className={`cursor-pointer py-2 px-4 ${

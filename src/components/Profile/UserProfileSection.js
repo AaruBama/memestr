@@ -42,7 +42,7 @@ export const UserProfileSection = ({
     const profileName = profile?.name || profile?.displayName || 'Anonymous';
 
     return (
-        <div className="flex items-start space-2 pt-2 border-b rounded-lg bg-white ">
+        <div className="flex items-center border-b rounded-lg bg-white p-1 ">
             <div className="flex grow">
                 <div
                     className={`
@@ -53,6 +53,7 @@ export const UserProfileSection = ({
                       border-gray-200
                       flex-shrink-0
                       cursor-pointer
+                      justify-center
                       ${className}
                     `}
                     onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
@@ -64,7 +65,7 @@ export const UserProfileSection = ({
                 </div>
 
                 <div
-                    className="flex flex-col ml-1 cursor-pointer"
+                    className="flex flex-col ml-1.5 cursor-pointer justify-center"
                     onClick={() => navigate(`/userprofile/${profile.pubkey}`)}>
                     <h3 className="font-semibold text-gray-800">
                         {profileName}
@@ -75,7 +76,7 @@ export const UserProfileSection = ({
                 </div>
             </div>
             {isHomePage && (
-                <div className="flex items-center space-x-2 justify-end ml-auto">
+                <div className="flex justify-center ml-auto">
                     <FollowButton
                         initialFollowState={false}
                         onFollowToggle={handleFollowToggle}

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ReactComponent as MoreOptionsIcon } from '../../Icons/LikeSvg.svg';
+import { ReactComponent as MoreOptionsIcon } from '../../Icons/Options.svg';
 const MoreOptionsMenu = ({ options = [], onOptionSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
@@ -26,7 +26,7 @@ const MoreOptionsMenu = ({ options = [], onOptionSelect }) => {
     };
 
     return (
-        <div className="relative" ref={menuRef}>
+        <div className="relative z-10" ref={menuRef}>
             <button
                 onClick={toggleMenu}
                 className="p-2 hover:bg-gray-100 rounded-full">
@@ -34,7 +34,7 @@ const MoreOptionsMenu = ({ options = [], onOptionSelect }) => {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-200 border rounded-lg shadow-lg">
+                <div className="absolute right-0 mt-2 w-48 bg-gray-200 bg-opacity-95 duration-200 border rounded-lg shadow-lg">
                     <ul>
                         {options.map((option, index) => (
                             <li

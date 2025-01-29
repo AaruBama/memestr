@@ -39,6 +39,7 @@ function useIntersectionObserver(loadMore, options = {}) {
 }
 //eslint
 function Feed(props) {
+    const className = props.className || '';
     const loadMoreRef = useIntersectionObserver(
         () => {
             if (!props.isLoading) {
@@ -56,7 +57,12 @@ function Feed(props) {
 
     return (
         <PageContext.Provider value={props.isHomePage}>
-            <div className="feed-container pt-8 mx-auto max-w-xl">
+            <div
+                className={`
+                      feed-container
+                      mx-auto max-w-xl
+                      ${className}
+                    `}>
                 {props.notes
                     .filter(
                         note => extractLinksFromText(note.content).length > 0,
