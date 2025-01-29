@@ -241,7 +241,7 @@ export function calculateTimeDifference(postCreatedAt) {
     let unit = '';
     let duration = 0;
     if (secondsDifference < 60) {
-        unit = 'seconds';
+        unit = 'sec';
         duration = secondsDifference;
     } else if (secondsDifference < 3600) {
         unit = 'm';
@@ -448,20 +448,19 @@ function Posts(props) {
 
                     <div className="border-x border-grey-100 flex justify-between items-center px-2">
                         <div className="flex gap-2 py-2">
-                            {/*<div className="flex items-center text-gray-500 text-xs">Tags:</div>*/}
                             {hashtags.slice(0, 3).map((tag, index) => (
                                 <button
                                     key={index}
                                     onClick={() =>
                                         handleTagClick(tag.substring(1))
                                     }
-                                    className="bg-gray-100 text-blue-800 font-semibold font-medium rounded-full px-4 py-1 text-sm focus:outline-none">
+                                    className="bg-gray-100 text-blue-800 font-semibold font-medium rounded-full px-2 py-1 text-xs focus:outline-none">
                                     #{tag.substring(1)}
                                 </button>
                             ))}
                         </div>
 
-                        <span className="text-xs text-gray-500">
+                        <span className="flex text-xs text-gray-500">
                             {timeDifference.duration}
                             {timeDifference.unit}
                         </span>

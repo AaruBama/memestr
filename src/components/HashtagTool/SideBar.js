@@ -8,6 +8,10 @@ import { ReactComponent as VehiclesSvg } from '../../Icons/Vehicles.svg';
 import { ReactComponent as PetsSvg } from '../../Icons/PetSvg.svg';
 import { ReactComponent as LoveSvg } from '../../Icons/heart.svg';
 import { ReactComponent as BitcoinSvg } from '../../Icons/Bitcoin.svg';
+import { ReactComponent as GamingSvg } from '../../Icons/Gaming.svg';
+import { ReactComponent as ArtSvg } from '../../Icons/Art.svg';
+import { ReactComponent as SportsSvg } from '../../Icons/Sports.svg';
+import { ReactComponent as NewsSvg } from '../../Icons/News.svg';
 import './MemeEditorStyle.css';
 
 function Sidebar({ setShowMemeEditor }) {
@@ -19,8 +23,10 @@ function Sidebar({ setShowMemeEditor }) {
 
     return (
         <aside className="hidden md:block md:w-72 bg-white p-5 sticky top-0 h-screen overflow-y-auto border-r z-50">
-            <h1 className="font-bungee px-4 py-2 text-xl ">Category</h1>
-            <nav className="mt-8 ">
+            <h1 className="font-bungee px-4 py-2 text-xl sticky top-0 bg-white z-10">
+                Category
+            </h1>
+            <nav className="overflow-y-auto h-[calc(100vh-10rem)]">
                 <NavLink to="/" className={getNavLinkClass}>
                     <HomeSvg />
                     <span className="ml-3">Home</span>
@@ -53,8 +59,24 @@ function Sidebar({ setShowMemeEditor }) {
                     <LoveSvg />
                     <span className="ml-3">Love & Relationship</span>
                 </NavLink>
+                <NavLink to="/gaming" className={getNavLinkClass}>
+                    <GamingSvg />
+                    <span className="ml-3">Gaming</span>
+                </NavLink>
+                <NavLink to="/art" className={getNavLinkClass}>
+                    <ArtSvg />
+                    <span className="ml-3">Art</span>
+                </NavLink>
+                <NavLink to="/news" className={getNavLinkClass}>
+                    <NewsSvg />
+                    <span className="ml-3">News</span>
+                </NavLink>
+                <NavLink to="/sports" className={getNavLinkClass}>
+                    <SportsSvg />
+                    <span className="ml-3">Sports</span>
+                </NavLink>
             </nav>
-            <div className="absolute bottom-0 left-0 w-full px-6 pb-6">
+            <div className="sticky bottom-0 left-0 w-full px-6 pb-4 bg-white">
                 <button
                     type="button"
                     className="w-full text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-4 font-medium rounded-full text-md px-5 py-3 me-2 mb-2 flex items-center justify-center"

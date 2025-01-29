@@ -58,6 +58,45 @@ function App() {
             'blockchain',
             'nft',
         ],
+        '/gaming': [
+            'gaming',
+            'gamers',
+            'game',
+            'videogame',
+            'videogames',
+            'games',
+            'nintendo',
+            'xbox',
+            'ps4',
+            'ps5',
+        ],
+        '/art': [
+            'art',
+            'paint',
+            'artwork',
+            'drawing',
+            'artist',
+            'artstr',
+            'paintart',
+        ],
+        '/news': ['news', 'latest', 'latest-news', 'politics', 'trump'],
+        '/sports': [
+            'sports',
+            'football',
+            'cricket',
+            'soccer',
+            'sport',
+            'basketball',
+            'tennis',
+            'swimming',
+            'oylmpics',
+            'olympics',
+            'badminton',
+            'rugby',
+            'wnba',
+            'nba',
+            'sport',
+        ],
     };
 
     function ConditionalHeader() {
@@ -156,6 +195,42 @@ function App() {
                         element={
                             <HashTagToolProvider
                                 filterTags={pageFilters['/relationship']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/gaming"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/gaming']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/art"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/art']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/news"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/news']}>
+                                <HashtagTool />
+                            </HashTagToolProvider>
+                        }
+                    />
+                    <Route
+                        path="/sports"
+                        element={
+                            <HashTagToolProvider
+                                filterTags={pageFilters['/sports']}>
                                 <HashtagTool />
                             </HashTagToolProvider>
                         }
