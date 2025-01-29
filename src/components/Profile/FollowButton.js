@@ -17,7 +17,7 @@ const FollowButton = ({ initialFollowState = false, onFollowToggle }) => {
         <button
             onClick={handleFollowToggle}
             className={`
-        px-2.5 py-0.5
+        px-3 py-1
         text-xs
         rounded-full
         text-white

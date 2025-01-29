@@ -422,21 +422,21 @@ function Posts(props) {
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
-            <div className="flex flex-col items-center mt-4">
-                <div className="flex flex-col w-full border-t-2 border-x-2 rounded-t-md border-gray-100 overflow-hidden max-w-md">
+            <div className="flex flex-col items-center mt-2">
+                <div className="flex flex-col w-full border-t-2 border-x-2 rounded-t-md border-gray-100 max-w-md">
                     {/* Add user picture before or alongside other content */}
                     <UserProfileSection
                         profile={props.note.profile}
                         size="md" // Configurable size
-                        className="mb-2 ml-1" // Optional additional styling
+                        className="ml-0.5" // Optional additional styling
                     />
                 </div>
-                <div className="bg-white overflow-hidden rounded-sm w-full max-w-md">
+                <div className="bg-white rounded-sm w-full max-w-md">
                     {/* Post Media Content */}
 
                     {titleWithoutTagsOrLinks.trim() !== '' && (
                         <div className="border-x border-grey-100 p-2">
-                            <h3 className="font-nunito font-semibold text-gray-700">
+                            <h3 className="truncate font-nunito font-semibold text-gray-700">
                                 {titleWithoutTagsOrLinks}
                             </h3>
                         </div>
@@ -448,6 +448,7 @@ function Posts(props) {
 
                     <div className="border-x border-grey-100 flex justify-between items-center px-2">
                         <div className="flex gap-2 py-2">
+                            {/*<div className="flex items-center text-gray-500 text-xs">Tags:</div>*/}
                             {hashtags.slice(0, 3).map((tag, index) => (
                                 <button
                                     key={index}
@@ -467,7 +468,7 @@ function Posts(props) {
                     </div>
 
                     <div className="border-t border-grey-100 rounded-b-md "></div>
-                    <div className="border-x border-grey-100 flex flex-col p-3">
+                    <div className="border-x border-grey-100 flex flex-col p-2">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center">
                                 <Link
