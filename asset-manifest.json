@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.ca4ec838.css",
-    "main.js": "/static/js/main.e6d4587f.js",
+    "main.css": "/static/css/main.b574afc2.css",
+    "main.js": "/static/js/main.b07f866d.js",
     "static/media/default_profile.jpg": "/static/media/default_profile.d8a94809b7a8f5c3211c.jpg",
     "static/media/profile.jpeg": "/static/media/profile.11a801837c2346393a2b.jpeg",
     "static/media/MemestrLogo.svg": "/static/media/MemestrLogo.b396ade4b8313ef0618a24d56ba81d2e.svg",
@@ -42,12 +42,13 @@
     "static/media/LikeSvg.svg": "/static/media/LikeSvg.aa629c435b86f40ef8bf4dc3b9297f5d.svg",
     "static/media/SearchIconBlack.svg": "/static/media/SearchIconBlack.b3a12fa517c4a7fd6c681afeb19b18eb.svg",
     "static/media/SearchIcon.svg": "/static/media/SearchIcon.2ccc36d4e84693dc2e83e37daaf34207.svg",
+    "static/media/Options.svg": "/static/media/Options.7b2eed5dbfab087c195220dd201bbb32.svg",
     "static/media/Notification.svg": "/static/media/Notification.d14f855fa1cc7c9ce23c469407fdfb0b.svg",
     "static/media/noImageUser.svg": "/static/media/noImageUser.5b53716144eef1098381daadb39c3f9c.svg",
     "static/media/RoundTick.svg": "/static/media/RoundTick.c8efcd84bee3b13c13ea07283ccd919d.svg"
   },
   "entrypoints": [
-    "static/css/main.ca4ec838.css",
-    "static/js/main.e6d4587f.js"
+    "static/css/main.b574afc2.css",
+    "static/js/main.b07f866d.js"
   ]
 }
