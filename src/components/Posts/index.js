@@ -15,6 +15,7 @@ import { VideoPlayer } from '../../helpers/videoPlayer';
 import { ReactComponent as CloseIcon } from '../../Icons/CloseIcon.svg';
 import { getRelayPool } from '../../services/RelayService';
 import { UserProfileSection } from '../Profile/UserProfileSection';
+import { CommentsModal } from '../Comments/commentsModal';
 const MAX_POSTS = 200;
 
 export const manageLikedPosts = (postId, userPublicKey, isLiked) => {
@@ -290,6 +291,8 @@ function Posts(props) {
 
     const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
+    const [selectedPostId, setSelectedPostId] = useState(null);
+    const [showCommentsModal, setShowCommentsModal] = useState(false);
 
     let postCreatedAt = props.note.created_at;
 
@@ -470,15 +473,34 @@ function Posts(props) {
                     <div className="border-x border-grey-100 flex flex-col p-2">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center">
-                                <Link
-                                    to={postUrl}
+                                {/*<Link*/}
+                                {/*    to={postUrl}*/}
+                                {/*    className="flex items-center">*/}
+                                {/*    <CommentSvg className="h-4 w-4 text-black-600" />*/}
+                                {/*    <span className="text-xs text-gray-600 ml-1">*/}
+                                {/*        {commentCount > 0 ? commentCount : ''}*/}
+                                {/*    </span>*/}
+                                {/*</Link>*/}
+                                <button
+                                    onClick={() => {
+                                        setSelectedPostId(props.note.id);
+                                        setShowCommentsModal(true);
+                                    }}
                                     className="flex items-center">
                                     <CommentSvg className="h-4 w-4 text-black-600" />
                                     <span className="text-xs text-gray-600 ml-1">
                                         {commentCount > 0 ? commentCount : ''}
                                     </span>
-                                </Link>
+                                </button>
                             </div>
+
+                            {showCommentsModal && (
+                                <CommentsModal
+                                    postId={selectedPostId}
+                                    isOpen={showCommentsModal}
+                                    onClose={() => setShowCommentsModal(false)}
+                                />
+                            )}
 
                             <div className="flex items-center">
                                 <button

@@ -5,6 +5,7 @@ import pic from '../Comments/profile.jpeg';
 import { useNavigate } from 'react-router-dom';
 
 function Comments({ reply }) {
+    console.log('reply in comments component is ', reply);
     const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
     const [username, setUsername] = useState('Unknown');
@@ -58,7 +59,7 @@ function Comments({ reply }) {
             <div className="comment-container">
                 <img className="profile1" src={picture} alt="Profile" />
                 <div className="comment-content">
-                    <div className="flex flex-col w-full">
+                    <div>
                         <span
                             className="username-comment cursor-pointer"
                             onClick={() =>
@@ -69,9 +70,11 @@ function Comments({ reply }) {
                         <span className="name-comment text-gray-400">
                             @{name}
                         </span>
-                        <p className="comment">
-                            {processContent(reply.content)}
-                        </p>
+                        <div className="flex flex-col">
+                            <p className="comment">
+                                {processContent(reply.content)}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

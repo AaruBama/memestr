@@ -31,6 +31,25 @@ import { getRelayPool } from '../../services/RelayService';
 
 // import { useHashTagContext } from "./HashtagTool"; // Import the custom hook
 // import {useHashTagContext} from "../HashtagTool";
+export const buildReplyTree = replies => {
+    const rootReplies = [];
+    const repliesById = {};
+
+    replies.forEach(reply => {
+        repliesById[reply.id] = { ...reply, children: [] };
+    });
+
+    replies.forEach(reply => {
+        const parentId = reply.parsed.reply?.id;
+        if (parentId && repliesById[parentId]) {
+            repliesById[parentId].children.push(repliesById[reply.id]);
+        } else {
+            rootReplies.push(repliesById[reply.id]);
+        }
+    });
+
+    return rootReplies;
+};
 
 function Post() {
     // const { notes, setNotes } = useHashTagContext(); // Access notes and setNotes from the context
@@ -111,26 +130,6 @@ function Post() {
     };
 
     const [repliesLoading, setRepliesLoading] = useState(true);
-
-    const buildReplyTree = replies => {
-        const rootReplies = [];
-        const repliesById = {};
-
-        replies.forEach(reply => {
-            repliesById[reply.id] = { ...reply, children: [] };
-        });
-
-        replies.forEach(reply => {
-            const parentId = reply.parsed.reply?.id;
-            if (parentId && repliesById[parentId]) {
-                repliesById[parentId].children.push(repliesById[reply.id]);
-            } else {
-                rootReplies.push(repliesById[reply.id]);
-            }
-        });
-
-        return rootReplies;
-    };
 
     const renderReplies = replies => {
         return replies.map(reply => <Comments key={reply.id} reply={reply} />);

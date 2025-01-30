@@ -8,9 +8,7 @@ export const RELAYS = [
     'wss://relay.primal.net',
     'wss://relay.damus.io',
     'wss://relay.nostr.band',
-    'wss://relay.nostr.bg',
     'wss://nos.lol',
-    'wss://nostr.mom',
 ];
 
 let relayPool = null;

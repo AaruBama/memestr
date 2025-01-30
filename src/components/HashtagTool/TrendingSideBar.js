@@ -72,7 +72,7 @@ function TrendingSidebar({ showMemeEditor }) {
     return (
         <aside
             className={`hidden lg:block w-96 bg-white p-2 sticky top-0 h-screen overflow-y-auto border-l border-gray-200 ${
-                showMemeEditor ? 'z-50' : 'z-50'
+                showMemeEditor ? 'z-10' : 'z-auto'
             }`}>
             <form
                 onSubmit={handleSearchSubmit}

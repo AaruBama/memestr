@@ -1,0 +1,57 @@
+/* In your CommentModal.css */
+.comments-modal-container {
+  overflow-x: hidden !important;
+}
+
+.comments-modal-desktop {
+  overscroll-behavior: auto;
+  position: fixed; /* Keep sidebar independent */
+}
+
+/*.comments-modal-overlay {*/
+/*  @apply fixed inset-0 bg-black bg-opacity-50 z-[60]; !* Increased z-index *!*/
+/*  touch-action: none; !* Prevent background scroll *!*/
+/*}*/
+
+/* Prevent any child elements from causing overflow */
+.comments-modal-content * {
+  max-width: 100%;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 768px) {
+  .comments-modal-enter {
+    transform: translateX(100%);
+  }
+
+  .comments-modal-enter-active {
+    transform: translateX(0);
+    transition: transform 300ms ease-in-out;
+  }
+
+  .comments-modal-exit {
+    transform: translateX(0);
+  }
+
+  .comments-modal-exit-active {
+    transform: translateX(100%);
+    transition: transform 300ms ease-in-out;
+  }
+
+  .comments-modal-content {
+    max-height: 60vh !important;
+    min-height: 40vh;
+  }
+
+  .no-comments-wrapper {
+    padding-bottom: 80px; /* Match footer height */
+  }
+
+  .comment-item {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

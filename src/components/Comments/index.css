@@ -1,11 +1,12 @@
 .comment-container {
   display: flex;
-  gap: 10px;
-  padding: 10px;
+  gap: 12px;
+  padding-top: 4px;
   border-top: 1px solid #c3c3c3;
   border-radius: 5px;
+  width: 100%;
   max-width: 100%;
-  min-width: 400px;
+  min-width: 0;
 }
 
 .comment-container > img {
@@ -31,6 +32,7 @@
 }
 
 .profile1 {
+  min-width: 40px; /* Prevent image shrink */
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -39,26 +41,35 @@
 
 .comment-content {
   flex-grow: 1;
+  max-width: 100%;
+  overflow: visible;
+  min-width: 0;
 }
 
 .username-comment {
   color: black;
   font-weight: bold;
-  font-size: medium;
+  font-size: small;
   padding-right: 5px;
 }
 
 .name-comment {
   font-weight: bold;
-  font-size: medium;
+  font-size: small;
 }
 
 .comment {
   color: black;
-  padding-top: 3px;
+  padding: 3px;
   font-size: small;
-  padding-left: 3px;
-  word-break: break-word;
+  word-wrap: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Modern alternative */
+  white-space: normal; /* Ensure text wraps */
+  hyphens: auto; /* Optional: hyphenate words */
+  max-width: 100%; /* Never exceed container width */
+  box-sizing: border-box; /* Include padding in width */
+  line-height: 1.4; /* Better readability */
+  margin: 4px 2px; /* Add horizontal spacing */
 }
 
 .nested-comments {
