@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import pic from '../Comments/profile.jpeg';
 import { useNavigate } from 'react-router-dom';
 
-function Comments({ reply }) {
-    console.log('reply in comments component is ', reply);
+const Comments = React.memo(({ reply }) => {
     const navigate = useNavigate();
     const [picture, setPicture] = useState(pic);
     const [username, setUsername] = useState('Unknown');
@@ -80,6 +79,6 @@ function Comments({ reply }) {
             </div>
         </>
     );
-}
+});
 
 export default Comments;

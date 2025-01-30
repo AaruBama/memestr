@@ -293,6 +293,7 @@ function Posts(props) {
     const [notificationMessage, setNotificationMessage] = useState('');
     const [selectedPostId, setSelectedPostId] = useState(null);
     const [showCommentsModal, setShowCommentsModal] = useState(false);
+    const [comment, setComment] = useState('');
 
     let postCreatedAt = props.note.created_at;
 
@@ -422,6 +423,63 @@ function Posts(props) {
         navigate(`/search/${suggestions}`);
     };
 
+    const captureNewComment = async comment => {
+        let relays = [
+            'wss://relay.damus.io',
+            'wss://relay.primal.net',
+            'wss://nos.lol',
+        ];
+        const pool = getRelayPool();
+        const storedData = localStorage.getItem('memestr');
+        if (!storedData) {
+            alert('Login required to comment.');
+            return;
+        }
+        const userData = JSON.parse(storedData);
+
+        let uesrPublicKey = JSON.parse(storedData).pubKey;
+        let userPrivateKey = JSON.parse(storedData).privateKey;
+
+        let commentEvent = {
+            kind: 1,
+            pubkey: uesrPublicKey,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [
+                ['e', props.note.id, ' ', 'root'],
+                ['p', uesrPublicKey],
+                ['alt', 'reply'],
+            ],
+            content: comment,
+        };
+
+        if (userData.privateKey) {
+            let sk = nip19.decode(userPrivateKey);
+            commentEvent.id = getEventHash(commentEvent);
+            commentEvent.sig = getSignature(commentEvent, sk.data);
+        } else if (window.nostr) {
+            commentEvent = await window.nostr.signEvent(commentEvent);
+        } else {
+            throw new Error('No authentication method available');
+        }
+
+        try {
+            let x = await pool.publish(relays, commentEvent);
+            Promise.resolve(x);
+            console.log('published comment.');
+        } catch (error) {
+            console.error('Error while publishing comment:', error);
+        }
+        // const commentObject = [
+        //     {
+        //         content: comment,
+        //         pubkey: uesrPublicKey,
+        //     },
+        // ];
+        // setReplies(replies => [...commentObject, ...replies]);
+        setComment('');
+        // c.map((cc) => {console.log(cc)})
+    };
+
     let postUrl = `/post/${props.note.id}?voteCount=${votesCount}`;
     return (
         <>
@@ -499,6 +557,9 @@ function Posts(props) {
                                     postId={selectedPostId}
                                     isOpen={showCommentsModal}
                                     onClose={() => setShowCommentsModal(false)}
+                                    comment={comment}
+                                    setComment={setComment}
+                                    captureNewComment={captureNewComment}
                                 />
                             )}
 

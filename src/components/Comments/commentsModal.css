@@ -8,6 +8,10 @@
   position: fixed; /* Keep sidebar independent */
 }
 
+.comments-modal-mobile {
+  bottom: 45px; /* Leave space for footer */
+  height: calc(100vh); /* Adjust height */
+}
 /*.comments-modal-overlay {*/
 /*  @apply fixed inset-0 bg-black bg-opacity-50 z-[60]; !* Increased z-index *!*/
 /*  touch-action: none; !* Prevent background scroll *!*/

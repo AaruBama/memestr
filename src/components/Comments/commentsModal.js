@@ -1,16 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import CommentSpinner from '../Spinner/CommentSpinner';
 import Comments from '../Comments';
 import { getRelayPool, RELAYS } from '../../services/RelayService';
 import { parseReferences } from 'nostr-tools/references';
 import { getProfileFromPublicKey } from '../Profile';
 import { nip10 } from 'nostr-tools';
-import { buildReplyTree } from '../Post/post';
 import './commentsModal.css';
+import CommentInput from './commentInput';
 
-export function CommentsModal({ postId, isOpen, onClose }) {
+export const buildReplyTree = replies => {
+    const rootReplies = [];
+    const repliesById = {};
+
+    replies.forEach(reply => {
+        repliesById[reply.id] = { ...reply, children: [] };
+    });
+
+    replies.forEach(reply => {
+        const parentId = reply.parsed.reply?.id;
+        if (parentId && repliesById[parentId]) {
+            repliesById[parentId].children.push(repliesById[reply.id]);
+        } else {
+            rootReplies.push(repliesById[reply.id]);
+        }
+    });
+
+    return rootReplies;
+};
+
+export function CommentsModal({
+    postId,
+    isOpen,
+    onClose,
+    comment,
+    setComment,
+    captureNewComment,
+}) {
     const [replies, setReplies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const CommentWithReplies = React.memo(({ rootMessage, replies }) => {
+        const [showReplies, setShowReplies] = useState(false);
+
+        const toggleReplies = () => {
+            setShowReplies(prevState => !prevState);
+        };
+
+        return (
+            <div key={rootMessage.id}>
+                <Comments reply={rootMessage} />
+                <div className="ml-16 mb-2">
+                    {replies.length > 0 && (
+                        <div
+                            onClick={toggleReplies}
+                            className="cursor-pointer text-blue-700 font-nunito text-normal ">
+                            {showReplies ? 'Hide Replies' : 'View Replies'}
+                        </div>
+                    )}
+                    {showReplies && renderReplies(replies)}
+                </div>
+            </div>
+        );
+    });
 
     // Reuse the comment fetching logic from Post component
     useEffect(() => {
@@ -83,32 +133,18 @@ export function CommentsModal({ postId, isOpen, onClose }) {
         fetchComments();
     }, [postId, isOpen]);
 
+    const memoizedReplies = useMemo(() => {
+        return replies.map(({ rootMessage, replies }) => (
+            <CommentWithReplies
+                key={rootMessage.id}
+                rootMessage={rootMessage}
+                replies={replies}
+            />
+        ));
+    }, [replies]);
+
     const renderReplies = replies => {
         return replies.map(reply => <Comments key={reply.id} reply={reply} />);
-    };
-
-    const CommentWithReplies = ({ rootMessage, replies }) => {
-        const [showReplies, setShowReplies] = useState(false);
-
-        const toggleReplies = () => {
-            setShowReplies(prevState => !prevState);
-        };
-
-        return (
-            <div key={rootMessage.id}>
-                <Comments reply={rootMessage} />
-                <div className="ml-16 mb-2">
-                    {replies.length > 0 && (
-                        <div
-                            onClick={toggleReplies}
-                            className="cursor-pointer text-blue-700 font-nunito text-normal ">
-                            {showReplies ? 'Hide Replies' : 'View Replies'}
-                        </div>
-                    )}
-                    {showReplies && renderReplies(replies)}
-                </div>
-            </div>
-        );
     };
 
     if (!isOpen) {
@@ -118,7 +154,7 @@ export function CommentsModal({ postId, isOpen, onClose }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
             {/* Mobile View - Bottom Sheet */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-xl h-[60vh] max-h-[60vh] overflow-y-auto transform ease-in-out transition-transform duration-300">
+            <div className="comments-modal-mobile md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-xl h-[60vh] max-h-[60vh] overflow-y-auto transform ease-in-out transition-transform duration-300">
                 <div className="p-4">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Comments</h2>
@@ -137,15 +173,14 @@ export function CommentsModal({ postId, isOpen, onClose }) {
                                     No comments yet
                                 </p>
                             ) : (
-                                replies.map(({ rootMessage, replies }) => (
-                                    <div className="" key={rootMessage.id}>
-                                        <CommentWithReplies
-                                            rootMessage={rootMessage}
-                                            replies={replies}
-                                        />
-                                    </div>
-                                ))
+                                memoizedReplies
                             )}
+                            <CommentInput
+                                variant="mobile"
+                                comment={comment}
+                                setComment={setComment}
+                                onSubmit={captureNewComment}
+                            />
                         </div>
                     )}
                 </div>
@@ -162,26 +197,36 @@ export function CommentsModal({ postId, isOpen, onClose }) {
                             ×
                         </button>
                     </div>
+
                     {isLoading ? (
                         <div className="flex-1 flex items-center justify-center">
                             <CommentSpinner />
                         </div>
                     ) : (
-                        <div className="flex-1 overflow-y-auto">
-                            {replies.length === 0 ? (
-                                <p className="text-gray-500 text-center">
-                                    No comments yet
-                                </p>
-                            ) : (
-                                replies.map(({ rootMessage, replies }) => (
-                                    <CommentWithReplies
-                                        key={rootMessage.id}
-                                        rootMessage={rootMessage}
-                                        replies={replies}
-                                    />
-                                ))
-                            )}
-                        </div>
+                        <>
+                            <CommentInput
+                                variant="desktop"
+                                comment={comment}
+                                setComment={setComment}
+                                onSubmit={captureNewComment}
+                            />
+
+                            <div className="flex-1 overflow-y-auto">
+                                {replies.length === 0 ? (
+                                    <p className="text-gray-500 text-center">
+                                        No comments yet
+                                    </p>
+                                ) : (
+                                    replies.map(({ rootMessage, replies }) => (
+                                        <CommentWithReplies
+                                            key={rootMessage.id}
+                                            rootMessage={rootMessage}
+                                            replies={replies}
+                                        />
+                                    ))
+                                )}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>
