@@ -1,0 +1,134 @@
+.post-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+    .post-container {
+        flex-direction: row;
+    }
+}
+
+.post-title {
+    font-size: 0.875rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    color: #1a202c;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.comments-box {
+    background-color: #f9fafb;
+    padding: 1rem;
+    width: 100%;
+    max-width: 24rem;
+    border: 1px solid #cbd5e0;
+}
+
+.comment-input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.submit-button {
+    margin-left: 0.5rem;
+    background-color: #000;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.comments-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-right: 15rem;
+}
+
+.comments-content {
+    padding-bottom: 4rem;
+    background-color: #fff;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 24rem;
+    margin: 0 auto;
+}
+
+.no-comments-message {
+    text-align: center;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.comment-box {
+    margin-top: 0.5rem;
+}
+
+.toggle-replies {
+    cursor: pointer;
+    color: #3182ce;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.875rem;
+}
+
+.comment-with-replies {
+    margin-bottom: 1rem;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.post-main-content {
+    flex: 1;
+    padding: 1rem;
+}
+
+.post-header-container {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.post-content {
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.post-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.zap-button,
+.like-button,
+.share-button {
+    display: flex;
+    align-items: center;
+}
+
+.comments-section {
+    padding: 1rem;
+    background-color: #f7fafc;
+}
+
+.comments-display {
+    margin-top: 1rem;
+}
+
+.no-comments-message {
+    text-align: center;
+    color: #718096;
+    font-size: 0.875rem;
+}

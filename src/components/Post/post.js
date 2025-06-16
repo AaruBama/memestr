@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import './post.css';
+import './postStyles.css';
 import { ReactComponent as SubmitIcon } from '../../Icons/SubmitIcon.svg';
 import Spinner from '../Spinner';
 import { parseReferences } from 'nostr-tools/references';
@@ -154,13 +155,13 @@ function Post() {
         };
 
         return (
-            <div key={rootMessage.id}>
+            <div className="comment-with-replies" key={rootMessage.id}>
                 <Comments reply={rootMessage} />
-                <div className="commentBox">
+                <div className="comment-box">
                     {replies.length > 0 && (
                         <div
                             onClick={toggleReplies}
-                            className="cursor-pointer text-blue-700 font-nunito text-normal ">
+                            className="toggle-replies">
                             {showReplies ? 'Hide Replies' : 'View Replies'}
                         </div>
                     )}
@@ -357,18 +358,18 @@ function Post() {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row min-h-screen">
+            <div className="post-container">
                 <Sidebar />
                 {isLoading || profileLoading || repliesLoading ? (
-                    <div className="loading-container">
+                    <div className="spinner-container">
                         <Spinner />
                     </div>
                 ) : (
-                    <main className="main-content">
-                        <div className="post-header">
-                            <div className="post-container">
+                    <main className="post-main-content">
+                        <div className="post-header-container">
+                            <div className="post-content">
                                 <div className="post-title">
-                                    <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
+                                    <h3 className="post-title">
                                         {postData['title']}
                                     </h3>
                                 </div>
@@ -377,11 +378,11 @@ function Post() {
                                     {postData['imageLink'] &&
                                         renderContent(postData['imageLink'][0])}
                                 </div>
-                                <div className="post-actions">
+                                <div className="post-action-buttons">
                                     {/* Zap Button */}
                                     <button
                                         onClick={handleZapButton}
-                                        className="flex items-center">
+                                        className="zap-button">
                                         <ZapSvg
                                             className={`${
                                                 fillZap
@@ -404,7 +405,7 @@ function Post() {
                                     <button
                                         onClick={handleLikeButtonClick}
                                         disabled={isTodisabled()}
-                                        className={`flex items-center ${
+                                        className={`like-button ${
                                             fillLike
                                                 ? 'text-red-600'
                                                 : 'text-black-600'
@@ -421,15 +422,15 @@ function Post() {
                                     {/* Share Button */}
                                     <button
                                         onClick={openShareModal}
-                                        className="flex items-center">
+                                        className="share-button">
                                         <ShareButtonSvg className="h-6 w-6 text-black" />
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="comments-container">
-                            <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-400">
+                        <div className="comments-section">
+                            <div className="comments-box">
                                 <form
                                     className="flex items-center justify-between"
                                     onSubmit={async event => {
@@ -439,46 +440,46 @@ function Post() {
                                     <input
                                         type="text"
                                         placeholder="Add a reply..."
-                                        className="flex-grow p-2 text-sm border border-gray-400 rounded-l-md"
+                                        className="comment-input"
                                         value={comment}
                                         onChange={captureComment}
                                         required
                                     />
                                     <button
                                         type="submit"
-                                        className="ml-2 bg-black text-white p-2 rounded-r-md">
+                                        className="submit-button">
                                         <SubmitIcon />
                                     </button>
                                 </form>
                             </div>
                         </div>
 
-                        <div>
+                        <div className="comments-display">
                             {isLoading ? (
                                 <CommentSpinner />
                             ) : replies.length === 0 ? (
-                                <div className="no-comments">
+                                <div className="no-comments-message">
                                     No comments yet.
                                 </div>
                             ) : (
-                                <div className="flex justify-center lg:mr-60">
-                                    <div className=" pb-16 md:bg-white rounded-b-sm shadow overflow-hidden w-full max-w-md mx-auto">
+                                <div className="comments-wrapper">
+                                    <div className="comments-content">
                                         {renderComments(replies)}
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        <ShareModal
+                        <ShareModal 
                             isOpen={isShareModalOpen}
                             onClose={closeShareModal}
                             postUrl={postUrl}
                         />
-                    </main>
+                    </main> 
                 )}
             </div>
-        </>
-    );
-}
+        </> 
+    ); 
+} 
 
-export default Post;
+export default Post; 
