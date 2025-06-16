@@ -22,3 +22,63 @@ input.comment-form {
   border: 2px solid dimgray;
   border-radius: 1rex;
 }
+
+.post-container {                                                           
+  display: flex;                                                          
+  flex-direction: column;                                                 
+  min-height: 100vh;                                                      
+}                                                                           
+                                                                          
+.loading-container {                                                        
+  flex: 1;                                                                
+  margin-right: 40px;                                                     
+}                                                                           
+                                                                          
+.main-content {                                                             
+  flex: 1;                                                                
+  overflow-y: auto;                                                       
+}                                                                           
+                                                                          
+.post-header {                                                              
+  margin-top: 16px;                                                       
+  display: flex;                                                          
+  flex-direction: column;                                                 
+  align-items: center;                                                    
+}                                                                           
+                                                                          
+.post-title {                                                               
+  font-size: 1rem;                                                        
+  font-weight: bold;                                                      
+  color: #1f2937; /* gray-900 */                                          
+  word-break: break-word;                                                 
+  white-space: normal;                                                    
+}                                                                           
+                                                                          
+.post-image {                                                               
+  width: 100%;                                                            
+  border-top: 2px solid #d1d5db; /* gray-300 */                           
+}                                                                           
+                                                                          
+.post-actions {                                                             
+  display: flex;                                                          
+  justify-content: space-between;                                         
+  align-items: center;                                                    
+  padding: 16px;                                                          
+  background-color: #f9fafb; /* gray-50 */                                
+}                                                                           
+                                                                          
+.zap-button,                                                                
+.like-button,                                                               
+.share-button {                                                             
+  display: flex;                                                          
+  align-items: center;                                                    
+}                                                                           
+                                                                          
+.processed-value {                                                          
+  margin-left: 4px;                                                       
+}                                                                           
+                                                                          
+.like-count {                                                               
+  margin-left: 4px;                                                       
+  color: #1f2937; /* gray-600 */                                          
+}                  
