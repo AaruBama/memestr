@@ -82,3 +82,72 @@ input.comment-form {
   margin-left: 4px;                                                       
   color: #1f2937; /* gray-600 */                                          
 }                  
+.post-header {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post-container {
+  background-color: white;
+  border-radius: 0.125rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 28rem;
+  margin: 0.25rem 0;
+  border: 1px solid #d1d5db;
+}
+
+.post-title {
+  padding: 0.5rem;
+}
+
+.post-image {
+  width: 100%;
+  border-top: 2px solid #d1d5db;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f9fafb;
+}
+
+.commentBox {
+  margin-left: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.toggle-replies {
+  cursor: pointer;
+  color: #1d4ed8; /* blue-700 */
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+}
+
+.loading-container {
+  flex: 1;
+  margin-right: 10rem;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.no-comments {
+  padding-bottom: 4rem;
+  color: #6b7280; /* gray-500 */
+  text-align: center;
+  margin: 1rem 0;
+  margin-right: 15rem;
+}
+
+.comments-container {
+  display: flex;
+  justify-content: center;
+  margin-right: 15rem;
+}

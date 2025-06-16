@@ -156,7 +156,7 @@ function Post() {
         return (
             <div key={rootMessage.id}>
                 <Comments reply={rootMessage} />
-                <div className="ml-16 mb-2">
+                <div className="commentBox">
                     {replies.length > 0 && (
                         <div
                             onClick={toggleReplies}
@@ -360,24 +360,24 @@ function Post() {
             <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar />
                 {isLoading || profileLoading || repliesLoading ? (
-                    <div className="flex-1  md:mr-40">
+                    <div className="loading-container">
                         <Spinner />
                     </div>
                 ) : (
-                    <main className="flex-1 overflow-y-auto">
-                        <div className="mt-16 flex flex-col items-center lg:mr-60">
-                            <div className="bg-white rounded-sm shadow-sm w-full max-w-md my-1 border border-gray-400 ">
-                                <div className="px-4 py-2 ">
+                    <main className="main-content">
+                        <div className="post-header">
+                            <div className="post-container">
+                                <div className="post-title">
                                     <h3 className="text-sm font-nunito font-bold text-gray-900 break-words whitespace-normal">
                                         {postData['title']}
                                     </h3>
                                 </div>
 
-                                <div className="w-full border-t-2 border-gray-300">
+                                <div className="post-image">
                                     {postData['imageLink'] &&
                                         renderContent(postData['imageLink'][0])}
                                 </div>
-                                <div className="flex justify-between items-center p-4 bg-gray-50">
+                                <div className="post-actions">
                                     {/* Zap Button */}
                                     <button
                                         onClick={handleZapButton}
@@ -428,7 +428,7 @@ function Post() {
                             </div>
                         </div>
 
-                        <div className="flex justify-center lg:mr-60">
+                        <div className="comments-container">
                             <div className="bg-gray-50 p-4 w-full max-w-md border border-gray-400">
                                 <form
                                     className="flex items-center justify-between"
@@ -457,7 +457,7 @@ function Post() {
                             {isLoading ? (
                                 <CommentSpinner />
                             ) : replies.length === 0 ? (
-                                <div className="pb-16 md:text-gray-500 text-center my-4 lg:mr-60">
+                                <div className="no-comments">
                                     No comments yet.
                                 </div>
                             ) : (
